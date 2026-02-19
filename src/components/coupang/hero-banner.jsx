@@ -72,7 +72,7 @@ export function HeroBanner() {
             <p className={`text-lg ${banner.textColor} opacity-90`}>
               {banner.subtitle}
             </p>
-            <button className="mt-6 rounded-full bg-[#fff] px-6 py-2.5 text-sm font-semibold text-[#333] shadow-md hover:shadow-lg transition-shadow">
+            <button className="mt-6 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#333] shadow-md hover:shadow-lg transition-shadow">
               Shop Now
             </button>
           </div>
@@ -81,9 +81,9 @@ export function HeroBanner() {
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="flex h-24 w-28 items-center justify-center rounded-lg bg-[#fff]/20 backdrop-blur-sm"
+                  className="flex h-24 w-28 items-center justify-center rounded-lg bg-white/20 backdrop-blur-sm"
                 >
-                  <div className="h-16 w-16 rounded-md bg-[#fff]/30" />
+                  <div className="h-16 w-16 rounded-md bg-white/30" />
                 </div>
               ))}
             </div>
@@ -94,14 +94,14 @@ export function HeroBanner() {
       {/* Navigation Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#fff]/80 text-[#333] shadow hover:bg-[#fff] transition-colors"
+        className="absolute left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-[#333] shadow hover:bg-white transition-colors"
         aria-label="Previous banner"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-[#fff]/80 text-[#333] shadow hover:bg-[#fff] transition-colors"
+        className="absolute right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-[#333] shadow hover:bg-white transition-colors"
         aria-label="Next banner"
       >
         <ChevronRight className="h-5 w-5" />

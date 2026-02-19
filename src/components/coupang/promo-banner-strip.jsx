@@ -9,15 +9,15 @@ const promos = [
 
 export function PromoBannerStrip() {
   return (
-    <section className="bg-[#fff] py-4 border-y border-[#f0f0f0]">
+    <section className="bg-white py-4 border-y border-[#f0f0f0]">
       <div className="mx-auto max-w-[1280px] px-4">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {promos.map((promo) => {
             const Icon = promo.icon
             return (
               <div key={promo.title} className="flex items-center gap-3">
-                <div
-                  className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full"
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
                   style={{ backgroundColor: `${promo.color}15` }}
                 >
                   <Icon className="h-5 w-5" style={{ color: promo.color }} />
