@@ -6,11 +6,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 const banners = [
   {
     id: 1,
-    title: "Healthy Diet Management",
-    subtitle: "Nutrition plans for your daily life",
+    title: "Korea's No. 1 Health & Beauty Store",
+    subtitle: "Discover all things K-Beauty at Samee and Sandu",
     bgColor: "bg-[#5B3F8C]",
     textColor: "text-[#fff]",
-    accent: "Meal Kits from $9.99",
+    accent: "Welcome to Samee and Sandu",
   },
   {
     id: 2,
@@ -115,8 +115,8 @@ export function HeroBanner() {
             onClick={() => setCurrentSlide(i)}
             className={`h-2 rounded-full transition-all ${
               i === currentSlide
-                ? "w-6 bg-[#fff]"
-                : "w-2 bg-[#fff]/50"
+                ? "w-6 bg-white"
+                : "w-2 bg-white/50"
             }`}
             aria-label={`Go to slide ${i + 1}`}
           />

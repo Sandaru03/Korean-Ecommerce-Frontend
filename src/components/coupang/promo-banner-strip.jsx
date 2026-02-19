@@ -1,7 +1,7 @@
 import { Rocket, Truck, CreditCard, Shield } from "lucide-react"
 
 const promos = [
-  { icon: Rocket, title: "Rocket Delivery", desc: "Order by midnight, get it tomorrow", color: "#346aff" },
+  { icon: Rocket, title: "Fast Delivery", desc: "Order by midnight, get it tomorrow", color: "#346aff" },
   { icon: Truck, title: "Free Returns", desc: "30-day hassle-free returns", color: "#00b050" },
   { icon: CreditCard, title: "Easy Payments", desc: "Interest-free installments", color: "#f6a623" },
   { icon: Shield, title: "100% Authentic", desc: "Quality guaranteed products", color: "#e44d2e" },

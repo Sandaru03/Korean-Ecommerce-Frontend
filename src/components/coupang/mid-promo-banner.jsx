@@ -2,7 +2,7 @@ import { Rocket, Leaf, Star, Gift } from "lucide-react"
 
 const banners = [
   {
-    title: "Rocket Delivery",
+    title: "Fast Delivery",
     desc: "Order now, delivered by dawn!",
     bgColor: "bg-[#e8f0fe]",
     textColor: "text-[#1a56db]",
@@ -10,7 +10,7 @@ const banners = [
     iconColor: "#346aff",
   },
   {
-    title: "Rocket Fresh",
+    title: "Fresh Foods",
     desc: "Farm-to-table freshness guaranteed",
     bgColor: "bg-[#e8f5e9]",
     textColor: "text-[#2e7d32]",
@@ -49,7 +49,7 @@ export function MidPromoBanner() {
                 className={`group flex items-center gap-3 rounded-xl ${banner.bgColor} p-4 transition-shadow hover:shadow-md`}
               >
                 <div
-                  className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#fff] shadow-sm"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-sm"
                 >
                   <Icon className="h-6 w-6" style={{ color: banner.iconColor }} />
                 </div>

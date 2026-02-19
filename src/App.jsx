@@ -8,6 +8,7 @@ import { ProductSection } from "@/components/coupang/product-section"
 import { MidPromoBanner } from "@/components/coupang/mid-promo-banner"
 import { NewsGallery } from "@/components/coupang/news-gallery"
 import { RecommendationSection } from "@/components/coupang/recommendation-section"
+import { CollectionLinks } from "@/components/coupang/collection-links"
 import { Footer } from "@/components/coupang/footer"
 import {
   todayRecommended,
@@ -29,86 +30,91 @@ export default function App() {
       <main>
         <HeroBanner />
         <CategoryIcons />
+        <CollectionLinks />
         <PromoBannerStrip />
 
-        {/* Today's Recommendations */}
+        {/* K-Beauty (Priority 1) */}
         <ProductSection
-          title="Today's Recommendations"
-          subtitle="We picked these just for you"
+          title="K-Beauty"
+          subtitle="Discover all things K-Beauty"
+          products={beautyProducts}
+          accentColor="#FF69B4"
+        />
+
+        {/* Skin Care (Priority 2) */}
+        <div className="py-2 bg-section-bg" />
+        <ProductSection
+          title="Skin Care"
+          subtitle="Solutions for every skin type"
           products={todayRecommended}
+          bgColor="bg-[#e3f2fd]"
+          accentColor="#4FC3F7"
         />
 
         {/* Lightning Deals */}
         <QuickDealBanner />
 
-        {/* Rocket Delivery Products */}
+        {/* K Pop (Priority 3) - Using Best Sellers for now as placeholder */}
         <div className="py-2 bg-section-bg" />
         <ProductSection
-          title="Rocket Delivery"
-          subtitle="Order by midnight, get it by dawn"
+          title="K Pop"
+          subtitle="Trending K-Pop Merchandise"
           products={rocketDeliveryProducts}
-          accentColor="#346aff"
+          accentColor="#9C27B0"
         />
 
         {/* Mid Promo Banners */}
         <MidPromoBanner />
 
-        {/* Fashion */}
+        {/* Brand Items (Priority 4) */}
         <ProductSection
-          title="Fashion Picks"
-          subtitle="Trending styles this season"
+          title="Brand Items"
+          subtitle="Official Goods from Top Brands"
           products={fashionProducts}
           bgColor="bg-[#fafafa]"
+          accentColor="#FF9800"
         />
 
-        {/* Personalized Recommendations */}
+        {/* Health (Priority 7) */}
         <RecommendationSection />
+
+        {/* Foods (Priority 8) */}
+        <ProductSection
+          title="Foods"
+          subtitle="Authentic Korean Snacks & Food"
+          products={freshProducts}
+          bgColor="bg-[#f0faf0]"
+          accentColor="#4CAF50"
+        />
 
         {/* News Gallery */}
         <NewsGallery />
 
-        {/* Beauty & Personal Care */}
-        <ProductSection
-          title="Beauty & Personal Care"
-          subtitle="Top-rated skincare and beauty essentials"
-          products={beautyProducts}
-          accentColor="#9C27B0"
-        />
-
-        {/* Fresh Products */}
+        {/* Home (Priority 9) */}
         <div className="py-2 bg-section-bg" />
         <ProductSection
-          title="Rocket Fresh"
-          subtitle="Farm-fresh groceries delivered by dawn"
-          products={freshProducts}
-          bgColor="bg-[#f0faf0]"
-          accentColor="#00b050"
-        />
-
-        {/* Electronics */}
-        <ProductSection
-          title="Electronics & Gadgets"
-          subtitle="Latest tech at the best prices"
-          products={electronicsProducts}
-        />
-
-        {/* Home & Living */}
-        <div className="py-2 bg-section-bg" />
-        <ProductSection
-          title="Home & Living"
-          subtitle="Make your space cozy and beautiful"
+          title="Home"
+          subtitle="Korean Home Lifestyle"
           products={homeProducts}
           bgColor="bg-[#fffaf0]"
-          accentColor="#f6a623"
+          accentColor="#795548"
         />
 
-        {/* Gold Box */}
+        {/* Electronics (Priority 13) */}
         <ProductSection
-          title="Gold Box Deals"
-          subtitle="Limited-time mega discounts you don't want to miss"
+          title="Electronics"
+          subtitle="Latest Digital Gadgets"
+          products={electronicsProducts}
+          accentColor="#3F51B5"
+        />
+
+        {/* Hot Deals */}
+        <ProductSection
+          title="Hot Deals"
+          subtitle="Limited-time Offers"
           products={goldBoxDeals}
           bgColor="bg-gradient-to-b from-[#fff8e1] to-[#fff]"
-          accentColor="#e65100"
+          accentColor="#F44336"
         />
       </main>
 

@@ -4,9 +4,22 @@ import { Search, ShoppingCart, User, Menu, ChevronDown, MapPin } from "lucide-re
 import { useState } from "react"
 
 const categories = [
-  "Rocket Delivery", "Rocket Fresh", "Rocket Direct", "Coupang Play",
-  "Rocket Global", "Gold Box", "Events", "Travel", "Fashion",
-  "Electronics", "Home & Garden", "Food & Grocery"
+  "K-Beauty",
+  "Skin Care",
+  "K Pop",
+  "Brand Items",
+  "Makeup items",
+  "Hair care",
+  "Health",
+  "Foods",
+  "Home",
+  "Kitchen",
+  "Baby & Kids",
+  "Shoes",
+  "Electronics",
+  "Digital",
+  "Sports",
+  "Pet supplies",
 ]
 
 export function Header() {
@@ -14,7 +27,7 @@ export function Header() {
   const [showCategories, setShowCategories] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-[#fff] shadow-sm">
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
       {/* Main Header */}
       <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-4 py-3">
         {/* Logo */}
