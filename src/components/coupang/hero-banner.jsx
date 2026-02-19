@@ -1,4 +1,4 @@
-"use client"
+
 
 import { useState, useEffect, useCallback } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -113,11 +113,10 @@ export function HeroBanner() {
           <button
             key={i}
             onClick={() => setCurrentSlide(i)}
-            className={`h-2 rounded-full transition-all ${
-              i === currentSlide
+            className={`h-2 rounded-full transition-all ${i === currentSlide
                 ? "w-6 bg-white"
                 : "w-2 bg-white/50"
-            }`}
+              }`}
             aria-label={`Go to slide ${i + 1}`}
           />
         ))}
