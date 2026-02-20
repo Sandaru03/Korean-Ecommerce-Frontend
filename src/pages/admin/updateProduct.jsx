@@ -151,9 +151,46 @@ export default function UpdateProductPage() {
                     <div className="flex-1 flex flex-col gap-1">
                         <label className="text-sm font-semibold">Category</label>
                         <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2">
-                            <option value="cctv1">CCTV Camera</option>
-                            <option value="cctv2">Accessories</option>
-                            <option value="cctv3">Package</option>
+                            <option value="k-beauty">K-Beauty</option>
+                            <option value="skin-care">Skin Care</option>
+                            <option value="k-pop">K Pop</option>
+                            <option value="brand-items">Brand Items</option>
+                            <option value="makeup-items">Makeup Items</option>
+                            <option value="hair-care">Hair Care</option>
+                            <option value="health">Health</option>
+                            <option value="foods">Foods</option>
+                            <option value="home">Home</option>
+                            <option value="kitchen">Kitchen</option>
+                            <option value="baby-kids">Baby & Kids</option>
+                            <option value="shoes">Shoes</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="digital">Digital</option>
+                            <option value="sports">Sports</option>
+                            <option value="pet-supplies">Pet Supplies</option>
+
+                            <optgroup label="Skin Type">
+                                <option value="dry-skin">Dry Skin</option>
+                                <option value="oily-skin">Oily Skin</option>
+                                <option value="combination-skin">Combination Skin</option>
+                                <option value="normal-skin">Normal Skin</option>
+                            </optgroup>
+
+                            <optgroup label="Brands">
+                                <option value="medicube">Medicube</option>
+                                <option value="anua">Anua</option>
+                                <option value="cosrx">Cosrx</option>
+                                <option value="skin-1004-centella">Skin 1004 Centella</option>
+                                <option value="the-ordinary">The Ordinary</option>
+                                <option value="some-by-mi">Some By Mi</option>
+                                <option value="cetaphil">Cetaphil</option>
+                                <option value="beauty-of-joseon">Beauty of Joseon</option>
+                            </optgroup>
+
+                            <optgroup label="Supplements">
+                                <option value="collagen">Collagen</option>
+                                <option value="vitamins">Vitamins</option>
+                                <option value="supplement">Supplement</option>
+                            </optgroup>
                         </select>
                     </div>
                 </div>
