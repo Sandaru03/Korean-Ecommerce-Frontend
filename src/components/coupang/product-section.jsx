@@ -15,8 +15,8 @@ export function ProductSection({
     cols === 4
       ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
       : cols === 5
-      ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
-      : "grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
+        ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+        : "grid-cols-2 md:grid-cols-3 lg:grid-cols-6"
 
   return (
     <section className={`${bgColor} py-6`}>
@@ -51,6 +51,7 @@ export function ProductSection({
           {products.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               name={product.name}
               price={product.price}
               originalPrice={product.originalPrice}

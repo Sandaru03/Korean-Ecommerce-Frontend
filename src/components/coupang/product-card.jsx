@@ -1,8 +1,8 @@
 import { Rocket, Star } from "lucide-react"
-
-
+import { Link } from "react-router-dom"
 
 export function ProductCard({
+  id,
   name,
   price,
   originalPrice,
@@ -15,8 +15,8 @@ export function ProductCard({
   badge,
 }) {
   return (
-    <a
-      href="#"
+    <Link
+      to={id ? `/product/${id}` : "#"}
       className="group flex flex-col overflow-hidden rounded-lg bg-white transition-shadow hover:shadow-md"
     >
       {/* Image Container */}
@@ -58,11 +58,10 @@ export function ProductCard({
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-3 w-3 ${
-                    i < Math.floor(rating)
-                      ? "fill-[#f6a623] text-[#f6a623]"
-                      : "fill-[#e0e0e0] text-[#e0e0e0]"
-                  }`}
+                  className={`h-3 w-3 ${i < Math.floor(rating)
+                    ? "fill-[#f6a623] text-[#f6a623]"
+                    : "fill-[#e0e0e0] text-[#e0e0e0]"
+                    }`}
                 />
               ))}
             </div>
@@ -87,6 +86,6 @@ export function ProductCard({
           )}
         </div>
       </div>
-    </a>
+    </Link>
   )
 }

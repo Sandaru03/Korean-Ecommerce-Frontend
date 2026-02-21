@@ -122,7 +122,7 @@ const SORT_OPTIONS = [
 function ListingCard({ product }) {
     const [wished, setWished] = useState(false)
     return (
-        <div className="group relative bg-white rounded-xl border border-[#eee] hover:shadow-lg hover:border-[#ccc] transition-all duration-200 overflow-hidden cursor-pointer">
+        <Link to={`/product/${product.id}`} className="group relative bg-white rounded-xl border border-[#eee] hover:shadow-lg hover:border-[#ccc] transition-all duration-200 overflow-hidden block">
             <button
                 onClick={() => setWished(w => !w)}
                 className="absolute top-2 right-2 z-10 h-8 w-8 flex items-center justify-center rounded-full bg-white shadow-sm hover:scale-110 transition-transform"
@@ -180,12 +180,15 @@ function ListingCard({ product }) {
                     )}
                 </div>
 
-                <button className="mt-3 w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-lg transition-colors">
+                <button
+                    onClick={(e) => { e.preventDefault(); }}
+                    className="mt-3 w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
+                >
                     <ShoppingCart className="h-3.5 w-3.5" />
                     Add to Cart
                 </button>
             </div>
-        </div>
+        </Link>
     )
 }
 
@@ -335,8 +338,8 @@ export default function CategoryPage() {
                                     <Link
                                         to={`/category/${s}`}
                                         className={`block text-[12px] px-2 py-1.5 rounded transition-colors ${s === slug
-                                                ? "bg-blue-600 text-white font-semibold"
-                                                : "text-[#444] hover:bg-gray-50 hover:text-blue-600"
+                                            ? "bg-blue-600 text-white font-semibold"
+                                            : "text-[#444] hover:bg-gray-50 hover:text-blue-600"
                                             }`}
                                     >
                                         {c.name}

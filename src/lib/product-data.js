@@ -120,3 +120,15 @@ export const sportsProducts = [
   { id: 114, name: "Adjustable Dumbbell Set 5–25kg Quick Select Home Gym", price: "$89.99", originalPrice: "$159.99", discount: "44%", rating: 4.8, reviews: 4321, image: img("sports5"), rocketDelivery: true, freeShipping: true, badge: "HOT" },
   { id: 115, name: "KF94 Premium Korean Face Mask Black 10 Pack 4-Layer", price: "$14.99", originalPrice: "$24.99", discount: "40%", rating: 4.9, reviews: 34567, image: img("sports6"), rocketDelivery: true },
 ]
+
+// ─── Flat id → product lookup (used by ProductPage) ─────────
+// Combines all category arrays into one { "id": product } map
+const _allProducts = [
+  ...kBeautyProducts, ...skinCareProducts, ...drySkinProducts,
+  ...oilySkinProducts, ...kpopProducts, ...makeupProducts,
+  ...hairCareProducts, ...healthProducts, ...foodProducts,
+  ...homeProducts, ...babyProducts, ...sportsProducts,
+]
+export const ALL_PRODUCTS = Object.fromEntries(
+  _allProducts.map(p => [String(p.id), p])
+)
