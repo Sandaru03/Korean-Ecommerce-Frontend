@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { BiBlock, BiCheckShield } from "react-icons/bi";
 import { HiMiniPlusCircle } from "react-icons/hi2";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Loader from "../../components/admin-utils/loader";
@@ -10,15 +10,8 @@ export default function CustomerAdminPage() {
     const [customers, setCustomers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [query, setQuery] = useState("");
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
         axios
             .get(import.meta.env.VITE_BACKEND_URL + "/users/customers")
             .then((res) => {
@@ -30,7 +23,7 @@ export default function CustomerAdminPage() {
                 toast.error(err.response?.data?.message || "Failed to load customers");
                 setIsLoading(false);
             });
-    }, [isLoading, navigate]);
+    }, [isLoading]);
 
     const filtered = useMemo(() => {
         if (!query.trim()) return customers;
@@ -45,12 +38,6 @@ export default function CustomerAdminPage() {
     }, [customers, query]);
 
     function toggleBlock(cus) {
-        const token = localStorage.getItem("token");
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
         axios
             .patch(
                 `${import.meta.env.VITE_BACKEND_URL}/users/customers/${encodeURIComponent(

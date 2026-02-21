@@ -3,6 +3,9 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import AdminPage from "./pages/AdminPage";
+import CartPage from "./pages/CartPage";
+import ProfilePage from "./pages/ProfilePage";
+import CategoryPage from "./pages/CategoryPage";
 
 export default function App() {
   return (
@@ -10,6 +13,9 @@ export default function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/cart" element={<CartPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/category/:slug" element={<CategoryPage />} />
       <Route path="/admin/*" element={<AdminPage />} />
     </Routes>
   );

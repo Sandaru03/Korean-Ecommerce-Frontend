@@ -1,31 +1,30 @@
-import { createClient } from "@supabase/supabase-js";
-
-const anon_key = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase_url = import.meta.env.VITE_SUPABASE_URL;
-
-const supabase = createClient(supabase_url, anon_key)
+import axios from "axios";
 
 export default function mediaUpload(file) {
     return new Promise((resolve, reject) => {
-        if (file == null) {
-            reject("No file selected")
+        if (!file) {
+            return reject("No file selected");
         }
 
-        const timestamp = new Date().getTime();
-        const fileName = timestamp + file.name;
+        const formData = new FormData();
+        formData.append("images", file); // Key must match backend uploadCloudinary.array('images')
 
-        supabase.storage
-            .from("images")
-            .upload(fileName, file, {
-                cacheControl: "3600",
-                upsert: false,
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}/upload/cloudinary`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        })
+            .then((response) => {
+                const urls = response.data.urls;
+                if (urls && urls.length > 0) {
+                    resolve(urls[0]); // Return the single URL for compatibility
+                } else {
+                    reject("No URL returned from server");
+                }
             })
-            .then(() => {
-                const publicUrl = supabase.storage.from("images").getPublicUrl(fileName)
-                    .data.publicUrl;
-                resolve(publicUrl);
-            }).catch(() => {
-                reject("Error uploading file")
-            })
+            .catch((error) => {
+                console.error("Upload error:", error);
+                reject(error.response?.data?.message || "Error uploading file");
+            });
     });
 }

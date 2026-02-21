@@ -26,11 +26,11 @@ export default function SignupPage() {
         }
         try {
             const res = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/users/signup`,
+                `${import.meta.env.VITE_BACKEND_URL}/users`,
                 formData
             );
-            toast.success(res.data.message || "Signed up successfully");
-            navigate("/login");
+            toast.success(res.data.message || "Account created successfully!");
+            navigate("/login"); // go to login so they can sign in
         } catch (error) {
             toast.error(error.response?.data?.message || "Signup failed");
         }

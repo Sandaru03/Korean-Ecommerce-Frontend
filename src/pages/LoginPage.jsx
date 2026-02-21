@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -7,6 +7,7 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
     function login(e) {
         e?.preventDefault();
@@ -15,8 +16,12 @@ export default function LoginPage() {
             .then((res) => {
                 localStorage.setItem("token", res.data.token);
                 toast.success("Login Successful");
-                if (res.data.role === "admin") navigate("/admin");
-                else navigate("/");
+                if (res.data.role === "admin") {
+                    navigate("/admin");
+                } else {
+                    // If they came from a specific page (e.g. cart), go back — otherwise homepage
+                    navigate(location.state?.from || "/");
+                }
             })
             .catch((error) => {
                 toast.error(error.response?.data?.message || "Login Failed");
