@@ -206,21 +206,31 @@ function CuratedList({ title, products, link = "#" }) {
 export default function HomePage() {
     return (
         <div className="min-h-screen bg-white font-sans selection:bg-[#ff1268] selection:text-white pb-20">
-            {/* ── Top announcement bar ── */}
-            <TopBanner />
-
             {/* ── Sticky header with search + cart ── */}
             <Header />
 
             {/* ── Top Navigation Bar (Olive Young Sub Nav) ── */}
-            <div className="border-b border-[#eee] bg-white relative z-40 hidden md:block">
+            <div className="border-b border-[#eee] bg-white relative z-50 hidden md:block">
                 <div className="mx-auto max-w-[1040px] px-4 flex">
-                    {/* Categories Trigger */}
+                    {/* Categories Hover Trigger */}
                     <div className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group">
-                        <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2">
+                        <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2 group-hover:text-[#ff1268] transition-colors">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
                             Category
                         </button>
+
+                        {/* Hover Dropdown Menu */}
+                        <div className="absolute top-full left-[-1px] w-[200px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                            <ul className="py-2">
+                                {categories.map(cat => (
+                                    <li key={cat.name}>
+                                        <Link to={cat.path} className="block px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-[#ff1268] transition-colors">
+                                            {cat.name}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
                     {/* Header Links */}
                     <div className="flex-1 flex gap-8 items-center px-8 text-[15px] font-bold text-[#111]">
@@ -234,50 +244,9 @@ export default function HomePage() {
                 </div>
             </div>
 
-            {/* ── Hero Section (Sidebar + Slider) ── */}
-            <div className="mx-auto max-w-[1040px] px-4 flex mb-14">
-                {/* Left Categories Sidebar */}
-                <div className="hidden md:block w-[180px] shrink-0 bg-white border-l border-r border-b border-[#eee]">
-                    <ul className="py-2">
-                        {categories.map(cat => (
-                            <li key={cat.name}>
-                                <Link to={cat.path} className="block px-4 py-[9px] text-[13px] text-[#555] font-medium hover:bg-[#f8f9fa] hover:text-[#ff1268] hover:font-bold transition-all">
-                                    {cat.name}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                {/* Right Hero Slider */}
-                <div className="flex-1 min-w-0 relative bg-[#f4f6f8] overflow-hidden">
-                    <div className="relative h-[480px] w-full flex items-center p-12 bg-gradient-to-r from-[#e3eaf3] to-[#d8e0ea]">
-                        <div className="w-1/2 z-10 relative">
-                            <span className="text-[13px] font-bold text-[#555] mb-2 block">Skincare Recommendations</span>
-                            <h2 className="text-[36px] font-black text-[#111] leading-tight mb-4 tracking-tight text-balance">Moisture Recharge<br />Right Now</h2>
-                            <p className="text-[15px] text-[#555]">Check out the best moisture cream deals</p>
-                            <Link to="/category/skin-care" className="mt-8 inline-flex border border-[#111] rounded-full px-6 py-2.5 text-[14px] font-bold text-[#111] hover:bg-[#111] hover:text-white transition-colors bg-white/20 backdrop-blur-sm">
-                                Learn More
-                            </Link>
-                        </div>
-
-                        <div className="absolute right-0 bottom-0 top-0 w-[55%] flex items-end justify-end">
-                            <img src={skinCareProducts[1].image} className="w-[80%] h-auto object-contain mix-blend-multiply opacity-90 scale-125 translate-y-8 -translate-x-8" />
-                        </div>
-
-                        {/* Pagination control */}
-                        <div className="absolute bottom-6 left-12 bg-black/20 backdrop-blur-md px-4 py-1.5 rounded-full flex gap-3 items-center text-[12px] font-bold text-white z-20">
-                            <span>1 / 12</span>
-                            <div className="w-[1px] h-3 bg-white/30"></div>
-                            <button className="cursor-pointer hover:text-white/70">&lt;</button>
-                            <button className="cursor-pointer hover:text-white/70">&gt;</button>
-                            <div className="w-[1px] h-3 bg-white/30"></div>
-                            <button className="cursor-pointer flex items-center justify-center w-3 h-3 hover:text-white/70">
-                                <div className="w-2 h-2.5 border-l-2 border-r-2 border-white"></div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            {/* ── Full Width Hero Section ── */}
+            <div className="w-full mb-14">
+                <HeroBanner />
             </div>
 
             {/* ── Round Icon Categories (20 Items) ── */}

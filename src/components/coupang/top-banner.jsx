@@ -11,8 +11,7 @@ export function TopBanner() {
   return (
     <div className="relative flex items-center justify-center bg-[#4abe8c] py-2 text-[#fff]">
       <p className="text-sm font-medium">
-        {"All products on this page are free to try! | "}
-        <span className="underline cursor-pointer">{"Free shipping on your first order"}</span>
+        {"Welcome to our store! Explore the best K-Beauty products."}
       </p>
       <button
         onClick={() => setVisible(false)}
