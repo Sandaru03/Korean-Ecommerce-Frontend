@@ -4,7 +4,7 @@ import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
 import {
     Search, Star, Rocket, SlidersHorizontal,
-    Grid3x3, LayoutGrid, ChevronRight, Heart, ShoppingCart
+    Grid3x3, LayoutGrid, ChevronRight, ChevronLeft, Heart, ShoppingCart
 } from "lucide-react"
 import {
     kBeautyProducts,
@@ -109,106 +109,132 @@ const CATEGORIES = {
     },
 }
 
-const PAGE_SIZES = [9, 12, 18, 24]
-const SORT_OPTIONS = [
-    { label: "Best Match", value: "default" },
-    { label: "Price: Low to High", value: "price_asc" },
-    { label: "Price: High to Low", value: "price_desc" },
-    { label: "Top Rated", value: "rating" },
-    { label: "Most Reviewed", value: "reviews" },
-]
-
+/* eslint-disable react/prop-types */
 // ── Individual product card ───────────────────────────────────
 function ListingCard({ product }) {
     const [wished, setWished] = useState(false)
+    const brandName = product.name.split(" ")[0]; // Extract first word as brand for UI purposes
+
     return (
-        <Link to={`/product/${product.id}`} className="group relative bg-white rounded-xl border border-[#eee] hover:shadow-lg hover:border-[#ccc] transition-all duration-200 overflow-hidden block">
-            <button
-                onClick={() => setWished(w => !w)}
-                className="absolute top-2 right-2 z-10 h-8 w-8 flex items-center justify-center rounded-full bg-white shadow-sm hover:scale-110 transition-transform"
-            >
-                <Heart className={`h-4 w-4 ${wished ? "fill-red-500 text-red-500" : "text-gray-400"}`} />
-            </button>
-
-            {product.badge && (
-                <span className="absolute top-2 left-2 z-10 rounded text-[10px] font-bold px-1.5 py-0.5 bg-red-500 text-white">
-                    {product.badge}
-                </span>
-            )}
-
-            <div className="aspect-square overflow-hidden bg-[#f8f8f8]">
+        <Link to={`/product/${product.id}`} className="group relative bg-white block">
+            <div className="relative aspect-square overflow-hidden border border-[#eee] rounded-sm mb-3">
                 <img
                     src={product.image}
                     alt={product.name}
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                 />
+                <button
+                    onClick={(e) => { e.preventDefault(); setWished(w => !w); }}
+                    className="absolute top-2 right-2 z-10 flex items-center justify-center p-1"
+                >
+                    <Heart className={`h-[22px] w-[22px] ${wished ? "fill-[#ff4040] text-[#ff4040]" : "text-[#ccc] hover:text-[#999]"}`} strokeWidth={1.5} />
+                </button>
             </div>
 
-            <div className="p-3">
-                <p className="text-[13px] text-[#333] leading-snug line-clamp-2 min-h-[38px] group-hover:text-blue-600 transition-colors">
+            <div className="px-0.5">
+                <p className="text-[12px] font-bold text-[#111] mb-1 leading-none truncate">{brandName}</p>
+                <p className="text-[13px] text-[#555] leading-[1.3] line-clamp-2 min-h-[34px] group-hover:underline decoration-1 underline-offset-2">
                     {product.name}
                 </p>
 
-                <div className="flex items-center gap-1 mt-1.5">
-                    <div className="flex">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                            <Star key={i} className={`h-3 w-3 ${i < Math.floor(product.rating) ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"}`} />
-                        ))}
-                    </div>
-                    <span className="text-[11px] text-gray-400">({product.reviews?.toLocaleString()})</span>
-                </div>
-
-                <div className="mt-2 flex items-baseline gap-1.5">
-                    {product.discount && (
-                        <span className="text-sm font-bold text-red-500">{product.discount}</span>
+                <div className="mt-2.5 flex flex-col gap-0.5">
+                    {product.originalPrice && (
+                        <p className="text-[12px] text-[#999] line-through font-medium leading-none">{product.originalPrice}</p>
                     )}
-                    <span className="text-base font-black text-[#111]">{product.price}</span>
+                    <div className="flex items-baseline gap-1.5 leading-none mt-1">
+                        {product.discount && (
+                            <span className="text-[16px] font-bold text-[#ff4040]">{product.discount}</span>
+                        )}
+                        <span className="text-[16px] font-bold text-[#111]">{product.price.replace('$', '₩')}</span>
+                    </div>
                 </div>
-                {product.originalPrice && (
-                    <p className="text-[11px] text-gray-400 line-through">{product.originalPrice}</p>
-                )}
 
-                <div className="flex gap-1 mt-2 flex-wrap">
+                <div className="flex gap-1.5 mt-3 flex-wrap">
                     {product.rocketDelivery && (
-                        <span className="inline-flex items-center gap-0.5 bg-blue-50 text-blue-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">
-                            <Rocket className="h-2.5 w-2.5" /> Fast
+                        <span className="bg-[#f0f0f0] text-[#555] text-[10px] font-semibold px-1.5 py-[2px] rounded-[3px]">
+                            Today's Dream
                         </span>
                     )}
                     {product.freeShipping && (
-                        <span className="bg-green-50 text-green-600 text-[10px] font-semibold px-1.5 py-0.5 rounded">Free Ship</span>
+                        <span className="bg-[#fff0f0] text-[#ff4040] text-[10px] font-semibold px-1.5 py-[2px] rounded-[3px]">
+                            Sale
+                        </span>
+                    )}
+                    {product.badge && (
+                        <span className="bg-[#e8f5e9] text-[#2e7d32] text-[10px] font-semibold px-1.5 py-[2px] rounded-[3px]">
+                            {product.badge}
+                        </span>
                     )}
                 </div>
-
-                <button
-                    onClick={(e) => { e.preventDefault(); }}
-                    className="mt-3 w-full flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2 rounded-lg transition-colors"
-                >
-                    <ShoppingCart className="h-3.5 w-3.5" />
-                    Add to Cart
-                </button>
             </div>
         </Link>
     )
 }
 
+function CategoryHeroBanner({ category }) {
+    if (!category.products.length) return null
+    return (
+        <div className="w-full bg-[#f8f6f4] rounded-xl overflow-hidden flex h-[260px] mb-12 relative cursor-pointer group border border-[#eee]">
+            <div className="flex-1 px-12 py-10 flex flex-col justify-center relative z-10">
+                <span className="text-[12px] text-[#666] font-bold mb-3 tracking-widest uppercase">{category.name}</span>
+                <h2 className="text-[28px] font-black text-[#111] leading-[1.2] mb-4">
+                    Discover the Best<br />of {category.name}
+                </h2>
+                <p className="text-[14px] text-[#555] max-w-sm leading-relaxed">
+                    {category.description}
+                </p>
+            </div>
+            <div className="w-[45%] h-full relative overflow-hidden">
+                <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-[0.15] mix-blend-multiply z-10`}></div>
+                <img src={category.products[0]?.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Banner" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#f8f6f4] via-[#f8f6f4]/50 to-transparent z-10 w-1/3"></div>
+            </div>
+            <div className="absolute bottom-5 right-5 z-20 bg-black/40 backdrop-blur-md rounded-full px-4 py-1.5 flex items-center gap-2.5 text-white text-[11px] font-bold tracking-widest transition-colors hover:bg-black/60">
+                <span>1 / 3</span>
+                <span className="w-[1px] h-3 bg-white/40"></span>
+                <ChevronRight className="h-3.5 w-3.5" />
+            </div>
+        </div>
+    )
+}
+
+function TopPills({ category, selectedBrand, onSelectBrand }) {
+    const brands = category.brands.slice(0, 5);
+    return (
+        <div className="flex justify-center gap-8 mb-12">
+            {brands.map((brand, i) => {
+                const prod = category.products.find(p => p.name.includes(brand)) || category.products[i];
+                const isActive = selectedBrand === brand;
+                return (
+                    <button
+                        key={brand}
+                        onClick={() => onSelectBrand(isActive ? null : brand)}
+                        className="flex flex-col items-center gap-3 group"
+                    >
+                        <div className={`w-[96px] h-[96px] rounded-full overflow-hidden border-[3px] transition-all duration-300 ${isActive ? 'border-[#9bd965]' : 'border-transparent group-hover:border-gray-200'}`}>
+                            <div className="w-full h-full bg-[#f8f8f8]">
+                                <img src={prod?.image} alt={brand} className="w-full h-full object-cover mix-blend-multiply flex shrink-0 group-hover:scale-110 transition-transform duration-500" />
+                            </div>
+                        </div>
+                        <span className={`text-[13px] ${isActive ? 'font-bold text-[#111]' : 'text-[#666] font-medium'}`}>{brand}</span>
+                    </button>
+                )
+            })}
+        </div>
+    )
+}
+
 // ── Main page component ───────────────────────────────────────
 export default function CategoryPage() {
-    // ALL hooks must be declared before any conditional return
     const { slug } = useParams()
 
-    const [brandSearch, setBrandSearch] = useState("")
     const [selectedBrand, setSelectedBrand] = useState(null)
-    const [sortBy, setSortBy] = useState("default")
-    const [pageSize, setPageSize] = useState(12)
     const [page, setPage] = useState(1)
-    const [cols, setCols] = useState(4)
+    const pageSize = 16
 
-    // Reset all filters whenever the category slug changes
     useEffect(() => {
         setSelectedBrand(null)
-        setBrandSearch("")
-        setSortBy("default")
         setPage(1)
     }, [slug])
 
@@ -218,35 +244,19 @@ export default function CategoryPage() {
         if (!category) return []
         let list = [...category.products]
         if (selectedBrand) {
-            // Match by brand keyword in product name
             list = list.filter(p =>
                 p.name.toLowerCase().includes(selectedBrand.toLowerCase())
             )
         }
-        if (sortBy === "price_asc") list.sort((a, b) => parseFloat(a.price.replace(/[^0-9.]/g, "")) - parseFloat(b.price.replace(/[^0-9.]/g, "")))
-        else if (sortBy === "price_desc") list.sort((a, b) => parseFloat(b.price.replace(/[^0-9.]/g, "")) - parseFloat(a.price.replace(/[^0-9.]/g, "")))
-        else if (sortBy === "rating") list.sort((a, b) => b.rating - a.rating)
-        else if (sortBy === "reviews") list.sort((a, b) => b.reviews - a.reviews)
         return list
-    }, [category, selectedBrand, sortBy])
+    }, [category, selectedBrand])
 
     const totalPages = Math.ceil(filteredProducts.length / pageSize)
     const paginatedProducts = filteredProducts.slice((page - 1) * pageSize, page * pageSize)
 
-    const filteredBrands = category
-        ? (category.brands || []).filter(b => b.toLowerCase().includes(brandSearch.toLowerCase()))
-        : []
-
-    const gridCols = {
-        3: "grid-cols-2 sm:grid-cols-3",
-        4: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
-        5: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-5",
-    }[cols] || "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
-
-    // ── Not found state ──
     if (!category) {
         return (
-            <div className="min-h-screen bg-[#f5f5f5]">
+            <div className="min-h-screen bg-white">
                 <Header />
                 <div className="flex flex-col items-center justify-center py-40">
                     <p className="text-2xl font-bold text-gray-400">Category not found</p>
@@ -258,167 +268,72 @@ export default function CategoryPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#f5f5f5] font-sans">
+        <div className="min-h-screen bg-white font-sans selection:bg-[#9bd965] selection:text-black">
             <Header />
 
-            {/* Category Hero Banner */}
-            <div className={`bg-gradient-to-r ${category.color} text-white`}>
-                <div className="mx-auto max-w-[1280px] px-6 py-8">
-                    <div className="flex items-center gap-1 text-white/70 text-xs mb-2">
-                        <Link to="/" className="hover:text-white transition">Home</Link>
-                        <ChevronRight className="h-3 w-3" />
-                        <span className="text-white font-semibold">{category.name}</span>
-                    </div>
-                    <h1 className="text-3xl md:text-4xl font-black">{category.name}</h1>
-                    <p className="text-white/80 mt-1 text-sm">{category.description}</p>
-                    <p className="mt-2 text-white/60 text-xs">{filteredProducts.length} products</p>
-                </div>
-            </div>
-
             {/* Main layout */}
-            <div className="mx-auto max-w-[1280px] px-4 py-6 flex gap-5">
+            <div className="mx-auto max-w-[1200px] px-6 py-10 flex gap-12 items-start">
 
                 {/* ── SIDEBAR ── */}
-                <aside className="hidden lg:block w-56 shrink-0 space-y-4">
-
-                    {/* Sidebar search */}
-                    <div className="bg-white rounded-xl p-3 border border-[#eee]">
-                        <div className="relative">
-                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search for products"
-                                className="w-full pl-7 pr-3 py-2 text-xs border border-[#eee] rounded-lg focus:outline-none focus:border-blue-400"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Brand filter */}
-                    <div className="bg-white rounded-xl p-4 border border-[#eee]">
-                        <h3 className="text-sm font-bold text-[#222] mb-3">Brand</h3>
-                        <div className="relative mb-2">
-                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Find a Brand"
-                                value={brandSearch}
-                                onChange={e => setBrandSearch(e.target.value)}
-                                className="w-full pl-6 pr-2 py-1.5 text-[11px] border border-[#eee] rounded-md focus:outline-none focus:border-blue-400"
-                            />
-                        </div>
-                        <ul className="space-y-1 max-h-48 overflow-y-auto">
-                            <li>
+                <aside className="hidden lg:block w-[180px] shrink-0 sticky top-10 text-left">
+                    <h2 className="text-[34px] font-black text-[#111] mb-8 lowercase tracking-tight">{category.name}</h2>
+                    <ul className="flex flex-col">
+                        <li>
+                            <button
+                                onClick={() => { setSelectedBrand(null); setPage(1) }}
+                                className={`text-left w-full py-3.5 border-b border-[#f0f0f0] text-[15px] transition-colors ${!selectedBrand ? 'font-bold text-[#111]' : 'text-[#666] hover:text-[#111]'}`}
+                            >
+                                All Products
+                            </button>
+                        </li>
+                        {category.brands.map(brand => (
+                            <li key={brand}>
                                 <button
-                                    onClick={() => { setSelectedBrand(null); setPage(1) }}
-                                    className={`w-full text-left text-[12px] px-2 py-1 rounded transition-colors flex items-center justify-between ${!selectedBrand ? "bg-blue-50 text-blue-700 font-semibold" : "text-[#555] hover:bg-gray-50"}`}
+                                    onClick={() => { setSelectedBrand(brand); setPage(1) }}
+                                    className={`text-left w-full py-3.5 border-b border-[#f0f0f0] text-[15px] transition-colors ${selectedBrand === brand ? 'font-bold text-[#111]' : 'text-[#666] hover:text-[#111]'}`}
                                 >
-                                    <span>All Brands</span>
-                                    <span className="text-[11px] text-gray-400">{category.products.length}</span>
+                                    {brand}
                                 </button>
                             </li>
-                            {filteredBrands.map(brand => (
-                                <li key={brand}>
-                                    <button
-                                        onClick={() => { setSelectedBrand(brand); setPage(1) }}
-                                        className={`w-full text-left text-[12px] px-2 py-1 rounded transition-colors ${selectedBrand === brand ? "bg-blue-50 text-blue-700 font-semibold" : "text-[#555] hover:bg-gray-50"}`}
-                                    >
-                                        {brand}
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* All categories nav */}
-                    <div className="bg-white rounded-xl p-4 border border-[#eee]">
-                        <h3 className="text-sm font-bold text-[#222] mb-3">All Categories</h3>
-                        <ul className="space-y-0.5">
-                            {Object.entries(CATEGORIES).map(([s, c]) => (
-                                <li key={s}>
-                                    <Link
-                                        to={`/category/${s}`}
-                                        className={`block text-[12px] px-2 py-1.5 rounded transition-colors ${s === slug
-                                            ? "bg-blue-600 text-white font-semibold"
-                                            : "text-[#444] hover:bg-gray-50 hover:text-blue-600"
-                                            }`}
-                                    >
-                                        {c.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                        ))}
+                    </ul>
                 </aside>
 
                 {/* ── MAIN CONTENT ── */}
                 <div className="flex-1 min-w-0">
 
-                    {/* Toolbar */}
-                    <div className="bg-white rounded-xl border border-[#eee] px-4 py-3 mb-4 flex flex-wrap items-center gap-3 justify-between">
-                        <div className="flex items-center gap-2">
-                            <SlidersHorizontal className="h-4 w-4 text-gray-400" />
-                            <select
-                                value={sortBy}
-                                onChange={e => { setSortBy(e.target.value); setPage(1) }}
-                                className="text-[13px] border border-[#eee] rounded-lg px-2 py-1.5 focus:outline-none focus:border-blue-400"
-                            >
-                                {SORT_OPTIONS.map(o => (
-                                    <option key={o.value} value={o.value}>{o.label}</option>
-                                ))}
-                            </select>
+                    {/* Top Section */}
+                    <h3 className="text-center text-[26px] font-bold text-[#111] mb-10 tracking-tight">
+                        The most sought-after {category.name} BEST right now
+                    </h3>
 
-                            {/* Active brand filter tag */}
-                            {selectedBrand && (
-                                <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
-                                    {selectedBrand}
-                                    <button onClick={() => setSelectedBrand(null)} className="hover:text-red-500">✕</button>
-                                </span>
-                            )}
-                        </div>
+                    <TopPills category={category} selectedBrand={selectedBrand} onSelectBrand={(b) => { setSelectedBrand(b); setPage(1); }} />
 
-                        <div className="flex items-center gap-3 ml-auto">
-                            <span className="text-xs text-gray-400">Show:</span>
-                            <div className="flex gap-1">
-                                {PAGE_SIZES.map(s => (
-                                    <button
-                                        key={s}
-                                        onClick={() => { setPageSize(s); setPage(1) }}
-                                        className={`text-[12px] px-2 py-1 rounded transition-colors ${pageSize === s ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-100"}`}
-                                    >
-                                        {s}
-                                    </button>
-                                ))}
-                            </div>
-                            <div className="flex gap-1 border-l pl-3">
-                                {[3, 4, 5].map(c => (
-                                    <button
-                                        key={c}
-                                        onClick={() => setCols(c)}
-                                        className={`p-1.5 rounded transition-colors ${cols === c ? "bg-blue-100 text-blue-600" : "text-gray-400 hover:bg-gray-100"}`}
-                                    >
-                                        {c === 3 ? <Grid3x3 className="h-4 w-4" /> : <LayoutGrid className="h-4 w-4" />}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                    <CategoryHeroBanner category={category} />
+
+                    {/* Curated Section Title */}
+                    <div className="flex items-end justify-between mb-8 pb-3 border-b-2 border-[#111]">
+                        <h4 className="text-[20px] font-bold text-[#111]">Recommended Products</h4>
+                        <span className="text-[13px] text-[#777] font-medium block pb-0.5">Total <strong className="text-[#111]">{filteredProducts.length}</strong></span>
                     </div>
 
                     {/* Grid */}
                     {paginatedProducts.length > 0 ? (
-                        <div className={`grid ${gridCols} gap-3`}>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12 mb-16">
                             {paginatedProducts.map(p => (
                                 <ListingCard key={p.id} product={p} />
                             ))}
                         </div>
                     ) : (
-                        <div className="bg-white rounded-xl border border-[#eee] py-20 text-center text-gray-400">
-                            <p className="text-lg font-semibold">No products found</p>
+                        <div className="border border-[#eee] py-32 text-center text-gray-400 mb-16 rounded-lg bg-[#fcfcfc]">
+                            <p className="text-lg font-semibold mb-2">No products found</p>
+                            <p className="text-sm">Try selecting a different subcategory.</p>
                             {selectedBrand && (
                                 <button
                                     onClick={() => setSelectedBrand(null)}
-                                    className="mt-4 bg-blue-600 text-white px-5 py-2 rounded-lg text-sm"
+                                    className="mt-6 bg-[#111] hover:bg-[#333] transition-colors text-white px-6 py-2.5 rounded text-sm font-semibold"
                                 >
-                                    Clear Brand Filter
+                                    View All Products
                                 </button>
                             )}
                         </div>
@@ -426,13 +341,13 @@ export default function CategoryPage() {
 
                     {/* Pagination */}
                     {totalPages > 1 && (
-                        <div className="mt-6 flex items-center justify-center gap-1">
+                        <div className="flex items-center justify-center gap-1 border-t border-[#eee] pt-10 pb-6">
                             <button
                                 onClick={() => setPage(p => Math.max(1, p - 1))}
                                 disabled={page === 1}
-                                className="px-3 py-1.5 rounded-lg border border-[#ddd] text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40"
+                                className="w-10 h-10 flex items-center justify-center border border-[#ddd] text-[#333] hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-white transition-colors"
                             >
-                                ‹
+                                <ChevronLeft className="h-5 w-5" />
                             </button>
                             {Array.from({ length: totalPages }, (_, i) => i + 1)
                                 .filter(n => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
@@ -443,12 +358,12 @@ export default function CategoryPage() {
                                 }, [])
                                 .map((n, i) =>
                                     n === "…" ? (
-                                        <span key={`e-${i}`} className="px-2 py-1.5 text-sm text-gray-400">…</span>
+                                        <span key={`e-${i}`} className="w-10 h-10 flex items-center justify-center text-gray-400">…</span>
                                     ) : (
                                         <button
                                             key={n}
                                             onClick={() => setPage(n)}
-                                            className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${n === page ? "bg-blue-600 text-white" : "border border-[#ddd] text-gray-600 hover:bg-gray-50"}`}
+                                            className={`w-10 h-10 flex items-center justify-center text-[15px] font-medium transition-colors ${n === page ? "bg-[#111] text-white border border-[#111]" : "border border-transparent text-[#555] hover:bg-gray-50 hover:border-[#ddd]"}`}
                                         >
                                             {n}
                                         </button>
@@ -458,9 +373,9 @@ export default function CategoryPage() {
                             <button
                                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                 disabled={page === totalPages}
-                                className="px-3 py-1.5 rounded-lg border border-[#ddd] text-sm text-gray-600 hover:bg-gray-50 disabled:opacity-40"
+                                className="w-10 h-10 flex items-center justify-center border border-[#ddd] text-[#333] hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-white transition-colors"
                             >
-                                ›
+                                <ChevronRight className="h-5 w-5" />
                             </button>
                         </div>
                     )}

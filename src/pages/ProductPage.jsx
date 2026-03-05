@@ -5,7 +5,7 @@ import { Footer } from "@/components/coupang/footer"
 import {
     Star, Rocket, ShoppingCart, Heart, ChevronRight,
     Shield, RotateCcw, Truck, PackageCheck,
-    Minus, Plus, Share2,
+    Minus, Plus, Share2, Grid3x3, Flame
 } from "lucide-react"
 import { ALL_PRODUCTS } from "@/lib/product-data"
 
@@ -33,14 +33,16 @@ function getDetails(id) {
 
 function StarBar({ rating, reviews }) {
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
             <div className="flex">
                 {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className={`h-4 w-4 ${i < Math.floor(rating) ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"}`} />
+                    <Star key={i} className={`h-3.5 w-3.5 ${i < Math.floor(rating) ? "fill-[#ff1268] text-[#ff1268]" : "fill-gray-200 text-gray-200"}`} />
                 ))}
             </div>
-            <span className="text-sm font-semibold text-amber-600">{rating}</span>
-            <span className="text-sm text-gray-400">({reviews?.toLocaleString()} reviews)</span>
+            <span className="text-[13px] font-bold text-[#111] leading-none ml-1">{rating}</span>
+            <span className="text-[13px] text-[#888] underline underline-offset-2 ml-1 cursor-pointer hover:text-[#111]">
+                ({reviews?.toLocaleString()}건)
+            </span>
         </div>
     )
 }
@@ -52,11 +54,14 @@ export default function ProductPage() {
     const product = ALL_PRODUCTS[id]
     const details = getDetails(id)
 
-    const [qty, setQty] = useState(1)
     const [wished, setWished] = useState(false)
     const [selectedImg, setSelectedImg] = useState(0)
-    const [selectedVolume, setSelectedVolume] = useState(details?.volume?.[0] || null)
     const [activeTab, setActiveTab] = useState("description")
+
+    // Options selector state
+    const [showOptions, setShowOptions] = useState(false)
+    const [selectedItems, setSelectedItems] = useState([]) // Array of { id, name, qty, price }
+    const [isTodayDream, setIsTodayDream] = useState(false)
 
     // Thumbnail images: same seed with slight variation for demo
     const images = product
@@ -75,7 +80,7 @@ export default function ProductPage() {
                 <div className="flex flex-col items-center justify-center py-40">
                     <p className="text-6xl mb-4">📦</p>
                     <p className="text-2xl font-bold text-gray-500">Product not found</p>
-                    <Link to="/" className="mt-6 bg-blue-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 transition">
+                    <Link to="/" className="mt-6 bg-[#ff1268] text-white px-6 py-2.5 rounded-full text-sm font-semibold hover:bg-[#e00d59] transition">
                         ← Back to Home
                     </Link>
                 </div>
@@ -85,246 +90,346 @@ export default function ProductPage() {
     }
 
     const discountPct = product.discount?.replace("%", "") || ""
+    const brandName = product.name.split(" ")[0]; // Extract first word as brand for UI
+
+    // Parse numeric price for calculation
+    const rawPrice = parseFloat(product.price.replace(/[^0-9.]/g, ""));
+    const totalPrice = selectedItems.reduce((acc, item) => acc + (rawPrice * item.qty), 0);
+    const formattedTotal = new Intl.NumberFormat('en-US').format(totalPrice);
+
+    const handleAddOption = (vol) => {
+        const existing = selectedItems.find(item => item.name === vol);
+        if (existing) {
+            setSelectedItems(selectedItems.map(item =>
+                item.name === vol ? { ...item, qty: item.qty + 1 } : item
+            ));
+        } else {
+            setSelectedItems([...selectedItems, { id: vol, name: vol, qty: 1, price: rawPrice }]);
+        }
+        setShowOptions(false);
+    };
+
+    const handleUpdateQty = (vol, newQty) => {
+        if (newQty < 1) return;
+        setSelectedItems(selectedItems.map(item =>
+            item.name === vol ? { ...item, qty: newQty } : item
+        ));
+    };
+
+    const handleRemoveItem = (vol) => {
+        setSelectedItems(selectedItems.filter(item => item.name !== vol));
+    };
 
     return (
-        <div className="min-h-screen bg-[#f5f5f5] font-sans">
+        <div className="min-h-screen bg-white font-sans selection:bg-[#ff1268] selection:text-white">
             <Header />
 
             {/* Breadcrumb */}
             <div className="bg-white border-b border-[#eee]">
-                <div className="mx-auto max-w-[1280px] px-4 py-2.5 flex items-center gap-1 text-xs text-gray-400">
-                    <Link to="/" className="hover:text-blue-600 transition">Home</Link>
-                    <ChevronRight className="h-3 w-3" />
-                    <button onClick={() => navigate(-1)} className="hover:text-blue-600 transition">Back</button>
-                    <ChevronRight className="h-3 w-3" />
-                    <span className="text-gray-600 truncate max-w-[300px]">{product.name}</span>
+                <div className="mx-auto max-w-[1040px] px-4 py-3 flex items-center gap-2 text-[12px] text-[#777]">
+                    <Link to="/" className="hover:text-[#111] transition">Home</Link>
+                    <ChevronRight className="h-3 w-3 text-[#ccc]" />
+                    <button onClick={() => navigate(-1)} className="hover:text-[#111] transition">Category</button>
+                    <ChevronRight className="h-3 w-3 text-[#ccc]" />
+                    <span className="text-[#333] font-medium truncate">{brandName}</span>
                 </div>
             </div>
 
-            <div className="mx-auto max-w-[1280px] px-4 py-6">
+            <div className="mx-auto max-w-[1040px] px-4 py-10 relative">
 
-                {/* ── Top section: image + info ── */}
-                <div className="flex flex-col lg:flex-row gap-6">
+                {/* ── Top section: image (left) + sticky info (right) ── */}
+                <div className="flex flex-col lg:flex-row gap-12 items-start relative">
 
-                    {/* Image gallery */}
-                    <div className="lg:w-[440px] shrink-0">
-                        <div className="bg-white rounded-2xl border border-[#eee] overflow-hidden">
-                            {/* Main image */}
-                            <div className="relative aspect-square bg-[#f8f8f8]">
-                                <img
-                                    src={images[selectedImg]}
-                                    alt={product.name}
-                                    className="h-full w-full object-cover"
-                                />
-                                {product.badge && (
-                                    <span className="absolute top-3 left-3 bg-red-500 text-white text-[11px] font-bold px-2 py-1 rounded-lg">
-                                        {product.badge}
-                                    </span>
-                                )}
-                                {discountPct && (
-                                    <span className="absolute top-3 right-3 bg-red-50 text-red-600 text-sm font-black px-2.5 py-1 rounded-xl border border-red-200">
-                                        -{discountPct}%
-                                    </span>
-                                )}
-                                <button
-                                    onClick={() => setWished(w => !w)}
-                                    className="absolute bottom-3 right-3 h-10 w-10 flex items-center justify-center rounded-full bg-white shadow-md hover:scale-110 transition-transform"
-                                >
-                                    <Heart className={`h-5 w-5 ${wished ? "fill-red-500 text-red-500" : "text-gray-400"}`} />
-                                </button>
+                    {/* Left: Image gallery */}
+                    <div className="w-full lg:w-[460px] shrink-0">
+                        {/* Main image */}
+                        <div className="relative aspect-square w-full bg-[#f8f8f8] mb-4 overflow-hidden border border-[#eee]">
+                            <img
+                                src={images[selectedImg]}
+                                alt={product.name}
+                                className="h-full w-full object-cover transition-all duration-300"
+                            />
+                            {/* Image Counter */}
+                            <div className="absolute bottom-4 right-4 bg-black/30 backdrop-blur-sm text-white text-[11px] font-bold px-3 py-1 rounded-full tracking-widest">
+                                {selectedImg + 1} | {images.length}
                             </div>
+                        </div>
 
-                            {/* Thumbnails */}
-                            <div className="flex gap-2 p-3 border-t border-[#eee] bg-white">
+                        {/* Thumbnails + Compare Button */}
+                        <div className="flex gap-2.5 items-center">
+                            <button className="h-[64px] shrink-0 flex flex-col items-center justify-center border border-[#ddd] bg-[#fdfdfd] text-[#555] px-3 font-semibold text-[11px] hover:border-[#111] transition-colors gap-1">
+                                <Grid3x3 className="h-4 w-4" />
+                                색상비교
+                            </button>
+                            <div className="flex gap-2.5 overflow-x-auto scrollbar-hide">
                                 {images.map((img, i) => (
                                     <button
                                         key={i}
                                         onClick={() => setSelectedImg(i)}
-                                        className={`h-16 w-16 rounded-xl overflow-hidden border-2 transition-all ${i === selectedImg ? "border-blue-500 scale-105" : "border-transparent"}`}
+                                        className={`h-[64px] w-[64px] shrink-0 border relative transition-all ${i === selectedImg ? "border-[#111]" : "border-transparent hover:border-[#ddd]"}`}
                                     >
                                         <img src={img} alt={`view ${i + 1}`} className="h-full w-full object-cover" />
+                                        {i === selectedImg && <div className="absolute inset-0 ring-1 ring-inset ring-[#111]"></div>}
                                     </button>
                                 ))}
                             </div>
                         </div>
                     </div>
 
-                    {/* Product info */}
-                    <div className="flex-1 min-w-0">
-                        <div className="bg-white rounded-2xl border border-[#eee] p-6 h-full">
+                    {/* Right: Sticky Product info */}
+                    <div className="flex-1 min-w-0 lg:sticky lg:top-10">
 
-                            {/* Tags */}
-                            <div className="flex flex-wrap gap-1.5 mb-3">
-                                {product.rocketDelivery && (
-                                    <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-600 text-[11px] font-bold px-2.5 py-1 rounded-full border border-blue-100">
-                                        <Rocket className="h-3 w-3" /> Fast Delivery
-                                    </span>
-                                )}
-                                {product.freeShipping && (
-                                    <span className="inline-flex items-center gap-1 bg-green-50 text-green-600 text-[11px] font-bold px-2.5 py-1 rounded-full border border-green-100">
-                                        <Truck className="h-3 w-3" /> Free Shipping
-                                    </span>
-                                )}
+                        {/* Header Row: Brand & Actions */}
+                        <div className="flex justify-between items-center mb-4">
+                            <Link to="#" className="text-[14px] font-bold text-[#111] hover:underline flex items-center gap-0.5">
+                                {brandName} <ChevronRight className="h-4 w-4" />
+                            </Link>
+                            <div className="flex gap-3">
+                                <button className="text-[#999] hover:text-[#111] transition-colors"><Share2 className="h-6 w-6" strokeWidth={1.5} /></button>
+                                <button onClick={() => setWished(w => !w)} className="transition-colors">
+                                    <Heart className={`h-6 w-6 ${wished ? "fill-[#ff1268] text-[#ff1268]" : "text-[#999] hover:text-[#111]"}`} strokeWidth={1.5} />
+                                </button>
                             </div>
+                        </div>
 
-                            {/* Name */}
-                            <h1 className="text-xl md:text-2xl font-bold text-[#111] leading-snug mb-3">
-                                {product.name}
-                            </h1>
+                        {/* Title */}
+                        <h1 className="text-[26px] font-black text-[#111] leading-[1.3] mb-5 tracking-tight">
+                            {product.name}
+                        </h1>
 
-                            {/* Rating */}
+                        {/* Rating & Viewers */}
+                        <div className="flex items-center gap-3 mb-6">
                             <StarBar rating={product.rating} reviews={product.reviews} />
+                            <div className="w-[1px] h-3 bg-[#ddd]"></div>
+                            <span className="text-[13px] text-[#ff1268] font-semibold flex items-center gap-1">
+                                <Flame className="h-3.5 w-3.5" /> 1,204명이 보고 있어요
+                            </span>
+                        </div>
 
-                            <div className="border-t border-[#f0f0f0] mt-4 pt-4">
-                                {/* Price */}
-                                <div className="flex items-baseline gap-3">
-                                    <span className="text-3xl font-black text-[#111]">{product.price}</span>
-                                    {product.originalPrice && (
-                                        <span className="text-lg text-gray-400 line-through">{product.originalPrice}</span>
-                                    )}
-                                    {discountPct && (
-                                        <span className="text-lg font-black text-red-500">-{discountPct}%</span>
-                                    )}
-                                </div>
-                                {product.originalPrice && (
-                                    <p className="text-xs text-green-600 font-medium mt-0.5">
-                                        You save {product.originalPrice} → {product.price}
-                                    </p>
+                        {/* Price Area */}
+                        <div className="flex flex-col mb-6">
+                            {product.originalPrice && (
+                                <span className="text-[14px] text-[#999] line-through font-medium leading-none mb-2">{product.originalPrice}원</span>
+                            )}
+                            <div className="flex items-baseline gap-2 leading-none">
+                                {discountPct && (
+                                    <span className="text-[32px] font-black text-[#e2211c]">{discountPct}%</span>
                                 )}
+                                <span className="text-[32px] font-black text-[#111]">{product.price.replace('$', '')}<span className="text-[22px] font-bold ml-0.5">원</span></span>
                             </div>
+                        </div>
 
-                            {/* Volume selector */}
-                            {details.volume?.length > 0 && (
-                                <div className="mt-4">
-                                    <p className="text-[13px] font-semibold text-[#444] mb-2">Size / Volume</p>
-                                    <div className="flex gap-2 flex-wrap">
-                                        {details.volume.map(v => (
-                                            <button
-                                                key={v}
-                                                onClick={() => setSelectedVolume(v)}
-                                                className={`px-4 py-1.5 rounded-lg border text-[13px] font-medium transition-all ${selectedVolume === v ? "border-blue-500 bg-blue-50 text-blue-700" : "border-[#ddd] text-[#555] hover:border-blue-300"}`}
-                                            >
-                                                {v}
-                                            </button>
-                                        ))}
+                        {/* Badges */}
+                        <div className="flex gap-1.5 mb-6 flex-wrap">
+                            {product.rocketDelivery && (
+                                <span className="bg-[#ffebf0] text-[#ff1268] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
+                                    오늘드림
+                                </span>
+                            )}
+                            <span className="bg-[#f0f0f0] text-[#555] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
+                                BEST
+                            </span>
+                            {product.freeShipping && (
+                                <span className="bg-[#fff0f0] text-[#e2211c] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
+                                    무료배송
+                                </span>
+                            )}
+                            {product.badge && (
+                                <span className="border border-[#ddd] text-[#777] text-[11px] font-bold px-2 py-[3px] rounded-[4px] tracking-wide">
+                                    {product.badge}
+                                </span>
+                            )}
+                        </div>
+
+                        <hr className="border-[#eee] my-6" />
+
+                        {/* Delivery Info Box */}
+                        <div className="flex flex-col gap-3 mb-6">
+                            <p className="text-[14px] font-bold text-[#111]">배송정보</p>
+
+                            {/* Today Dream Checkbox */}
+                            <label className="flex items-center gap-2 cursor-pointer bg-[#fafcfb] border border-[#e8f1ec] p-3 rounded-md">
+                                <input
+                                    type="checkbox"
+                                    checked={isTodayDream}
+                                    onChange={(e) => setIsTodayDream(e.target.checked)}
+                                    className="w-4 h-4 accent-[#009b77] cursor-pointer"
+                                />
+                                <span className="text-[13px] font-semibold text-[#111] flex items-center gap-1">
+                                    <Rocket className="h-4 w-4 text-[#009b77]" /> 오늘드림으로 받아보시겠어요?
+                                </span>
+                            </label>
+
+                            {/* Delivery Options List */}
+                            <ul className="text-[13px] text-[#555] space-y-2.5 mt-2">
+                                <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
+                                    <div className="flex items-center gap-4">
+                                        <span className="w-[50px] font-medium text-[#777]">일반배송</span>
+                                        <span>2,500원 (20,000원 이상 무료배송)</span>
                                     </div>
+                                    <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
+                                </li>
+                                <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
+                                    <div className="flex items-center gap-4">
+                                        <span className="w-[50px] font-bold text-[#ff1268]">오늘드림</span>
+                                        <span className="text-[#a16b00] font-medium">오후 1시 전 주문 시 오늘 도착 확률 99%</span>
+                                    </div>
+                                    <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
+                                </li>
+                                <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
+                                    <div className="flex items-center gap-4">
+                                        <span className="w-[50px] font-medium text-[#777]">픽업</span>
+                                        <span>매장픽업 가능</span>
+                                    </div>
+                                    <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Options Selector */}
+                        <div className="relative mb-4">
+                            <button
+                                onClick={() => setShowOptions(!showOptions)}
+                                className={`w-full flex justify-between items-center border ${showOptions ? 'border-[#111]' : 'border-[#ddd]'} py-3.5 px-4 rounded-[4px] bg-white transition-colors`}
+                            >
+                                <span className="text-[14px] font-semibold text-[#111]">옵션을 선택해 주세요.</span>
+                                <ChevronRight className={`h-4 w-4 text-[#111] transition-transform ${showOptions ? 'rotate-90' : 'rotate-90'}`} />
+                            </button>
+
+                            {/* Dropdown Menu */}
+                            {showOptions && (
+                                <div className="absolute top-full left-0 w-full mt-1 bg-white border border-[#111] max-h-[280px] overflow-y-auto z-30 shadow-xl rounded-[4px]">
+                                    {details.volume?.length > 0 ? details.volume.map(vol => (
+                                        <button
+                                            key={vol}
+                                            onClick={() => handleAddOption(vol)}
+                                            className="w-full text-left px-4 py-3 hover:bg-[#f8f8f8] border-b border-[#f0f0f0] last:border-0 flex justify-between items-center"
+                                        >
+                                            <span className="text-[13px] text-[#333]">{vol}</span>
+                                            <span className="text-[13px] font-bold text-[#111]">{product.price.replace('$', '')}원</span>
+                                        </button>
+                                    )) : (
+                                        <button
+                                            onClick={() => handleAddOption("단일 상품")}
+                                            className="w-full text-left px-4 py-3 hover:bg-[#f8f8f8] flex justify-between items-center"
+                                        >
+                                            <span className="text-[13px] text-[#333]">단일 상품</span>
+                                            <span className="text-[13px] font-bold text-[#111]">{product.price.replace('$', '')}원</span>
+                                        </button>
+                                    )}
                                 </div>
                             )}
+                        </div>
 
-                            {/* Quantity + actions */}
-                            <div className="mt-5 flex items-center gap-3 flex-wrap">
-                                {/* Qty picker */}
-                                <div className="flex items-center border border-[#ddd] rounded-xl overflow-hidden">
-                                    <button
-                                        onClick={() => setQty(q => Math.max(1, q - 1))}
-                                        className="px-3 py-2.5 hover:bg-gray-50 text-[#444] transition-colors"
-                                    >
-                                        <Minus className="h-4 w-4" />
-                                    </button>
-                                    <span className="px-4 py-2.5 text-sm font-bold min-w-[40px] text-center border-x border-[#ddd]">{qty}</span>
-                                    <button
-                                        onClick={() => setQty(q => q + 1)}
-                                        className="px-3 py-2.5 hover:bg-gray-50 text-[#444] transition-colors"
-                                    >
-                                        <Plus className="h-4 w-4" />
-                                    </button>
-                                </div>
-
-                                {/* Add to cart */}
-                                <button className="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl transition-colors shadow-sm">
-                                    <ShoppingCart className="h-5 w-5" />
-                                    Add to Cart
-                                </button>
-
-                                {/* Buy now */}
-                                <button className="flex-1 flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 px-6 rounded-xl transition-colors shadow-sm">
-                                    Buy Now
-                                </button>
-                            </div>
-
-                            {/* Trust badges */}
-                            <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                {[
-                                    { icon: Shield, label: "100% Authentic" },
-                                    { icon: RotateCcw, label: "30-Day Returns" },
-                                    { icon: Truck, label: "Free Shipping" },
-                                    { icon: PackageCheck, label: "Secure Checkout" },
-                                ].map(({ icon: Icon, label }) => (
-                                    <div key={label} className="flex flex-col items-center gap-1 p-2 bg-[#f8f8f8] rounded-xl text-center">
-                                        <Icon className="h-4 w-4 text-blue-600" />
-                                        <span className="text-[10px] font-medium text-[#555]">{label}</span>
+                        {/* Selected Items List */}
+                        {selectedItems.length > 0 && (
+                            <div className="bg-[#fcfcfc] border border-[#eee] rounded-[4px] p-4 mb-6 space-y-4">
+                                {selectedItems.map(item => (
+                                    <div key={item.id} className="flex flex-col gap-3">
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-[13px] font-semibold text-[#111] max-w-[80%] leading-tight">{product.name} - {item.name}</span>
+                                            <button onClick={() => handleRemoveItem(item.name)} className="text-[#999] hover:text-[#111] text-[18px] leading-none">&times;</button>
+                                        </div>
+                                        <div className="flex justify-between items-end">
+                                            {/* Qty Adjuster */}
+                                            <div className="flex items-center border border-[#ddd] bg-white h-[32px] w-[90px] rounded-[3px]">
+                                                <button onClick={() => handleUpdateQty(item.name, item.qty - 1)} className="flex-1 h-full flex items-center justify-center text-[#555] text-[18px]">&minus;</button>
+                                                <span className="w-[30px] text-center text-[13px] font-bold text-[#111] font-mono leading-none">{item.qty}</span>
+                                                <button onClick={() => handleUpdateQty(item.name, item.qty + 1)} className="flex-1 h-full flex items-center justify-center text-[#555] text-[16px]">&#43;</button>
+                                            </div>
+                                            <span className="text-[15px] font-bold text-[#111]">
+                                                {new Intl.NumberFormat('en-US').format(item.price * item.qty)}원
+                                            </span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
+                        )}
+
+                        {/* Total Checkout Area */}
+                        <div className="flex justify-between items-end mb-6 py-4 border-t-2 border-[#111]">
+                            <span className="text-[14px] font-semibold text-[#555]">총 상품금액</span>
+                            <div className="flex items-end gap-1">
+                                <span className="text-[14px] text-[#ff1268] font-semibold mb-1">총 {selectedItems.reduce((acc, item) => acc + item.qty, 0)}개</span>
+                                <span className="text-[28px] font-black text-[#111] leading-none ml-2">{formattedTotal}</span>
+                                <span className="text-[16px] font-bold text-[#111] leading-none mb-1">원</span>
+                            </div>
                         </div>
+
+                        {/* Bottom Action Area */}
+                        <div className="flex gap-2">
+                            <button className="h-[56px] w-[56px] shrink-0 flex flex-col items-center justify-center border border-[#ddd] bg-white rounded-[4px] text-[#555] hover:border-[#111] transition-colors gap-0.5">
+                                <span className="text-[18px] leading-none">🎁</span>
+                                <span className="text-[10px] font-bold">선물</span>
+                            </button>
+                            <button className="flex-1 h-[56px] border border-[#111] bg-white text-[#111] font-bold text-[16px] rounded-[4px] hover:bg-[#f8f8f8] transition-colors">
+                                장바구니
+                            </button>
+                            <button className="flex-[1.5] h-[56px] bg-[#111] text-white font-bold text-[16px] rounded-[4px] hover:bg-[#333] transition-colors">
+                                바로구매
+                            </button>
+                        </div>
+
                     </div>
                 </div>
 
-                {/* ── Tabs: Description / How to Use / Ingredients ── */}
-                <div className="mt-6 bg-white rounded-2xl border border-[#eee] overflow-hidden">
-                    {/* Tab headers */}
-                    <div className="flex border-b border-[#eee]">
-                        {["description", "how-to-use", "ingredients"].map(tab => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`px-6 py-3.5 text-sm font-semibold capitalize transition-colors ${activeTab === tab ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500 hover:text-gray-800"}`}
-                            >
-                                {tab.replace("-", " ")}
-                            </button>
-                        ))}
+                {/* ── Tabs: Description / Reviews / Q&A ── */}
+                <div className="mt-20 border-t border-[#eee]">
+                    {/* Sticky Tab headers */}
+                    <div className="flex sticky top-[10px] bg-white z-20 border-b border-[#111] shadow-sm">
+                        {["상품설명", "구매정보", "리뷰", "Q&A"].map((tab, idx) => {
+                            const tabKeys = ["description", "info", "reviews", "qa"];
+                            const current = tabKeys[idx];
+                            return (
+                                <button
+                                    key={current}
+                                    onClick={() => setActiveTab(current)}
+                                    className={`flex-1 py-4 text-[15px] font-bold transition-colors ${activeTab === current ? "text-[#111] border-b-[3px] border-[#111] -mb-[1px]" : "text-[#777] hover:text-[#111]"}`}
+                                >
+                                    {tab} {current === 'reviews' && <span className="text-[#999] font-normal ml-0.5">({product.reviews?.toLocaleString()})</span>}
+                                </button>
+                            )
+                        })}
                     </div>
 
-                    {/* Tab content */}
-                    <div className="p-6">
+                    {/* Tab content area */}
+                    <div className="py-16 max-w-[800px] mx-auto text-center">
                         {activeTab === "description" && (
-                            <div className="space-y-4">
-                                <p className="text-sm text-[#555] leading-relaxed">{details.description}</p>
-                                <ul className="space-y-2">
-                                    {details.highlights?.map(h => (
-                                        <li key={h} className="flex items-start gap-2 text-sm text-[#444]">
-                                            <span className="text-green-500 font-bold mt-0.5">✓</span>
-                                            {h}
-                                        </li>
-                                    ))}
-                                </ul>
+                            <div className="space-y-8">
+                                <h3 className="text-[24px] font-black text-[#111] leading-snug tracking-tight mb-8">
+                                    {product.name}
+                                </h3>
+                                <p className="text-[15px] text-[#555] leading-[1.8] text-left">
+                                    {details.description}
+                                </p>
+                                <div className="text-left bg-[#f8f8f8] p-8 mt-8 border border-[#eee]">
+                                    <h4 className="font-bold text-[#111] mb-4 text-[16px]">Check Points</h4>
+                                    <ul className="space-y-3">
+                                        {details.highlights?.map(h => (
+                                            <li key={h} className="flex items-start gap-2 text-[14px] text-[#555]">
+                                                <span className="text-[#ff1268] font-bold mt-0.5">✓</span>
+                                                {h}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="mt-12 text-left">
+                                    <h4 className="font-bold text-[#111] mb-3 text-[16px]">How to Use</h4>
+                                    <p className="text-[14px] text-[#666] leading-[1.8]">{details.howToUse}</p>
+                                </div>
+
+                                <div className="mt-12 text-left">
+                                    <h4 className="font-bold text-[#111] mb-3 text-[16px]">Full Ingredients</h4>
+                                    <p className="text-[13px] text-[#888] leading-[1.8] font-mono p-4 bg-[#fcfcfc] border border-[#f0f0f0]">{details.ingredients}</p>
+                                </div>
                             </div>
                         )}
-                        {activeTab === "how-to-use" && (
-                            <p className="text-sm text-[#555] leading-relaxed">{details.howToUse}</p>
+                        {activeTab !== "description" && (
+                            <div className="py-32 text-[#999]">
+                                <p className="text-[15px]">해당 컨텐츠는 준비중입니다.</p>
+                            </div>
                         )}
-                        {activeTab === "ingredients" && (
-                            <p className="text-sm text-[#555] leading-relaxed font-mono">{details.ingredients}</p>
-                        )}
-                    </div>
-                </div>
-
-                {/* ── Related products ── */}
-                <div className="mt-6">
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-lg font-bold text-[#111]">You May Also Like</h2>
-                        <Link to="/" className="text-sm text-blue-600 hover:underline">View All</Link>
-                    </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                        {Object.values(ALL_PRODUCTS)
-                            .filter(p => p.id !== product.id)
-                            .slice(0, 6)
-                            .map(p => (
-                                <Link
-                                    key={p.id}
-                                    to={`/product/${p.id}`}
-                                    className="group bg-white rounded-xl border border-[#eee] overflow-hidden hover:shadow-md transition-shadow"
-                                >
-                                    <div className="aspect-square overflow-hidden bg-[#f8f8f8]">
-                                        <img src={p.image} alt={p.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
-                                    </div>
-                                    <div className="p-2">
-                                        <p className="text-[12px] text-[#333] line-clamp-2 leading-tight">{p.name}</p>
-                                        <p className="text-[13px] font-bold text-[#111] mt-1">{p.price}</p>
-                                        {p.originalPrice && <p className="text-[10px] text-gray-400 line-through">{p.originalPrice}</p>}
-                                    </div>
-                                </Link>
-                            ))}
                     </div>
                 </div>
             </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Link } from "react-router-dom"
 
 const banners = [
   {
@@ -11,6 +12,7 @@ const banners = [
     bgColor: "bg-[#5B3F8C]",
     textColor: "text-[#fff]",
     accent: "Welcome to Samee and Sandu",
+    href: "/category/k-beauty",
   },
   {
     id: 2,
@@ -19,6 +21,7 @@ const banners = [
     bgColor: "bg-[#2E7D32]",
     textColor: "text-[#fff]",
     accent: "Limited Time Offer",
+    href: "/category/skin-care",
   },
   {
     id: 3,
@@ -27,6 +30,7 @@ const banners = [
     bgColor: "bg-[#1565C0]",
     textColor: "text-[#fff]",
     accent: "Free delivery on orders $30+",
+    href: "/category/foods",
   },
   {
     id: 4,
@@ -35,6 +39,7 @@ const banners = [
     bgColor: "bg-[#E65100]",
     textColor: "text-[#fff]",
     accent: "Best prices guaranteed",
+    href: "/category/home",
   },
 ]
 
@@ -72,9 +77,9 @@ export function HeroBanner() {
             <p className={`text-lg ${banner.textColor} opacity-90`}>
               {banner.subtitle}
             </p>
-            <button className="mt-6 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#333] shadow-md hover:shadow-lg transition-shadow">
+            <Link to={banner.href} className="mt-6 inline-block rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#333] shadow-md hover:shadow-lg transition-shadow">
               Shop Now
-            </button>
+            </Link>
           </div>
           <div className="hidden flex-1 items-center justify-center md:flex">
             <div className="grid grid-cols-2 gap-3">
@@ -114,8 +119,8 @@ export function HeroBanner() {
             key={i}
             onClick={() => setCurrentSlide(i)}
             className={`h-2 rounded-full transition-all ${i === currentSlide
-                ? "w-6 bg-white"
-                : "w-2 bg-white/50"
+              ? "w-6 bg-white"
+              : "w-2 bg-white/50"
               }`}
             aria-label={`Go to slide ${i + 1}`}
           />

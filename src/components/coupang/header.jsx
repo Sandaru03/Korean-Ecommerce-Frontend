@@ -70,7 +70,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
+    <header className="relative z-50 bg-white shadow-sm">
       {/* ── Main Header Row ── */}
       <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-4 py-3">
         {/* Logo */}
@@ -149,63 +149,6 @@ export function Header() {
           </button>
         </div>
       </div>
-
-      {/* ── Category Nav Bar ── */}
-      <nav className="border-t border-[#e5e5e5] bg-white">
-        <div className="mx-auto max-w-[1280px] px-4 flex items-center">
-
-          {/* "All Categories" button + dropdown — outside overflow context */}
-          <div className="relative shrink-0" ref={catMenuRef}>
-            <button
-              onClick={() => setShowCategories((v) => !v)}
-              className="flex items-center gap-1.5 border-r border-[#e5e5e5] pr-4 py-2.5 text-sm font-semibold text-[#333] hover:text-coupang-blue transition-colors"
-            >
-              <Menu className="h-4 w-4" />
-              <span>All Categories</span>
-              <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${showCategories ? "rotate-180" : ""}`} />
-            </button>
-
-            {/* Dropdown panel — uses absolute positioning without overflow clipping */}
-            {showCategories && (
-              <div
-                className="absolute left-0 top-full mt-px z-[9999] w-72 rounded-b-2xl rounded-tr-2xl bg-white shadow-2xl border border-[#e5e5e5] overflow-hidden"
-              >
-                {/* Header */}
-                <div className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-500">
-                  <p className="text-[11px] font-bold text-white uppercase tracking-widest">Browse All Categories</p>
-                </div>
-                {/* 2-column grid */}
-                <div className="grid grid-cols-2 divide-x divide-[#f0f0f0]">
-                  {NAV_CATEGORIES.map((cat) => (
-                    <Link
-                      key={cat.slug}
-                      to={`/category/${cat.slug}`}
-                      onClick={() => setShowCategories(false)}
-                      className="flex items-center gap-2.5 px-4 py-3 text-[13px] text-[#333] hover:bg-blue-50 hover:text-blue-600 border-b border-[#f5f5f5] transition-colors"
-                    >
-                      <span className="text-xl leading-none">{cat.emoji}</span>
-                      <span className="font-medium truncate">{cat.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Scrollable inline category links */}
-          <div className="flex items-center overflow-x-auto flex-1 scrollbar-hide">
-            {NAV_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.slug}
-                to={`/category/${cat.slug}`}
-                className="shrink-0 px-3 py-2.5 text-[13px] text-[#555] hover:text-coupang-blue transition-colors whitespace-nowrap"
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </nav>
 
     </header>
   )

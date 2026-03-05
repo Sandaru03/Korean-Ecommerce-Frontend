@@ -1,11 +1,10 @@
 import { TopBanner } from "@/components/coupang/top-banner"
 import { Header } from "@/components/coupang/header"
 import { HeroBanner } from "@/components/coupang/hero-banner"
-import { CategoryIcons } from "@/components/coupang/category-icons"
-import { PromoBannerStrip } from "@/components/coupang/promo-banner-strip"
 import { Footer } from "@/components/coupang/footer"
-import { ProductSection } from "@/components/coupang/product-section"
-import { ChevronRight, Zap, Flame, Clock } from "lucide-react"
+import { ChevronRight, ChevronLeft, Heart } from "lucide-react"
+import { Link } from "react-router-dom"
+import { useState } from "react"
 
 import {
     kBeautyProducts,
@@ -22,306 +21,362 @@ import {
     sportsProducts,
 } from "@/lib/product-data"
 
-/* ── Mini product card used inside split-layout sections ── */
-function MiniCard({ p }) {
+const categories = [
+    { name: "Skincare", path: "/category/skin-care" },
+    { name: "Makeup/Nails", path: "/category/makeup" },
+    { name: "Beauty Tools", path: "/category/k-beauty" },
+    { name: "Dermo-Cosmetics", path: "/category/skin-care" },
+    { name: "Men's Care", path: "/category/skin-care" },
+    { name: "Fragrance/Diffuser", path: "/category/k-beauty" },
+    { name: "Hair Care", path: "/category/hair-care" },
+    { name: "Body Care", path: "/category/skin-care" },
+    { name: "Health Supplements", path: "/category/health" },
+    { name: "Foods", path: "/category/foods" },
+    { name: "Oral/Health Care", path: "/category/health" },
+    { name: "Hygiene Products", path: "/category/home" },
+    { name: "Life/K-Pop", path: "/category/kpop" },
+]
+
+const roundCategories = [
+    { name: "Sale BEST", image: "https://picsum.photos/seed/kbeauty1/150/150", path: "/category/makeup" },
+    { name: "Minimal Skincare", image: "https://picsum.photos/seed/skincare2/150/150", path: "/category/skin-care" },
+    { name: "New products", image: "https://picsum.photos/seed/skincare3/150/150", path: "/category/k-beauty" },
+    { name: "slow aging", image: "https://picsum.photos/seed/skincare4/150/150", path: "/category/skin-care" },
+    { name: "Clean Beauty", image: "https://picsum.photos/seed/skincare5/150/150", path: "/category/skin-care" },
+    { name: "Skincare", image: "https://picsum.photos/seed/skincare6/150/150", path: "/category/skin-care" },
+    { name: "Makeup", image: "https://picsum.photos/seed/makeup1/150/150", path: "/category/makeup" },
+    { name: "Hair Care", image: "https://picsum.photos/seed/haircare1/150/150", path: "/category/hair-care" },
+    { name: "Body Care", image: "https://picsum.photos/seed/dryskin1/150/150", path: "/category/skin-care" },
+    { name: "Health", image: "https://picsum.photos/seed/health1/150/150", path: "/category/health" },
+    { name: "Foods", image: "https://picsum.photos/seed/food1/150/150", path: "/category/foods" },
+    { name: "Hygiene", image: "https://picsum.photos/seed/home1/150/150", path: "/category/home" },
+    { name: "K-Pop", image: "https://picsum.photos/seed/kpop1/150/150", path: "/category/kpop" },
+    { name: "Baby & Kids", image: "https://picsum.photos/seed/baby1/150/150", path: "/category/home" },
+    { name: "Sports", image: "https://picsum.photos/seed/sports1/150/150", path: "/category/home" },
+    { name: "Home & Kitchen", image: "https://picsum.photos/seed/home2/150/150", path: "/category/home" },
+    { name: "Beauty Tools", image: "https://picsum.photos/seed/makeup2/150/150", path: "/category/k-beauty" },
+    { name: "Men's Care", image: "https://picsum.photos/seed/oilyskin1/150/150", path: "/category/skin-care" },
+    { name: "Fragrance", image: "https://picsum.photos/seed/haircare2/150/150", path: "/category/k-beauty" },
+    { name: "Dermo-Cosmetics", image: "https://picsum.photos/seed/dryskin2/150/150", path: "/category/skin-care" },
+]
+
+function OliveCard({ p }) {
+    const [wished, setWished] = useState(false);
+
+    // Parse numeric price for calculation (assuming price is like "$15.99" or "15,000원")
+    const rawPriceMatch = p.price.match(/[\d,.]+/);
+    const rawPrice = rawPriceMatch ? rawPriceMatch[0] : p.price;
+
+    // Extract brand from name
+    const brandName = p.name.split(" ")[0];
+    const discountPct = p.discount ? p.discount.replace("%", "") : null;
+
     return (
-        <a href="#" className="group flex flex-col bg-white border border-[#f0f0f0] rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-            <div className="aspect-square overflow-hidden bg-[#f8f8f8]">
-                <img src={p.image} alt={p.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+        <div className="group flex flex-col relative w-[240px] shrink-0">
+            {/* Image Box */}
+            <div className="relative aspect-square overflow-hidden bg-[#f8f8f8] mb-3 border border-[#eee] rounded-[4px]">
+                <Link to={`/product/${p.id}`}>
+                    <img src={p.image} alt={p.name} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                </Link>
+                <button
+                    onClick={(e) => { e.preventDefault(); setWished(w => !w); }}
+                    className="absolute bottom-2 right-2 h-8 w-8 flex items-center justify-center rounded-full bg-white shadow-sm hover:scale-110 transition-transform"
+                >
+                    <Heart className={`h-4 w-4 ${wished ? "fill-[#ff1268] text-[#ff1268]" : "text-[#999]"}`} strokeWidth={1.5} />
+                </button>
             </div>
-            <div className="p-2">
-                <p className="text-[11px] text-[#333] line-clamp-2 leading-tight">{p.name}</p>
-                <p className="mt-1 text-[12px] font-bold text-coupang-red">{p.price}</p>
-                {p.discount && (
-                    <p className="text-[10px] text-[#999] line-through">{p.originalPrice}</p>
-                )}
-            </div>
-        </a>
+
+            {/* Details */}
+            <Link to={`/product/${p.id}`} className="flex flex-col flex-1">
+                <p className="text-[12px] font-bold text-[#111] mb-0.5">{brandName}</p>
+                <p className="text-[13px] text-[#333] line-clamp-2 leading-snug mb-2">{p.name}</p>
+
+                <div className="flex items-baseline gap-1.5 mt-auto">
+                    {discountPct && (
+                        <span className="text-[18px] font-black text-[#e2211c] leading-none">{discountPct}%</span>
+                    )}
+                    <span className="text-[18px] font-black text-[#111] leading-none">{rawPrice}<span className="text-[14px] font-bold text-[#111]">원</span></span>
+                    {p.originalPrice && (
+                        <span className="text-[11px] text-[#999] line-through ml-0.5 leading-none">{p.originalPrice}</span>
+                    )}
+                </div>
+
+                {/* Badges */}
+                <div className="flex gap-1 mt-2.5 flex-wrap">
+                    <span className="bg-[#ffebf0] text-[#ff1268] text-[10px] font-bold px-1.5 py-0.5 rounded-[3px]">Today Delivery</span>
+                    <span className="bg-[#f0f0f0] text-[#555] text-[10px] font-bold px-1.5 py-0.5 rounded-[3px]">BEST</span>
+                </div>
+            </Link>
+        </div>
     )
 }
 
-/* ── Feature banner with 4 products grid on the right ── */
-function SplitSection({ gradient, tag, title, subtitle, cta, products }) {
+function HorizontalProductStrip({ title, products, link = "#" }) {
     return (
-        <section className="bg-white py-4 border-b border-[#f0f0f0]">
-            <div className="mx-auto max-w-[1280px] px-4">
-                <div className="flex gap-3">
-                    {/* Left – promo card */}
-                    <div className={`hidden md:flex w-[200px] shrink-0 flex-col justify-between rounded-xl p-5 text-white ${gradient}`}>
-                        {tag && <span className="inline-block self-start text-[10px] font-bold bg-white/30 px-2 py-0.5 rounded-full mb-2">{tag}</span>}
-                        <div>
-                            <p className="text-xs opacity-80 mb-1">{subtitle}</p>
-                            <h3 className="text-lg font-black leading-tight">{title}</h3>
-                        </div>
-                        <a href="#" className="mt-4 self-start inline-flex items-center text-xs font-semibold bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full transition">
-                            {cta} <ChevronRight className="h-3 w-3 ml-0.5" />
-                        </a>
-                    </div>
+        <section className="mb-14">
+            <div className="flex items-end justify-between mb-4">
+                <h2 className="text-[22px] font-bold text-[#111] tracking-tight">{title}</h2>
+                <Link to={link} className="text-[13px] text-[#777] hover:text-[#111] flex items-center gap-0.5">
+                    View More <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+            </div>
 
-                    {/* Right – product grid */}
-                    <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                        {products.slice(0, 4).map(p => <MiniCard key={p.id} p={p} />)}
-                    </div>
+            <div className="relative">
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 snap-x">
+                    {products.slice(0, 10).map(p => (
+                        <div key={p.id} className="snap-start">
+                            <OliveCard p={p} />
+                        </div>
+                    ))}
                 </div>
             </div>
         </section>
     )
 }
 
-/* ── Flash sale / deal banner ── */
-function FlashBanner({ color = "#e44d2e", label, href = "#" }) {
+function FeatureRankingCard({ p, rank }) {
+    const brandName = p.name.split(" ")[0];
+    const discountPct = p.discount ? p.discount.replace("%", "") : null;
+    const rawPriceMatch = p.price.match(/[\d,.]+/);
+    const rawPrice = rawPriceMatch ? rawPriceMatch[0] : p.price;
+
     return (
-        <section className="py-0">
-            <a href={href}>
-                <div className="mx-0" style={{ background: color }}>
-                    <div className="mx-auto max-w-[1280px] px-4 py-3 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-white">
-                            <Zap className="h-5 w-5 fill-white" />
-                            <span className="text-sm font-black tracking-wide">{label}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-white/80 text-xs">
-                            <Clock className="h-3.5 w-3.5" />
-                            <span>Limited Time</span>
-                            <ChevronRight className="h-4 w-4" />
-                        </div>
-                    </div>
+        <Link to={`/product/${p.id}`} className="block relative w-[380px] shrink-0 border border-[#eee] rounded-[8px] overflow-hidden bg-white shadow-sm group">
+            <div className="aspect-[4/3] bg-[#f8f8f8] overflow-hidden relative">
+                <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute top-0 left-0 bg-[#ff1268] text-white font-black text-[22px] w-[40px] h-[40px] flex items-center justify-center rounded-br-[8px]">
+                    {rank}
                 </div>
-            </a>
-        </section>
+            </div>
+            <div className="p-5">
+                <span className="text-[#ff1268] text-[12px] font-bold bg-[#ffebf0] px-2 py-1 rounded-[4px] inline-flex items-center gap-1 mb-3">
+                    🔥 1,234 people are viewing this
+                </span>
+                <p className="text-[12px] font-bold text-[#111] mb-1">{brandName}</p>
+                <p className="text-[15px] text-[#111] leading-snug line-clamp-2 mb-3">{p.name}</p>
+
+                <div className="flex items-baseline gap-1.5 mt-auto">
+                    {discountPct && (
+                        <span className="text-[22px] font-black text-[#e2211c] leading-none">{discountPct}%</span>
+                    )}
+                    <span className="text-[22px] font-black text-[#111] leading-none">{rawPrice}<span className="text-[16px] font-bold text-[#111]">원</span></span>
+                </div>
+            </div>
+        </Link>
     )
 }
 
-/* ── Wide promotional banner ── */
-function WideBanner({ gradient, icon: Icon, title, subtitle, accentText }) {
+function CuratedList({ title, products, link = "#" }) {
     return (
-        <section className="py-0">
-            <div className={`${gradient} py-8`}>
-                <div className="mx-auto max-w-[1280px] px-6 flex items-center justify-between">
-                    <div className="text-white">
-                        {accentText && <p className="text-xs font-semibold uppercase tracking-widest opacity-75 mb-1">{accentText}</p>}
-                        <h2 className="text-2xl md:text-3xl font-black">{title}</h2>
-                        <p className="text-sm md:text-base opacity-85 mt-1 max-w-sm">{subtitle}</p>
-                    </div>
-                    <div className="hidden md:flex items-center gap-4">
-                        <a href="#" className="bg-white text-gray-800 px-5 py-2 rounded-full text-sm font-bold hover:shadow-lg transition">
-                            Shop Now
-                        </a>
-                    </div>
-                </div>
+        <div className="flex-1 min-w-0">
+            <div className="flex items-end justify-between mb-4 px-1">
+                <h3 className="text-[20px] font-bold text-[#111] tracking-tight">{title}</h3>
+                <Link to={link} className="text-[13px] text-[#777] hover:text-[#111] flex items-center gap-0.5">
+                    View More <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
             </div>
-        </section>
+            <div className="space-y-3">
+                {products.slice(0, 3).map((p, idx) => {
+                    const rawPriceMatch = p.price.match(/[\d,.]+/);
+                    const rawPrice = rawPriceMatch ? rawPriceMatch[0] : p.price;
+                    return (
+                        <Link key={p.id} to={`/product/${p.id}`} className="flex items-center gap-4 bg-white border border-[#eee] rounded-[8px] p-4 hover:shadow-md transition-shadow group">
+                            <div className="relative h-[100px] w-[100px] bg-[#f8f8f8] rounded-[4px] overflow-hidden shrink-0">
+                                <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                                <div className="absolute top-0 left-0 bg-[#333] text-white text-[12px] font-bold w-[24px] h-[24px] flex items-center justify-center rounded-br-[4px]">
+                                    {idx + 1}
+                                </div>
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[12px] font-bold text-[#111] mb-1">{p.name.split(" ")[0]}</p>
+                                <p className="text-[14px] text-[#333] mb-2 line-clamp-2 leading-tight">{p.name}</p>
+                                <div className="flex items-baseline gap-1.5">
+                                    {p.discount && <span className="text-[16px] font-black text-[#e2211c] leading-none">{p.discount.replace("%", "")}%</span>}
+                                    <span className="text-[16px] font-black text-[#111] leading-none">{rawPrice}원</span>
+                                </div>
+                            </div>
+                        </Link>
+                    )
+                })}
+            </div>
+        </div>
     )
 }
 
 export default function HomePage() {
     return (
-        <div className="min-h-screen bg-[#f5f5f5] font-sans">
+        <div className="min-h-screen bg-white font-sans selection:bg-[#ff1268] selection:text-white pb-20">
             {/* ── Top announcement bar ── */}
             <TopBanner />
 
             {/* ── Sticky header with search + cart ── */}
             <Header />
 
-            {/* ── Hero carousel (auto-slides) ── */}
-            <HeroBanner />
-
-            {/* ── Promo trust strip ── */}
-            <PromoBannerStrip />
-
-            {/* ── Category icon grid ── */}
-            <div className="bg-white border-b border-[#f0f0f0]">
-                <CategoryIcons />
+            {/* ── Top Navigation Bar (Olive Young Sub Nav) ── */}
+            <div className="border-b border-[#eee] bg-white relative z-40 hidden md:block">
+                <div className="mx-auto max-w-[1040px] px-4 flex">
+                    {/* Categories Trigger */}
+                    <div className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group">
+                        <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+                            Category
+                        </button>
+                    </div>
+                    {/* Header Links */}
+                    <div className="flex-1 flex gap-8 items-center px-8 text-[15px] font-bold text-[#111]">
+                        <Link to="/category/makeup" className="hover:text-[#ff1268] transition">Special Deals</Link>
+                        <Link to="/category/skin-care" className="hover:text-[#ff1268] transition">Ranking</Link>
+                        <Link to="/category/k-beauty" className="hover:text-[#ff1268] transition">Only at OY</Link>
+                        <Link to="/category/hair-care" className="hover:text-[#ff1268] transition">LUXE EDIT</Link>
+                        <Link to="/category/skin-care" className="hover:text-[#ff1268] transition">Events</Link>
+                        <Link to="/category/health" className="hover:text-[#ff1268] transition">Sale</Link>
+                    </div>
+                </div>
             </div>
 
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 1: K-Beauty – full product grid    */}
-            {/* ═══════════════════════════════════════════ */}
-            <ProductSection
-                title="✨ K-Beauty Picks"
-                subtitle="Best sellers from COSRX, Anua, Medicube & more"
-                products={kBeautyProducts}
-                bgColor="bg-white"
-                accentColor="#e91e8c"
-            />
+            {/* ── Hero Section (Sidebar + Slider) ── */}
+            <div className="mx-auto max-w-[1040px] px-4 flex mb-14">
+                {/* Left Categories Sidebar */}
+                <div className="hidden md:block w-[180px] shrink-0 bg-white border-l border-r border-b border-[#eee]">
+                    <ul className="py-2">
+                        {categories.map(cat => (
+                            <li key={cat.name}>
+                                <Link to={cat.path} className="block px-4 py-[9px] text-[13px] text-[#555] font-medium hover:bg-[#f8f9fa] hover:text-[#ff1268] hover:font-bold transition-all">
+                                    {cat.name}
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
 
-            {/* Flash sale strip */}
-            <FlashBanner color="#e44d2e" label="⚡ Lightning Deals — Up to 50% Off" />
+                {/* Right Hero Slider */}
+                <div className="flex-1 min-w-0 relative bg-[#f4f6f8] overflow-hidden">
+                    <div className="relative h-[480px] w-full flex items-center p-12 bg-gradient-to-r from-[#e3eaf3] to-[#d8e0ea]">
+                        <div className="w-1/2 z-10 relative">
+                            <span className="text-[13px] font-bold text-[#555] mb-2 block">Skincare Recommendations</span>
+                            <h2 className="text-[36px] font-black text-[#111] leading-tight mb-4 tracking-tight text-balance">Moisture Recharge<br />Right Now</h2>
+                            <p className="text-[15px] text-[#555]">Check out the best moisture cream deals</p>
+                            <Link to="/category/skin-care" className="mt-8 inline-flex border border-[#111] rounded-full px-6 py-2.5 text-[14px] font-bold text-[#111] hover:bg-[#111] hover:text-white transition-colors bg-white/20 backdrop-blur-sm">
+                                Learn More
+                            </Link>
+                        </div>
 
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 2: Skin Care split layout          */}
-            {/* ═══════════════════════════════════════════ */}
-            <SplitSection
-                gradient="bg-gradient-to-b from-green-400 to-teal-500"
-                tag="HOT"
-                title="Skin Care Essentials"
-                subtitle="Daily must-haves"
-                cta="See All"
-                products={skinCareProducts}
-            />
+                        <div className="absolute right-0 bottom-0 top-0 w-[55%] flex items-end justify-end">
+                            <img src={skinCareProducts[1].image} className="w-[80%] h-auto object-contain mix-blend-multiply opacity-90 scale-125 translate-y-8 -translate-x-8" />
+                        </div>
 
-            {/* Wide promo – Dry Skin */}
-            <WideBanner
-                gradient="bg-gradient-to-r from-blue-400 to-cyan-400"
-                title="Perfect for Dry Skin"
-                subtitle="Hydrating creams, ceramides & moisture serums"
-                accentText="Skin Type Collections"
-            />
+                        {/* Pagination control */}
+                        <div className="absolute bottom-6 left-12 bg-black/20 backdrop-blur-md px-4 py-1.5 rounded-full flex gap-3 items-center text-[12px] font-bold text-white z-20">
+                            <span>1 / 12</span>
+                            <div className="w-[1px] h-3 bg-white/30"></div>
+                            <button className="cursor-pointer hover:text-white/70">&lt;</button>
+                            <button className="cursor-pointer hover:text-white/70">&gt;</button>
+                            <div className="w-[1px] h-3 bg-white/30"></div>
+                            <button className="cursor-pointer flex items-center justify-center w-3 h-3 hover:text-white/70">
+                                <div className="w-2 h-2.5 border-l-2 border-r-2 border-white"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 3: Dry Skin products               */}
-            {/* ═══════════════════════════════════════════ */}
-            <ProductSection
-                title="💧 Dry Skin Solutions"
-                subtitle="Rich moisturisers, ceramides & hyaluronic acid formulas"
-                products={drySkinProducts}
-                bgColor="bg-white"
-                accentColor="#2196F3"
-            />
+            {/* ── Round Icon Categories (20 Items) ── */}
+            <div className="mx-auto max-w-[1040px] px-4 mb-20">
+                <div className="flex flex-wrap md:grid md:grid-cols-10 gap-y-8 gap-x-2">
+                    {roundCategories.map((cat, idx) => (
+                        <Link key={idx} to={cat.path} className="flex flex-col items-center gap-3 group w-[20%] md:w-auto">
+                            <div className="w-[64px] h-[64px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-[#eaeaea] bg-[#f8f8f8] shrink-0">
+                                <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+                            </div>
+                            <span className="text-[12px] md:text-[13px] text-[#333] font-medium text-center leading-tight group-hover:text-[#ff1268] transition-colors whitespace-pre-wrap">{cat.name}</span>
+                        </Link>
+                    ))}
+                </div>
+            </div>
 
-            {/* Wide promo – Oily Skin */}
-            <WideBanner
-                gradient="bg-gradient-to-r from-teal-500 to-green-500"
-                title="For Oily & Combination Skin"
-                subtitle="Control shine, minimise pores & stay matte all day"
-                accentText="Skin Type Collections"
-            />
+            {/* ── Main Content Container ── */}
+            <div className="mx-auto max-w-[1040px] px-4 space-y-20">
 
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 4: Oily Skin split layout          */}
-            {/* ═══════════════════════════════════════════ */}
-            <SplitSection
-                gradient="bg-gradient-to-b from-teal-400 to-emerald-600"
-                tag="NEW"
-                title="Oily Skin Control"
-                subtitle="BHA, AHA & pore care"
-                cta="Shop All"
-                products={oilySkinProducts}
-            />
+                {/* ── Curated Lists (2 Columns) ── */}
+                <div className="flex flex-col md:flex-row gap-8">
+                    <CuratedList title="Trending Products Now" products={kBeautyProducts} link="/category/k-beauty" />
+                    <CuratedList title="Recommended just for you" products={skinCareProducts} link="/category/skin-care" />
+                </div>
 
-            {/* Flash sale strip – K-Pop */}
-            <FlashBanner color="#7c3aed" label="🎵 K-Pop Official Merch — Albums, Lightsticks & More" />
+                {/* ── Real-time Ranking ── */}
+                <section>
+                    <div className="flex items-end justify-between mb-4">
+                        <div className="flex items-center gap-4">
+                            <h2 className="text-[22px] font-bold text-[#111] tracking-tight">Real-time Ranking</h2>
+                            <span className="text-[13px] text-[#777] font-medium border border-[#ddd] px-2 py-0.5 rounded-full">All</span>
+                        </div>
+                        <Link to="/category/makeup" className="text-[13px] text-[#777] hover:text-[#111] flex items-center gap-0.5">
+                            View More <ChevronRight className="h-3.5 w-3.5" />
+                        </Link>
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-6">
+                        {/* Top Rank Feature Card */}
+                        <FeatureRankingCard p={makeupProducts[0]} rank={1} />
 
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 5: K-Pop – full product grid       */}
-            {/* ═══════════════════════════════════════════ */}
-            <ProductSection
-                title="🎵 K-Pop Merchandise"
-                subtitle="Official merch — BTS, BLACKPINK, SEVENTEEN, aespa & more"
-                products={kpopProducts}
-                bgColor="bg-white"
-                accentColor="#7c3aed"
-            />
+                        {/* List format for ranks 2-5 */}
+                        <div className="flex-1 flex flex-col justify-between">
+                            {[2, 3, 4].map((rank, idx) => {
+                                const p = makeupProducts[idx + 1];
+                                const rawPriceMatch = p.price.match(/[\d,.]+/);
+                                const rawPrice = rawPriceMatch ? rawPriceMatch[0] : p.price;
+                                return (
+                                    <Link key={p.id} to={`/product/${p.id}`} className="flex items-center gap-5 border-b border-[#eee] py-4 group hover:bg-[#fcfcfc] transition-colors rounded-lg px-2">
+                                        <span className="text-[20px] font-black text-[#111] w-[20px] text-center">{rank}</span>
+                                        <div className="w-[72px] h-[72px] shrink-0 bg-[#f8f8f8] rounded-[4px] overflow-hidden border border-[#eee]">
+                                            <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="text-[12px] font-bold text-[#111] mb-0.5">{p.name.split(" ")[0]}</p>
+                                            <p className="text-[14px] text-[#555] line-clamp-1 group-hover:underline">{p.name}</p>
+                                        </div>
+                                        <div className="flex items-baseline gap-1 text-right">
+                                            {p.discount && <span className="text-[16px] font-black text-[#e2211c]">{p.discount.replace("%", "")}%</span>}
+                                            <span className="text-[16px] font-bold text-[#111]">{rawPrice}<span className="text-[14px] font-medium ml-0.5">원</span></span>
+                                        </div>
+                                    </Link>
+                                )
+                            })}
+                        </div>
+                    </div>
+                </section>
 
-            {/* Wide promo – Makeup */}
-            <WideBanner
-                gradient="bg-gradient-to-r from-pink-500 to-rose-500"
-                title="K-Beauty Makeup"
-                subtitle="ROMAND, Laneige, 3CE, CLIO — Korea's top makeup brands"
-                accentText="Trending Now"
-            />
+                {/* ── Promo Banner Pair ── */}
+                <div className="grid grid-cols-2 gap-4">
+                    <Link to="/category/hair-care" className="relative h-[200px] rounded-[12px] overflow-hidden group bg-[#eee] block">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#ffe4e1] to-[#fce4ec]"></div>
+                        <div className="absolute inset-0 px-8 py-10 flex flex-col justify-center">
+                            <span className="text-[12px] font-bold bg-[#111] text-white px-2 py-0.5 rounded-sm self-start mb-3">WEEKLY</span>
+                            <h3 className="text-[22px] font-black text-[#111] mb-1 relative z-10 group-hover:underline decoration-2 underline-offset-4">Fragrant Hair Care Collection</h3>
+                            <p className="text-[15px] text-[#555] relative z-10">Scents that welcome spring</p>
+                        </div>
+                        <div className="absolute right-4 bottom-0 top-6 w-[140px]">
+                            <img src={hairCareProducts[0].image} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500 origin-bottom" />
+                        </div>
+                    </Link>
+                    <Link to="/category/kpop" className="relative h-[200px] rounded-[12px] overflow-hidden group bg-[#eee] block">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#e0f2f1] to-[#e8f5e9]"></div>
+                        <div className="absolute inset-0 px-8 py-10 flex flex-col justify-center">
+                            <span className="text-[12px] font-bold bg-[#ff1268] text-white px-2 py-0.5 rounded-sm self-start mb-3">HOT</span>
+                            <h3 className="text-[22px] font-black text-[#111] mb-1 relative z-10 group-hover:underline decoration-2 underline-offset-4">K-Pop Idol Goods Special</h3>
+                            <p className="text-[15px] text-[#555] relative z-10">From lightsticks to albums</p>
+                        </div>
+                        <div className="absolute right-4 bottom-0 top-6 w-[140px]">
+                            <img src={kpopProducts[0].image} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500 origin-bottom" />
+                        </div>
+                    </Link>
+                </div>
 
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 6: Makeup split layout             */}
-            {/* ═══════════════════════════════════════════ */}
-            <SplitSection
-                gradient="bg-gradient-to-b from-pink-400 to-rose-600"
-                tag="TREND"
-                title="Makeup Must-Haves"
-                subtitle="Tints, shadows & foundation"
-                cta="View All"
-                products={makeupProducts}
-            />
+                {/* ── Horizontal Strips ── */}
+                <HorizontalProductStrip title="Editor's Pick Beauty Items" products={oilySkinProducts} link="/category/oily-skin" />
+                <HorizontalProductStrip title="Only at Olive Young!" products={healthProducts} link="/category/health" />
+                <HorizontalProductStrip title="Today's Deal" products={foodProducts} link="/category/foods" />
 
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 7: Hair Care – full grid           */}
-            {/* ═══════════════════════════════════════════ */}
-            <ProductSection
-                title="💇 Hair Care"
-                subtitle="Repair, volumise and nourish — Korean hair care bestsellers"
-                products={hairCareProducts}
-                bgColor="bg-white"
-                accentColor="#FF9800"
-            />
-
-            {/* Flash sale – Health */}
-            <FlashBanner color="#2e7d32" label="💊 Health & Wellness — Red Ginseng, Collagen & Vitamins" />
-
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 8: Health split layout             */}
-            {/* ═══════════════════════════════════════════ */}
-            <SplitSection
-                gradient="bg-gradient-to-b from-green-500 to-emerald-700"
-                tag="DAILY"
-                title="Health & Supplements"
-                subtitle="Collagen • Probiotics • Vitamins"
-                cta="Shop Now"
-                products={healthProducts}
-            />
-
-            {/* Wide promo – Foods */}
-            <WideBanner
-                gradient="bg-gradient-to-r from-orange-400 to-red-500"
-                title="🍜 Authentic Korean Foods"
-                subtitle="Ramen, seaweed, tteokbokki & all your Korean snack favourites"
-                accentText="Korean Pantry"
-            />
-
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 9: Foods – full grid               */}
-            {/* ═══════════════════════════════════════════ */}
-            <ProductSection
-                title="🍜 Korean Foods"
-                subtitle="Ottogi, Nongshim, Binggrae and more authentic Korean staples"
-                products={foodProducts}
-                bgColor="bg-white"
-                accentColor="#FF5722"
-            />
-
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 10: Home & Kitchen split           */}
-            {/* ═══════════════════════════════════════════ */}
-            <SplitSection
-                gradient="bg-gradient-to-b from-amber-400 to-amber-600"
-                tag="HOME"
-                title="Home & Kitchen"
-                subtitle="Korean ceramics & cookware"
-                cta="Browse"
-                products={homeProducts}
-            />
-
-            {/* Flash sale – Baby & Kids */}
-            <FlashBanner color="#0288d1" label="👶 Baby & Kids — Organic, Safe & Gentle Products" />
-
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 11: Baby & Kids – full grid        */}
-            {/* ═══════════════════════════════════════════ */}
-            <ProductSection
-                title="👶 Baby & Kids"
-                subtitle="Safe, organic and gentle essentials for your little ones"
-                products={babyProducts}
-                bgColor="bg-white"
-                accentColor="#03A9F4"
-            />
-
-            {/* Wide promo – Sports */}
-            <WideBanner
-                gradient="bg-gradient-to-r from-indigo-500 to-blue-600"
-                title="🏃 Sports & Fitness"
-                subtitle="Yoga mats, resistance bands, dumbbells and more"
-                accentText="Active Lifestyle"
-            />
-
-            {/* ═══════════════════════════════════════════ */}
-            {/* SECTION 12: Sports split layout            */}
-            {/* ═══════════════════════════════════════════ */}
-            <SplitSection
-                gradient="bg-gradient-to-b from-indigo-500 to-blue-700"
-                tag="FIT"
-                title="Sports & Fitness"
-                subtitle="Train harder, recover faster"
-                cta="Shop Gear"
-                products={sportsProducts}
-            />
+            </div>
 
             <Footer />
         </div>

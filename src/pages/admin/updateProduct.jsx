@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -16,9 +16,53 @@ export default function UpdateProductPage() {
     const [description, setDescription] = useState(location.state.description);
     const [stock, setStock] = useState(location.state.stock);
     const [isAvailable, setIsAvailable] = useState(location.state.isAvailable);
-    const [category, setCategory] = useState(location.state.category);
+
+    // Dynamic categories
+    const [allCategories, setAllCategories] = useState([]);
+    const [category, setCategory] = useState(location.state.category || "");
+    const [subCategory, setSubCategory] = useState(location.state.subCategory || "");
+
     const navigate = useNavigate();
 
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            if (!token) return navigate("/login");
+
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/categories", {
+                headers: { Authorization: "Bearer " + token }
+            });
+            const fetchedCategories = res.data.categories || [];
+            setAllCategories(fetchedCategories);
+
+            // If the product doesn't have a category saved but there are categories in DB, set a default
+            if (!category && fetchedCategories.length > 0) {
+                setCategory(fetchedCategories[0].name);
+                if (fetchedCategories[0].subcategories?.length > 0) {
+                    setSubCategory(fetchedCategories[0].subcategories[0].name);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+            toast.error("Failed to load categories.");
+        }
+    };
+
+    // Auto-update subcategories when main category changes manually
+    const handleCategoryChange = (e) => {
+        const newCat = e.target.value;
+        setCategory(newCat);
+        const selectedCat = allCategories.find(c => c.name === newCat);
+        if (selectedCat && selectedCat.subcategories?.length > 0) {
+            setSubCategory(selectedCat.subcategories[0].name);
+        } else {
+            setSubCategory("");
+        }
+    };
 
     async function handleSubmit() {
 
@@ -44,7 +88,8 @@ export default function UpdateProductPage() {
             description: description,
             stock: stock,
             isAvailable: isAvailable,
-            category: category
+            category: category,
+            subCategory: subCategory
         }
 
         if (responses.length == 0) {
@@ -150,47 +195,20 @@ export default function UpdateProductPage() {
 
                     <div className="flex-1 flex flex-col gap-1">
                         <label className="text-sm font-semibold">Category</label>
-                        <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2">
-                            <option value="k-beauty">K-Beauty</option>
-                            <option value="skin-care">Skin Care</option>
-                            <option value="k-pop">K Pop</option>
-                            <option value="brand-items">Brand Items</option>
-                            <option value="makeup-items">Makeup Items</option>
-                            <option value="hair-care">Hair Care</option>
-                            <option value="health">Health</option>
-                            <option value="foods">Foods</option>
-                            <option value="home">Home</option>
-                            <option value="kitchen">Kitchen</option>
-                            <option value="baby-kids">Baby & Kids</option>
-                            <option value="shoes">Shoes</option>
-                            <option value="electronics">Electronics</option>
-                            <option value="digital">Digital</option>
-                            <option value="sports">Sports</option>
-                            <option value="pet-supplies">Pet Supplies</option>
+                        <select value={category} onChange={handleCategoryChange} className="w-full border-[2px] h-[40px] rounded-md px-2">
+                            {allCategories.map(c => (
+                                <option key={c.id} value={c.name}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
 
-                            <optgroup label="Skin Type">
-                                <option value="dry-skin">Dry Skin</option>
-                                <option value="oily-skin">Oily Skin</option>
-                                <option value="combination-skin">Combination Skin</option>
-                                <option value="normal-skin">Normal Skin</option>
-                            </optgroup>
-
-                            <optgroup label="Brands">
-                                <option value="medicube">Medicube</option>
-                                <option value="anua">Anua</option>
-                                <option value="cosrx">Cosrx</option>
-                                <option value="skin-1004-centella">Skin 1004 Centella</option>
-                                <option value="the-ordinary">The Ordinary</option>
-                                <option value="some-by-mi">Some By Mi</option>
-                                <option value="cetaphil">Cetaphil</option>
-                                <option value="beauty-of-joseon">Beauty of Joseon</option>
-                            </optgroup>
-
-                            <optgroup label="Supplements">
-                                <option value="collagen">Collagen</option>
-                                <option value="vitamins">Vitamins</option>
-                                <option value="supplement">Supplement</option>
-                            </optgroup>
+                    <div className="flex-1 flex flex-col gap-1">
+                        <label className="text-sm font-semibold">Subcategory</label>
+                        <select value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2">
+                            <option value="">None</option>
+                            {allCategories.find(c => c.name === category)?.subcategories?.map((sub, idx) => (
+                                <option key={idx} value={sub.name}>{sub.name}</option>
+                            ))}
                         </select>
                     </div>
                 </div>
