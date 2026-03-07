@@ -197,14 +197,6 @@ export default function ProductPage() {
                             {product.name}
                         </h1>
 
-                        {/* Weight Display */}
-                        {product.weight && (
-                            <div className="mb-5 inline-block bg-[#f8f8f8] border border-[#eee] text-[#555] text-[13px] font-bold px-3 py-1 rounded-sm">
-                                용량/중량: {product.weight}
-                            </div>
-                        )}
-                        {!product.weight && <div className="mb-5"></div>}
-
                         {/* Rating & Viewers */}
                         <div className="flex items-center gap-3 mb-6">
                             <StarBar rating={product.rating} reviews={product.reviews} />
@@ -217,13 +209,16 @@ export default function ProductPage() {
                         {/* Price Area */}
                         <div className="flex flex-col mb-6">
                             {product.originalPrice && (
-                                <span className="text-[14px] text-[#999] line-through font-medium leading-none mb-2">{product.originalPrice}원</span>
+                                <span className="text-[14px] text-[#999] line-through font-medium leading-none mb-2">{product.originalPrice.replace('원', '')}</span>
                             )}
                             <div className="flex items-baseline gap-2 leading-none">
                                 {discountPct && (
                                     <span className="text-[32px] font-black text-[#e2211c]">{discountPct}%</span>
                                 )}
-                                <span className="text-[32px] font-black text-[#111]">{product.price.replace('$', '')}<span className="text-[22px] font-bold ml-0.5">원</span></span>
+                                <span className="text-[32px] font-black text-[#111]">
+                                    <span className="text-[22px] font-bold mr-0.5">₩</span>
+                                    {product.price.replace('$', '')}
+                                </span>
                             </div>
                         </div>
 
@@ -231,7 +226,7 @@ export default function ProductPage() {
                         <div className="flex gap-1.5 mb-6 flex-wrap">
                             {product.rocketDelivery && (
                                 <span className="bg-[#ffebf0] text-[#ff1268] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
-                                    오늘드림
+                                    Today's Delivery
                                 </span>
                             )}
                             <span className="bg-[#f0f0f0] text-[#555] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
@@ -239,7 +234,7 @@ export default function ProductPage() {
                             </span>
                             {product.freeShipping && (
                                 <span className="bg-[#fff0f0] text-[#e2211c] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
-                                    무료배송
+                                    Free Shipping
                                 </span>
                             )}
                             {product.badge && (
@@ -253,7 +248,7 @@ export default function ProductPage() {
 
                         {/* Delivery Info Box */}
                         <div className="flex flex-col gap-3 mb-6">
-                            <p className="text-[14px] font-bold text-[#111]">배송정보</p>
+                            <p className="text-[14px] font-bold text-[#111]">Delivery Information</p>
 
                             {/* Today Dream Checkbox */}
                             <label className="flex items-center gap-2 cursor-pointer bg-[#fafcfb] border border-[#e8f1ec] p-3 rounded-md">
@@ -264,7 +259,7 @@ export default function ProductPage() {
                                     className="w-4 h-4 accent-[#009b77] cursor-pointer"
                                 />
                                 <span className="text-[13px] font-semibold text-[#111] flex items-center gap-1">
-                                    <Rocket className="h-4 w-4 text-[#009b77]" /> 오늘드림으로 받아보시겠어요?
+                                    <Rocket className="h-4 w-4 text-[#009b77]" /> Would you like to get it by Today's Delivery?
                                 </span>
                             </label>
 
@@ -272,22 +267,22 @@ export default function ProductPage() {
                             <ul className="text-[13px] text-[#555] space-y-2.5 mt-2">
                                 <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
                                     <div className="flex items-center gap-4">
-                                        <span className="w-[50px] font-medium text-[#777]">일반배송</span>
-                                        <span>2,500원 (20,000원 이상 무료배송)</span>
+                                        <span className="w-[80px] font-medium text-[#777]">Standard</span>
+                                        <span>₩2,500 (Free over ₩20,000)</span>
                                     </div>
                                     <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
                                 </li>
                                 <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
                                     <div className="flex items-center gap-4">
-                                        <span className="w-[50px] font-bold text-[#ff1268]">오늘드림</span>
-                                        <span className="text-[#a16b00] font-medium">오후 1시 전 주문 시 오늘 도착 확률 99%</span>
+                                        <span className="w-[80px] font-bold text-[#ff1268]">Today's Delivery</span>
+                                        <span className="text-[#a16b00] font-medium">Order by 1PM for 99% today delivery probability</span>
                                     </div>
                                     <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
                                 </li>
                                 <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
                                     <div className="flex items-center gap-4">
-                                        <span className="w-[50px] font-medium text-[#777]">픽업</span>
-                                        <span>매장픽업 가능</span>
+                                        <span className="w-[80px] font-medium text-[#777]">Store Pickup</span>
+                                        <span>Available in selected stores</span>
                                     </div>
                                     <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
                                 </li>
@@ -300,7 +295,7 @@ export default function ProductPage() {
                                 onClick={() => setShowOptions(!showOptions)}
                                 className={`w-full flex justify-between items-center border ${showOptions ? 'border-[#111]' : 'border-[#ddd]'} py-3.5 px-4 rounded-[4px] bg-white transition-colors`}
                             >
-                                <span className="text-[14px] font-semibold text-[#111]">옵션을 선택해 주세요.</span>
+                                <span className="text-[14px] font-semibold text-[#111]">Please select an option.</span>
                                 <ChevronRight className={`h-4 w-4 text-[#111] transition-transform ${showOptions ? 'rotate-90' : 'rotate-90'}`} />
                             </button>
 
@@ -314,15 +309,15 @@ export default function ProductPage() {
                                             className="w-full text-left px-4 py-3 hover:bg-[#f8f8f8] border-b border-[#f0f0f0] last:border-0 flex justify-between items-center"
                                         >
                                             <span className="text-[13px] text-[#333]">{vol}</span>
-                                            <span className="text-[13px] font-bold text-[#111]">{product.price.replace('$', '')}원</span>
+                                            <span className="text-[13px] font-bold text-[#111]">₩{product.price.replace('$', '')}</span>
                                         </button>
                                     )) : (
                                         <button
-                                            onClick={() => handleAddOption("단일 상품")}
+                                            onClick={() => handleAddOption("Single Product")}
                                             className="w-full text-left px-4 py-3 hover:bg-[#f8f8f8] flex justify-between items-center"
                                         >
-                                            <span className="text-[13px] text-[#333]">단일 상품</span>
-                                            <span className="text-[13px] font-bold text-[#111]">{product.price.replace('$', '')}원</span>
+                                            <span className="text-[13px] text-[#333]">Single Product</span>
+                                            <span className="text-[13px] font-bold text-[#111]">₩{product.price.replace('$', '')}</span>
                                         </button>
                                     )}
                                 </div>
@@ -346,7 +341,7 @@ export default function ProductPage() {
                                                 <button onClick={() => handleUpdateQty(item.name, item.qty + 1)} className="flex-1 h-full flex items-center justify-center text-[#555] text-[16px]">&#43;</button>
                                             </div>
                                             <span className="text-[15px] font-bold text-[#111]">
-                                                {new Intl.NumberFormat('en-US').format(item.price * item.qty)}원
+                                                ₩{new Intl.NumberFormat('en-US').format(item.price * item.qty)}
                                             </span>
                                         </div>
                                     </div>
@@ -356,11 +351,11 @@ export default function ProductPage() {
 
                         {/* Total Checkout Area */}
                         <div className="flex justify-between items-end mb-6 py-4 border-t-2 border-[#111]">
-                            <span className="text-[14px] font-semibold text-[#555]">총 상품금액</span>
+                            <span className="text-[14px] font-semibold text-[#555]">Total Product Price</span>
                             <div className="flex items-end gap-1">
-                                <span className="text-[14px] text-[#ff1268] font-semibold mb-1">총 {selectedItems.reduce((acc, item) => acc + item.qty, 0)}개</span>
-                                <span className="text-[28px] font-black text-[#111] leading-none ml-2">{formattedTotal}</span>
-                                <span className="text-[16px] font-bold text-[#111] leading-none mb-1">원</span>
+                                <span className="text-[14px] text-[#ff1268] font-semibold mb-1">Total {selectedItems.reduce((acc, item) => acc + item.qty, 0)} Items</span>
+                                <span className="text-[16px] font-bold text-[#111] leading-none mb-1">₩</span>
+                                <span className="text-[28px] font-black text-[#111] leading-none ml-0">{formattedTotal}</span>
                             </div>
                         </div>
 
@@ -368,13 +363,13 @@ export default function ProductPage() {
                         <div className="flex gap-2">
                             <button className="h-[56px] w-[56px] shrink-0 flex flex-col items-center justify-center border border-[#ddd] bg-white rounded-[4px] text-[#555] hover:border-[#111] transition-colors gap-0.5">
                                 <span className="text-[18px] leading-none">🎁</span>
-                                <span className="text-[10px] font-bold">선물</span>
+                                <span className="text-[10px] font-bold">Gift</span>
                             </button>
                             <button className="flex-1 h-[56px] border border-[#111] bg-white text-[#111] font-bold text-[16px] rounded-[4px] hover:bg-[#f8f8f8] transition-colors">
-                                장바구니
+                                Cart
                             </button>
                             <button className="flex-[1.5] h-[56px] bg-[#111] text-white font-bold text-[16px] rounded-[4px] hover:bg-[#333] transition-colors">
-                                바로구매
+                                Buy Now
                             </button>
                         </div>
 
@@ -385,7 +380,7 @@ export default function ProductPage() {
                 <div className="mt-20 border-t border-[#eee]">
                     {/* Sticky Tab headers */}
                     <div className="flex sticky top-[10px] bg-white z-20 border-b border-[#111] shadow-sm">
-                        {["상품설명", "구매정보", "리뷰", "Q&A"].map((tab, idx) => {
+                        {["Description", "Purchase Info", "Reviews", "Q&A"].map((tab, idx) => {
                             const tabKeys = ["description", "info", "reviews", "qa"];
                             const current = tabKeys[idx];
                             return (
@@ -435,7 +430,7 @@ export default function ProductPage() {
                         )}
                         {activeTab !== "description" && (
                             <div className="py-32 text-[#999]">
-                                <p className="text-[15px]">해당 컨텐츠는 준비중입니다.</p>
+                                <p className="text-[15px]">This content is being prepared.</p>
                             </div>
                         )}
                     </div>

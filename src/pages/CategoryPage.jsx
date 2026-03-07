@@ -83,9 +83,6 @@ function ListingCard({ product }) {
                                 ? product.price.replace('$', '₩') 
                                 : `₩${product.price.toLocaleString()}`}
                         </span>
-                        {product.weight && (
-                            <span className="text-[12px] text-[#888] font-normal ml-1 border-l border-[#ddd] pl-1.5">{product.weight}</span>
-                        )}
                     </div>
                 </div>
 
