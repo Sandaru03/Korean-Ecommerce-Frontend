@@ -4,7 +4,7 @@ import { HeroBanner } from "@/components/coupang/hero-banner"
 import { Footer } from "@/components/coupang/footer"
 import { ChevronRight, ChevronLeft, Heart } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import {
     kBeautyProducts,
@@ -21,55 +21,21 @@ import {
     sportsProducts,
 } from "@/lib/product-data"
 
-const categories = [
-    { name: "Skincare", path: "/category/skin-care" },
-    { name: "Makeup/Nails", path: "/category/makeup" },
-    { name: "Beauty Tools", path: "/category/k-beauty" },
-    { name: "Dermo-Cosmetics", path: "/category/skin-care" },
-    { name: "Men's Care", path: "/category/skin-care" },
-    { name: "Fragrance/Diffuser", path: "/category/k-beauty" },
-    { name: "Hair Care", path: "/category/hair-care" },
-    { name: "Body Care", path: "/category/skin-care" },
-    { name: "Health Supplements", path: "/category/health" },
-    { name: "Foods", path: "/category/foods" },
-    { name: "Oral/Health Care", path: "/category/health" },
-    { name: "Hygiene Products", path: "/category/home" },
-    { name: "Life/K-Pop", path: "/category/kpop" },
-]
-
-const roundCategories = [
-    { name: "Sale BEST", image: "https://picsum.photos/seed/kbeauty1/150/150", path: "/category/makeup" },
-    { name: "Minimal Skincare", image: "https://picsum.photos/seed/skincare2/150/150", path: "/category/skin-care" },
-    { name: "New products", image: "https://picsum.photos/seed/skincare3/150/150", path: "/category/k-beauty" },
-    { name: "slow aging", image: "https://picsum.photos/seed/skincare4/150/150", path: "/category/skin-care" },
-    { name: "Clean Beauty", image: "https://picsum.photos/seed/skincare5/150/150", path: "/category/skin-care" },
-    { name: "Skincare", image: "https://picsum.photos/seed/skincare6/150/150", path: "/category/skin-care" },
-    { name: "Makeup", image: "https://picsum.photos/seed/makeup1/150/150", path: "/category/makeup" },
-    { name: "Hair Care", image: "https://picsum.photos/seed/haircare1/150/150", path: "/category/hair-care" },
-    { name: "Body Care", image: "https://picsum.photos/seed/dryskin1/150/150", path: "/category/skin-care" },
-    { name: "Health", image: "https://picsum.photos/seed/health1/150/150", path: "/category/health" },
-    { name: "Foods", image: "https://picsum.photos/seed/food1/150/150", path: "/category/foods" },
-    { name: "Hygiene", image: "https://picsum.photos/seed/home1/150/150", path: "/category/home" },
-    { name: "K-Pop", image: "https://picsum.photos/seed/kpop1/150/150", path: "/category/kpop" },
-    { name: "Baby & Kids", image: "https://picsum.photos/seed/baby1/150/150", path: "/category/home" },
-    { name: "Sports", image: "https://picsum.photos/seed/sports1/150/150", path: "/category/home" },
-    { name: "Home & Kitchen", image: "https://picsum.photos/seed/home2/150/150", path: "/category/home" },
-    { name: "Beauty Tools", image: "https://picsum.photos/seed/makeup2/150/150", path: "/category/k-beauty" },
-    { name: "Men's Care", image: "https://picsum.photos/seed/oilyskin1/150/150", path: "/category/skin-care" },
-    { name: "Fragrance", image: "https://picsum.photos/seed/haircare2/150/150", path: "/category/k-beauty" },
-    { name: "Dermo-Cosmetics", image: "https://picsum.photos/seed/dryskin2/150/150", path: "/category/skin-care" },
-]
+// Moved static categories to local state fetched from backend
 
 function OliveCard({ p }) {
     const [wished, setWished] = useState(false);
 
-    // Parse numeric price for calculation (assuming price is like "$15.99" or "15,000원")
-    const rawPriceMatch = p.price.match(/[\d,.]+/);
-    const rawPrice = rawPriceMatch ? rawPriceMatch[0] : p.price;
-
+    // Parse price for calculation (handles both string "$15.99" and number 15000)
+    let rawPrice = p.price;
+    if (typeof p.price === 'string') {
+        const match = p.price.match(/[\d,.]+/);
+        rawPrice = match ? match[0] : p.price;
+    }
+    
     // Extract brand from name
-    const brandName = p.name.split(" ")[0];
-    const discountPct = p.discount ? p.discount.replace("%", "") : null;
+    const brandName = p.name ? p.name.split(" ")[0] : "Brand";
+    const discountPct = p.discount ? String(p.discount).replace("%", "") : null;
 
     return (
         <div className="group flex flex-col relative w-[240px] shrink-0">
@@ -135,10 +101,15 @@ function HorizontalProductStrip({ title, products, link = "#" }) {
 }
 
 function FeatureRankingCard({ p, rank }) {
-    const brandName = p.name.split(" ")[0];
-    const discountPct = p.discount ? p.discount.replace("%", "") : null;
-    const rawPriceMatch = p.price.match(/[\d,.]+/);
-    const rawPrice = rawPriceMatch ? rawPriceMatch[0] : p.price;
+    if (!p) return null;
+    const brandName = p.name ? p.name.split(" ")[0] : "Brand";
+    const discountPct = p.discount ? String(p.discount).replace("%", "") : null;
+    
+    let rawPrice = p.price;
+    if (typeof p.price === 'string') {
+        const match = p.price.match(/[\d,.]+/);
+        rawPrice = match ? match[0] : p.price;
+    }
 
     return (
         <Link to={`/product/${p.id}`} className="block relative w-[380px] shrink-0 border border-[#eee] rounded-[8px] overflow-hidden bg-white shadow-sm group">
@@ -177,8 +148,12 @@ function CuratedList({ title, products, link = "#" }) {
             </div>
             <div className="space-y-3">
                 {products.slice(0, 3).map((p, idx) => {
-                    const rawPriceMatch = p.price.match(/[\d,.]+/);
-                    const rawPrice = rawPriceMatch ? rawPriceMatch[0] : p.price;
+                    if (!p) return null;
+                    let rawPrice = p.price;
+                    if (typeof p.price === 'string') {
+                        const match = p.price.match(/[\d,.]+/);
+                        rawPrice = match ? match[0] : p.price;
+                    }
                     return (
                         <Link key={p.id} to={`/product/${p.id}`} className="flex items-center gap-4 bg-white border border-[#eee] rounded-[8px] p-4 hover:shadow-md transition-shadow group">
                             <div className="relative h-[100px] w-[100px] bg-[#f8f8f8] rounded-[4px] overflow-hidden shrink-0">
@@ -204,45 +179,36 @@ function CuratedList({ title, products, link = "#" }) {
 }
 
 export default function HomePage() {
+    const [categories, setCategories] = useState([]);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch(`${backendUrl}/categories`);
+                const data = await response.json();
+                if (data.categories) {
+                    setCategories(data.categories);
+                }
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+        fetchCategories();
+    }, [backendUrl]);
+
+    // Use fetched categories for both the dropdown and the round icons
+    // Filter for top-level categories only
+    const rootCategories = categories.filter(c => c.parentId === null);
+    const topNavCategories = rootCategories.slice(0, 13);
+    const roundIconCategories = rootCategories;
+
     return (
         <div className="min-h-screen bg-white font-sans selection:bg-[#ff1268] selection:text-white pb-20">
             {/* ── Sticky header with search + cart ── */}
             <Header />
 
-            {/* ── Top Navigation Bar (Olive Young Sub Nav) ── */}
-            <div className="border-b border-[#eee] bg-white relative z-50 hidden md:block">
-                <div className="mx-auto max-w-[1040px] px-4 flex">
-                    {/* Categories Hover Trigger */}
-                    <div className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group">
-                        <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2 group-hover:text-[#ff1268] transition-colors">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
-                            Category
-                        </button>
-
-                        {/* Hover Dropdown Menu */}
-                        <div className="absolute top-full left-[-1px] w-[200px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                            <ul className="py-2">
-                                {categories.map(cat => (
-                                    <li key={cat.name}>
-                                        <Link to={cat.path} className="block px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-[#ff1268] transition-colors">
-                                            {cat.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                    {/* Header Links */}
-                    <div className="flex-1 flex gap-8 items-center px-8 text-[15px] font-bold text-[#111]">
-                        <Link to="/category/makeup" className="hover:text-[#ff1268] transition">Special Deals</Link>
-                        <Link to="/category/skin-care" className="hover:text-[#ff1268] transition">Ranking</Link>
-                        <Link to="/category/k-beauty" className="hover:text-[#ff1268] transition">Only at OY</Link>
-                        <Link to="/category/hair-care" className="hover:text-[#ff1268] transition">LUXE EDIT</Link>
-                        <Link to="/category/skin-care" className="hover:text-[#ff1268] transition">Events</Link>
-                        <Link to="/category/health" className="hover:text-[#ff1268] transition">Sale</Link>
-                    </div>
-                </div>
-            </div>
+            {/* Top Navigation Bar moved to Header.jsx for site-wide consistency */}
 
             {/* ── Full Width Hero Section ── */}
             <div className="w-full mb-14">
@@ -252,8 +218,8 @@ export default function HomePage() {
             {/* ── Round Icon Categories (20 Items) ── */}
             <div className="mx-auto max-w-[1040px] px-4 mb-20">
                 <div className="flex flex-wrap md:grid md:grid-cols-10 gap-y-8 gap-x-2">
-                    {roundCategories.map((cat, idx) => (
-                        <Link key={idx} to={cat.path} className="flex flex-col items-center gap-3 group w-[20%] md:w-auto">
+                    {roundIconCategories.map((cat, idx) => (
+                        <Link key={cat.id || idx} to={`/super-category/${cat.slug}`} className="flex flex-col items-center gap-3 group w-[20%] md:w-auto">
                             <div className="w-[64px] h-[64px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-[#eaeaea] bg-[#f8f8f8] shrink-0">
                                 <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
                             </div>

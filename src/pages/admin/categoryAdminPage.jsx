@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaLayerGroup } from "react-icons/fa";
 import Loader from "../../components/admin-utils/loader";
 
 export default function CategoryAdminPage() {
@@ -10,20 +10,36 @@ export default function CategoryAdminPage() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    // Only attach Authorization header if a real token is stored
+    const getHeaders = () => {
+        const token = localStorage.getItem("token");
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    };
+
     useEffect(() => {
         fetchCategories();
     }, []);
 
     const fetchCategories = async () => {
         try {
-            const token = localStorage.getItem("token");
-            if (!token) return navigate("/login");
-
             setLoading(true);
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/categories", {
-                headers: { Authorization: "Bearer " + token }
+            // Fetch as tree to handle hierarchy
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/categories?tree=true", {
+                headers: getHeaders()
             });
-            setCategories(res.data.categories || []);
+            
+            // Flatten the tree for table display with depth indicator
+            const flat = [];
+            const flatten = (items, depth = 0) => {
+                items.forEach(item => {
+                    flat.push({ ...item, depth });
+                    if (item.children && item.children.length > 0) {
+                        flatten(item.children, depth + 1);
+                    }
+                });
+            };
+            flatten(res.data.categories || []);
+            setCategories(flat);
         } catch (error) {
             console.error("Error fetching categories:", error);
             toast.error("Failed to load categories.");
@@ -33,15 +49,15 @@ export default function CategoryAdminPage() {
     };
 
     const handleDelete = async (id, name) => {
-        if (!window.confirm(`Are you sure you want to delete category "${name}"?`)) return;
+        if (!window.confirm(`Are you sure you want to delete category "${name}"?\n\nThis will also delete all its children and subcategories.`)) return;
 
         try {
-            const token = localStorage.getItem("token");
             await axios.delete(import.meta.env.VITE_BACKEND_URL + `/categories/${id}`, {
-                headers: { Authorization: "Bearer " + token }
+                headers: getHeaders()
             });
             toast.success("Category deleted");
-            setCategories(categories.filter(c => c.id !== id));
+            // Refetch to accurately remove all descendants from the list
+            fetchCategories();
         } catch (error) {
             console.error(error);
             toast.error("Failed to delete category");
@@ -71,14 +87,13 @@ export default function CategoryAdminPage() {
                         <tr className="bg-slate-50 border-b border-slate-200 text-sm font-semibold text-slate-600">
                             <th className="p-4">Image</th>
                             <th className="p-4">Name</th>
-                            <th className="p-4">Subcategories</th>
                             <th className="p-4 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
                         {categories.length === 0 ? (
                             <tr>
-                                <td colSpan="4" className="p-8 text-center text-slate-500">
+                                <td colSpan="3" className="p-8 text-center text-slate-500">
                                     No categories found. Click "Add Category" to create one.
                                 </td>
                             </tr>
@@ -94,28 +109,32 @@ export default function CategoryAdminPage() {
                                             )}
                                         </div>
                                     </td>
-                                    <td className="p-4 font-medium text-slate-800">{category.name}</td>
                                     <td className="p-4">
-                                        {category.subcategories && category.subcategories.length > 0 ? (
-                                            <div className="flex flex-wrap gap-2">
-                                                {category.subcategories.map((sub, idx) => (
-                                                    <span key={idx} className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 border border-slate-200 rounded-md text-xs text-slate-600">
-                                                        {sub.image && (
-                                                            <img src={sub.image} alt={sub.name} className="w-4 h-4 rounded-full object-cover" />
-                                                        )}
-                                                        {sub.name}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <span className="text-xs text-slate-400">None</span>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {[...Array(category.depth)].map((_, i) => (
+                                                <div key={i} className="w-4 border-l border-slate-300 h-8 ml-2 -mt-4"></div>
+                                            ))}
+                                            <span className={`font-medium ${category.depth > 0 ? 'text-slate-600' : 'text-slate-800'}`}>
+                                                {category.name}
+                                            </span>
+                                        </div>
                                     </td>
+
                                     <td className="p-4 text-right">
                                         <div className="flex justify-end gap-2">
+                                            {/* Show 'Manage' for top-level categories only */}
+                                            {category.depth === 0 && (
+                                                <button
+                                                    onClick={() => navigate(`/admin/categories/${category.id}/subcategories`)}
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-colors"
+                                                    title="Manage subcategories"
+                                                >
+                                                    <FaLayerGroup className="text-xs" /> Manage
+                                                </button>
+                                            )}
                                             <Link
                                                 to={`/admin/update-category`}
-                                                state={{ category }}
+                                                state={{ categoryId: category.id }}
                                                 className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                 title="Edit"
                                             >

@@ -14,6 +14,7 @@ export default function AddProductPage() {
     const [images, setImages] = useState([]);
     const [description, setDescription] = useState("");
     const [stock, setStock] = useState("");
+    const [weight, setWeight] = useState("");
     const [isAvailable, setIsAvailable] = useState(true);
 
     // Dynamic categories
@@ -83,6 +84,7 @@ export default function AddProductPage() {
             price: price,
             images: responses,
             description: description,
+            weight: weight,
             stock: stock,
             isAvailable: isAvailable,
             category: category,
@@ -176,6 +178,11 @@ export default function AddProductPage() {
                     <div className="flex-1 flex flex-col gap-1">
                         <label className="text-sm font-semibold">Stock</label>
                         <input type="number" value={stock} onChange={(e) => setStock(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2" />
+                    </div>
+
+                    <div className="flex-1 flex flex-col gap-1">
+                        <label className="text-sm font-semibold">Weight (e.g. 500g)</label>
+                        <input type="text" value={weight} onChange={(e) => setWeight(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2" />
                     </div>
 
                     <div className="flex-1 flex flex-col gap-1">

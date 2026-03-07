@@ -4,20 +4,7 @@ import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut, LogIn } from "lu
 import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link } from "react-router-dom"
 
-const NAV_CATEGORIES = [
-  { name: "K-Beauty", slug: "k-beauty", emoji: "✨" },
-  { name: "Skin Care", slug: "skin-care", emoji: "🌿" },
-  { name: "Dry Skin", slug: "dry-skin", emoji: "💧" },
-  { name: "Oily Skin", slug: "oily-skin", emoji: "🍃" },
-  { name: "K-Pop", slug: "k-pop", emoji: "🎵" },
-  { name: "Makeup", slug: "makeup", emoji: "💄" },
-  { name: "Hair Care", slug: "hair-care", emoji: "💇" },
-  { name: "Health", slug: "health", emoji: "💊" },
-  { name: "Foods", slug: "foods", emoji: "🍜" },
-  { name: "Home & Kitchen", slug: "home", emoji: "🏠" },
-  { name: "Baby & Kids", slug: "baby-kids", emoji: "👶" },
-  { name: "Sports", slug: "sports", emoji: "🏃" },
-]
+// static NAV_CATEGORIES removed in favor of dynamic fetching
 
 export function Header() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -26,7 +13,24 @@ export function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const userMenuRef = useRef(null)
   const catMenuRef = useRef(null)
+  const [navCategories, setNavCategories] = useState([])
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await fetch(`${backendUrl}/categories?tree=true`)
+        const data = await res.json()
+        if (data.categories) {
+          setNavCategories(data.categories)
+        }
+      } catch (err) {
+          console.error("Error fetching header categories:", err)
+      }
+    }
+    fetchCats()
+  }, [backendUrl])
 
   // Check login state on mount + whenever storage changes
   useEffect(() => {
@@ -150,6 +154,40 @@ export function Header() {
         </div>
       </div>
 
+      {/* ── Top Navigation Bar (Unified) ── */}
+      <div className="border-b border-[#eee] bg-white relative z-50 hidden md:block">
+        <div className="mx-auto max-w-[1280px] px-4 flex">
+          {/* Categories Hover Trigger */}
+          <div className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group" ref={catMenuRef}>
+            <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2 group-hover:text-coupang-blue transition-colors">
+              <Menu className="h-5 w-5" />
+              Category
+            </button>
+
+            {/* Hover Dropdown Menu */}
+            <div className="absolute top-full left-[-1px] w-[200px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <ul className="py-2">
+                {navCategories.map(cat => (
+                  <li key={cat.id || cat.name}>
+                    <Link to={`/category/${cat.slug}`} className="block px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-coupang-blue transition-colors">
+                      {cat.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          {/* Header Links */}
+          <div className="flex-1 flex gap-8 items-center px-8 text-[15px] font-bold text-[#111]">
+            <Link to="/category/makeup" className="hover:text-coupang-blue transition">Special Deals</Link>
+            <Link to="/category/skin-care" className="hover:text-coupang-blue transition">Ranking</Link>
+            <Link to="/category/k-beauty" className="hover:text-coupang-blue transition">Only at OY</Link>
+            <Link to="/category/hair-care" className="hover:text-coupang-blue transition">LUXE EDIT</Link>
+            <Link to="/category/skin-care" className="hover:text-coupang-blue transition">Events</Link>
+            <Link to="/category/health" className="hover:text-coupang-blue transition">Sale</Link>
+          </div>
+        </div>
+      </div>
     </header>
   )
 }

@@ -193,9 +193,17 @@ export default function ProductPage() {
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-[26px] font-black text-[#111] leading-[1.3] mb-5 tracking-tight">
+                        <h1 className="text-[26px] font-black text-[#111] leading-[1.3] tracking-tight mb-2">
                             {product.name}
                         </h1>
+
+                        {/* Weight Display */}
+                        {product.weight && (
+                            <div className="mb-5 inline-block bg-[#f8f8f8] border border-[#eee] text-[#555] text-[13px] font-bold px-3 py-1 rounded-sm">
+                                용량/중량: {product.weight}
+                            </div>
+                        )}
+                        {!product.weight && <div className="mb-5"></div>}
 
                         {/* Rating & Viewers */}
                         <div className="flex items-center gap-3 mb-6">

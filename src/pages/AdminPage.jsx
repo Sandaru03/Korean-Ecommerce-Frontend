@@ -22,6 +22,9 @@ import CustomerAdminPage from "./admin/customerAdminPage";
 import CategoryAdminPage from "./admin/categoryAdminPage";
 import AddCategoryAdminPage from "./admin/addCategoryAdminPage";
 import UpdateCategoryAdminPage from "./admin/updateCategoryAdminPage";
+import SubCategoryAdminPage from "./admin/subCategoryAdminPage";
+import SuperCategoryAdminPage from "./admin/superCategoryAdminPage";
+import CategoriesOfSuperAdminPage from "./admin/categoriesOfSuperAdminPage";
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -67,6 +70,7 @@ function DashboardHero() {
                     { label: "Products", to: "/admin/product", icon: HiShoppingBag, color: "bg-blue-500" },
                     { label: "Orders", to: "/admin/order", icon: FaBoxArchive, color: "bg-emerald-500" },
                     { label: "Customers", to: "/admin/customers", icon: FaUser, color: "bg-orange-500" },
+                    { label: "Super Categories", to: "/admin/super-categories", icon: FaFilePen, color: "bg-pink-500" },
                     { label: "Categories", to: "/admin/categories", icon: FaFilePen, color: "bg-purple-500" },
                     { label: "Reviews", to: "/admin/reviews", icon: FaFilePen, color: "bg-yellow-500" },
                 ].map((c) => (
@@ -172,6 +176,7 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/product" icon={HiShoppingBag} label="Products" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/order" icon={FaBoxArchive} label="Orders" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/customers" icon={FaUser} label="Customers" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/super-categories" icon={FaFilePen} label="Super Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/categories" icon={FaFilePen} label="Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/reviews" icon={FaFilePen} label="Reviews" onClick={() => setSidebarOpen(false)} />
                     </nav>
@@ -238,7 +243,10 @@ export default function AdminPage() {
                             <Route path="updateproduct" element={<UpdateProductPage />} />
                             <Route path="reviews" element={<ReviewsAdminPage />} />
                             <Route path="customers" element={<CustomerAdminPage />} />
+                            <Route path="super-categories" element={<SuperCategoryAdminPage />} />
+                            <Route path="super-categories/:superCatId/categories" element={<CategoriesOfSuperAdminPage />} />
                             <Route path="categories" element={<CategoryAdminPage />} />
+                            <Route path="categories/:parentId/subcategories" element={<SubCategoryAdminPage />} />
                             <Route path="add-category" element={<AddCategoryAdminPage />} />
                             <Route path="update-category" element={<UpdateCategoryAdminPage />} />
                         </Routes>

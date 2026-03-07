@@ -21,105 +21,37 @@ import {
     sportsProducts,
 } from "@/lib/product-data"
 
-// ── Category registry ────────────────────────────────────────
-const CATEGORIES = {
-    "k-beauty": {
-        name: "K-Beauty",
-        description: "Best sellers from COSRX, Anua, Medicube & more",
-        color: "from-pink-500 to-rose-400",
-        products: kBeautyProducts,
-        brands: ["COSRX", "Anua", "Medicube", "Beauty of Joseon", "Skin1004", "Some By Mi"],
-    },
-    "skin-care": {
-        name: "Skin Care",
-        description: "Daily essentials — cleanse, tone, moisturise",
-        color: "from-green-500 to-teal-400",
-        products: skinCareProducts,
-        brands: ["The Ordinary", "Cetaphil", "Anua", "Medicube", "Skin1004"],
-    },
-    "dry-skin": {
-        name: "Dry Skin",
-        description: "Rich moisturisers, ceramides & hyaluronic acid",
-        color: "from-blue-500 to-cyan-400",
-        products: drySkinProducts,
-        brands: ["COSRX", "Cetaphil", "Beauty of Joseon", "Some By Mi", "Anua"],
-    },
-    "oily-skin": {
-        name: "Oily Skin",
-        description: "Control shine, minimise pores & stay matte",
-        color: "from-teal-500 to-emerald-400",
-        products: oilySkinProducts,
-        brands: ["COSRX", "Medicube", "Some By Mi", "The Ordinary", "Anua", "Beauty of Joseon"],
-    },
-    "k-pop": {
-        name: "K-Pop",
-        description: "Official albums, lightsticks & fan merch",
-        color: "from-purple-600 to-indigo-500",
-        products: kpopProducts,
-        brands: ["BTS", "BLACKPINK", "SEVENTEEN", "STRAY KIDS", "NewJeans", "aespa"],
-    },
-    "makeup": {
-        name: "Makeup",
-        description: "ROMAND, Laneige, 3CE, CLIO & more",
-        color: "from-pink-600 to-rose-500",
-        products: makeupProducts,
-        brands: ["ROMAND", "Etude House", "3CE", "Laneige", "CLIO", "Peripera"],
-    },
-    "hair-care": {
-        name: "Hair Care",
-        description: "Repair, grow and nourish your hair",
-        color: "from-amber-500 to-orange-400",
-        products: hairCareProducts,
-        brands: ["Aromatica", "MASIL", "Amos", "Ryo", "innisfree", "Mise En Scene"],
-    },
-    "health": {
-        name: "Health & Supplements",
-        description: "Red ginseng, collagen, vitamins & probiotics",
-        color: "from-emerald-600 to-green-500",
-        products: healthProducts,
-        brands: ["Korean Red Ginseng", "Collagen Plus", "VitaC", "KorProb", "OmegaKor"],
-    },
-    "foods": {
-        name: "Korean Foods",
-        description: "Authentic snacks, ramen & Korean staples",
-        color: "from-orange-500 to-red-400",
-        products: foodProducts,
-        brands: ["Ottogi", "Nongshim", "Binggrae", "CJ", "Lotte", "Orion"],
-    },
-    "home": {
-        name: "Home & Kitchen",
-        description: "Korean-style cookware, ceramics & essentials",
-        color: "from-amber-600 to-yellow-500",
-        products: homeProducts,
-        brands: ["Cuchen", "PN Poong Nyun", "Hanil", "Korean Ceramic", "Teflon Free"],
-    },
-    "baby-kids": {
-        name: "Baby & Kids",
-        description: "Safe, organic & gentle for your little ones",
-        color: "from-sky-500 to-blue-400",
-        products: babyProducts,
-        brands: ["Burt's Bees Baby", "Organic Korea", "Comotomo", "Hegen", "Baby Dove"],
-    },
-    "sports": {
-        name: "Sports & Fitness",
-        description: "Gear up, train hard & recover faster",
-        color: "from-indigo-600 to-blue-500",
-        products: sportsProducts,
-        brands: ["Fit Korea", "ActivePro", "KF94", "NexBand", "FlexGear"],
-    },
-}
+// Removed static CATEGORIES registry - now fetched from backend
 
 /* eslint-disable react/prop-types */
 // ── Individual product card ───────────────────────────────────
 function ListingCard({ product }) {
     const [wished, setWished] = useState(false)
-    const brandName = product.name.split(" ")[0]; // Extract first word as brand for UI purposes
+    const brandName = product.name.split(" ")[0]; 
+
+    // Robust image handling
+    let imageUrl = "https://via.placeholder.com/300"
+    let images = product.images || product.image
+    if (typeof images === 'string' && (images.startsWith('[') || images.startsWith('{'))) {
+        try {
+            const parsed = JSON.parse(images)
+            images = Array.isArray(parsed) ? parsed : [parsed]
+        } catch (e) {
+            // Not JSON, use as is
+        }
+    }
+    
+    if (Array.isArray(images) && images.length > 0) {
+        imageUrl = images[0]
+    } else if (typeof images === 'string') {
+        imageUrl = images
+    }
 
     return (
         <Link to={`/product/${product.id}`} className="group relative bg-white block">
             <div className="relative aspect-square overflow-hidden border border-[#eee] rounded-sm mb-3">
                 <img
-                    src={product.image}
+                    src={imageUrl}
                     alt={product.name}
                     className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
@@ -146,7 +78,14 @@ function ListingCard({ product }) {
                         {product.discount && (
                             <span className="text-[16px] font-bold text-[#ff4040]">{product.discount}</span>
                         )}
-                        <span className="text-[16px] font-bold text-[#111]">{product.price.replace('$', '₩')}</span>
+                        <span className="text-[16px] font-bold text-[#111]">
+                            {typeof product.price === 'string' 
+                                ? product.price.replace('$', '₩') 
+                                : `₩${product.price.toLocaleString()}`}
+                        </span>
+                        {product.weight && (
+                            <span className="text-[12px] text-[#888] font-normal ml-1 border-l border-[#ddd] pl-1.5">{product.weight}</span>
+                        )}
                     </div>
                 </div>
 
@@ -172,8 +111,8 @@ function ListingCard({ product }) {
     )
 }
 
-function CategoryHeroBanner({ category }) {
-    if (!category.products.length) return null
+function CategoryHeroBanner({ category, products }) {
+    if (!products || !products.length) return null
     return (
         <div className="w-full bg-[#f8f6f4] rounded-xl overflow-hidden flex h-[260px] mb-12 relative cursor-pointer group border border-[#eee]">
             <div className="flex-1 px-12 py-10 flex flex-col justify-center relative z-10">
@@ -182,12 +121,12 @@ function CategoryHeroBanner({ category }) {
                     Discover the Best<br />of {category.name}
                 </h2>
                 <p className="text-[14px] text-[#555] max-w-sm leading-relaxed">
-                    {category.description}
+                    Explore our curated collection of premium products.
                 </p>
             </div>
             <div className="w-[45%] h-full relative overflow-hidden">
-                <div className={`absolute inset-0 bg-gradient-to-r ${category.color} opacity-[0.15] mix-blend-multiply z-10`}></div>
-                <img src={category.products[0]?.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Banner" />
+                <div className={`absolute inset-0 bg-gradient-to-r from-pink-100 to-rose-200 opacity-[0.35] mix-blend-multiply z-10`}></div>
+                <img src={products[0]?.images?.[0] || products[0]?.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Banner" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#f8f6f4] via-[#f8f6f4]/50 to-transparent z-10 w-1/3"></div>
             </div>
             <div className="absolute bottom-5 right-5 z-20 bg-black/40 backdrop-blur-md rounded-full px-4 py-1.5 flex items-center gap-2.5 text-white text-[11px] font-bold tracking-widest transition-colors hover:bg-black/60">
@@ -199,25 +138,23 @@ function CategoryHeroBanner({ category }) {
     )
 }
 
-function TopPills({ category, selectedBrand, onSelectBrand }) {
-    const brands = category.brands.slice(0, 5);
+function TopPills({ subcategories, currentPath, onNavigate }) {
+    if (!subcategories || subcategories.length === 0) return null;
     return (
-        <div className="flex justify-center gap-8 mb-12">
-            {brands.map((brand, i) => {
-                const prod = category.products.find(p => p.name.includes(brand)) || category.products[i];
-                const isActive = selectedBrand === brand;
+        <div className="flex justify-center gap-8 mb-12 flex-wrap">
+            {subcategories.map((sub, i) => {
                 return (
                     <button
-                        key={brand}
-                        onClick={() => onSelectBrand(isActive ? null : brand)}
+                        key={sub.name}
+                        onClick={() => onNavigate(sub.name)}
                         className="flex flex-col items-center gap-3 group"
                     >
-                        <div className={`w-[96px] h-[96px] rounded-full overflow-hidden border-[3px] transition-all duration-300 ${isActive ? 'border-[#9bd965]' : 'border-transparent group-hover:border-gray-200'}`}>
+                        <div className={`w-[96px] h-[96px] rounded-full overflow-hidden border-[3px] transition-all duration-300 border-transparent group-hover:border-[#ff1268]`}>
                             <div className="w-full h-full bg-[#f8f8f8]">
-                                <img src={prod?.image} alt={brand} className="w-full h-full object-cover mix-blend-multiply flex shrink-0 group-hover:scale-110 transition-transform duration-500" />
+                                <img src={sub.image || "https://picsum.photos/seed/cat/200/200"} alt={sub.name} className="w-full h-full object-cover flex shrink-0 group-hover:scale-110 transition-transform duration-500" />
                             </div>
                         </div>
-                        <span className={`text-[13px] ${isActive ? 'font-bold text-[#111]' : 'text-[#666] font-medium'}`}>{brand}</span>
+                        <span className={`text-[13px] text-[#666] font-medium group-hover:text-[#ff1268] group-hover:font-bold transition-all`}>{sub.name}</span>
                     </button>
                 )
             })}
@@ -226,35 +163,103 @@ function TopPills({ category, selectedBrand, onSelectBrand }) {
 }
 
 // ── Main page component ───────────────────────────────────────
+import axios from "axios"
+
 export default function CategoryPage() {
     const { slug } = useParams()
-
-    const [selectedBrand, setSelectedBrand] = useState(null)
+    const [categoryData, setCategoryData] = useState(null)
+    const [products, setProducts] = useState([])
+    const [currentPath, setCurrentPath] = useState([]) // Array of subcategory names
+    const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const pageSize = 16
 
     useEffect(() => {
-        setSelectedBrand(null)
-        setPage(1)
+        const fetchCategory = async () => {
+            try {
+                setLoading(true)
+                const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/categories/slug/${slug}`)
+                setCategoryData(res.data.category)
+                setCurrentPath([]) // Reset path when switching main category
+                setPage(1)
+            } catch (error) {
+                console.error("Error fetching category:", error)
+                setCategoryData(null)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchCategory()
     }, [slug])
 
-    const category = CATEGORIES[slug] || null
+    useEffect(() => {
+        if (!categoryData) return
 
-    const filteredProducts = useMemo(() => {
-        if (!category) return []
-        let list = [...category.products]
-        if (selectedBrand) {
-            list = list.filter(p =>
-                p.name.toLowerCase().includes(selectedBrand.toLowerCase())
-            )
+        const fetchProducts = async () => {
+            try {
+                setLoading(true)
+                let url = `${import.meta.env.VITE_BACKEND_URL}/products?category=${categoryData.name}`
+                if (currentPath.length > 0) {
+                    url += `&subCategory=${currentPath[currentPath.length - 1]}`
+                }
+                const res = await axios.get(url)
+                setProducts(res.data)
+                setPage(1)
+            } catch (error) {
+                console.error("Error fetching products:", error)
+            } finally {
+                setLoading(false)
+            }
         }
-        return list
-    }, [category, selectedBrand])
+        fetchProducts()
+    }, [categoryData, currentPath])
 
-    const totalPages = Math.ceil(filteredProducts.length / pageSize)
-    const paginatedProducts = filteredProducts.slice((page - 1) * pageSize, page * pageSize)
+    // Helper to find the current node in the subcategory tree
+    const getCurrentSubcategories = () => {
+        if (!categoryData) return []
+        
+        let current = categoryData.children || []
+        
+        // Traverse the path through children
+        for (const pathName of currentPath) {
+            const found = current.find(s => s.name === pathName)
+            if (found && found.children) {
+                current = found.children
+            } else {
+                return []
+            }
+        }
+        return current
+    }
 
-    if (!category) {
+    const handleNavigateSub = (name) => {
+        setCurrentPath([...currentPath, name])
+    }
+
+    const handleGoBack = (index) => {
+        if (index === -1) {
+            setCurrentPath([])
+        } else {
+            setCurrentPath(currentPath.slice(0, index + 1))
+        }
+    }
+
+    const totalPages = Math.ceil(products.length / pageSize)
+    const paginatedProducts = products.slice((page - 1) * pageSize, page * pageSize)
+
+    if (loading && !categoryData) {
+        return (
+            <div className="min-h-screen bg-white">
+                <Header />
+                <div className="flex items-center justify-center py-40">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff1268]"></div>
+                </div>
+                <Footer />
+            </div>
+        )
+    }
+
+    if (!categoryData) {
         return (
             <div className="min-h-screen bg-white">
                 <Header />
@@ -267,118 +272,128 @@ export default function CategoryPage() {
         )
     }
 
+    const subcategoriesToShow = getCurrentSubcategories()
+
     return (
-        <div className="min-h-screen bg-white font-sans selection:bg-[#9bd965] selection:text-black">
+        <div className="min-h-screen bg-white font-sans selection:bg-[#ff1268] selection:text-white">
             <Header />
 
-            {/* Main layout */}
-            <div className="mx-auto max-w-[1200px] px-6 py-10 flex gap-12 items-start">
-
-                {/* ── SIDEBAR ── */}
-                <aside className="hidden lg:block w-[180px] shrink-0 sticky top-10 text-left">
-                    <h2 className="text-[34px] font-black text-[#111] mb-8 lowercase tracking-tight">{category.name}</h2>
-                    <ul className="flex flex-col">
-                        <li>
-                            <button
-                                onClick={() => { setSelectedBrand(null); setPage(1) }}
-                                className={`text-left w-full py-3.5 border-b border-[#f0f0f0] text-[15px] transition-colors ${!selectedBrand ? 'font-bold text-[#111]' : 'text-[#666] hover:text-[#111]'}`}
+            <div className="mx-auto max-w-[1200px] px-6 py-10">
+                <div className="flex gap-12 items-start">
+                    {/* SIDEBAR */}
+                    <aside className="hidden lg:block w-[180px] shrink-0 sticky top-10 text-left">
+                        <h2 className="text-[34px] font-black text-[#111] mb-8 lowercase tracking-tight">{categoryData.name}</h2>
+                        
+                        <div className="mb-6">
+                            <button 
+                                onClick={() => handleGoBack(-1)}
+                                className={`text-left w-full py-2 text-[14px] transition-colors ${currentPath.length === 0 ? 'font-bold text-[#ff1268]' : 'text-[#666] hover:text-[#111]'}`}
                             >
-                                All Products
+                                All {categoryData.name}
                             </button>
-                        </li>
-                        {category.brands.map(brand => (
-                            <li key={brand}>
-                                <button
-                                    onClick={() => { setSelectedBrand(brand); setPage(1) }}
-                                    className={`text-left w-full py-3.5 border-b border-[#f0f0f0] text-[15px] transition-colors ${selectedBrand === brand ? 'font-bold text-[#111]' : 'text-[#666] hover:text-[#111]'}`}
+                            {currentPath.map((name, i) => (
+                                <button 
+                                    key={i}
+                                    onClick={() => handleGoBack(i)}
+                                    className={`text-left w-full pl-3 py-2 text-[14px] border-l-2 ml-1 transition-colors ${i === currentPath.length - 1 ? 'font-bold border-[#ff1268] text-[#ff1268]' : 'border-gray-100 text-[#666] hover:text-[#111]'}`}
                                 >
-                                    {brand}
+                                    {name}
                                 </button>
-                            </li>
-                        ))}
-                    </ul>
-                </aside>
-
-                {/* ── MAIN CONTENT ── */}
-                <div className="flex-1 min-w-0">
-
-                    {/* Top Section */}
-                    <h3 className="text-center text-[26px] font-bold text-[#111] mb-10 tracking-tight">
-                        The most sought-after {category.name} BEST right now
-                    </h3>
-
-                    <TopPills category={category} selectedBrand={selectedBrand} onSelectBrand={(b) => { setSelectedBrand(b); setPage(1); }} />
-
-                    <CategoryHeroBanner category={category} />
-
-                    {/* Curated Section Title */}
-                    <div className="flex items-end justify-between mb-8 pb-3 border-b-2 border-[#111]">
-                        <h4 className="text-[20px] font-bold text-[#111]">Recommended Products</h4>
-                        <span className="text-[13px] text-[#777] font-medium block pb-0.5">Total <strong className="text-[#111]">{filteredProducts.length}</strong></span>
-                    </div>
-
-                    {/* Grid */}
-                    {paginatedProducts.length > 0 ? (
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12 mb-16">
-                            {paginatedProducts.map(p => (
-                                <ListingCard key={p.id} product={p} />
                             ))}
                         </div>
-                    ) : (
-                        <div className="border border-[#eee] py-32 text-center text-gray-400 mb-16 rounded-lg bg-[#fcfcfc]">
-                            <p className="text-lg font-semibold mb-2">No products found</p>
-                            <p className="text-sm">Try selecting a different subcategory.</p>
-                            {selectedBrand && (
-                                <button
-                                    onClick={() => setSelectedBrand(null)}
-                                    className="mt-6 bg-[#111] hover:bg-[#333] transition-colors text-white px-6 py-2.5 rounded text-sm font-semibold"
-                                >
-                                    View All Products
-                                </button>
-                            )}
-                        </div>
-                    )}
+                    </aside>
 
-                    {/* Pagination */}
-                    {totalPages > 1 && (
-                        <div className="flex items-center justify-center gap-1 border-t border-[#eee] pt-10 pb-6">
-                            <button
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
-                                disabled={page === 1}
-                                className="w-10 h-10 flex items-center justify-center border border-[#ddd] text-[#333] hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-white transition-colors"
-                            >
-                                <ChevronLeft className="h-5 w-5" />
-                            </button>
-                            {Array.from({ length: totalPages }, (_, i) => i + 1)
-                                .filter(n => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
-                                .reduce((acc, n, idx, arr) => {
-                                    if (idx > 0 && n - arr[idx - 1] > 1) acc.push("…")
-                                    acc.push(n)
-                                    return acc
-                                }, [])
-                                .map((n, i) =>
-                                    n === "…" ? (
-                                        <span key={`e-${i}`} className="w-10 h-10 flex items-center justify-center text-gray-400">…</span>
-                                    ) : (
-                                        <button
-                                            key={n}
-                                            onClick={() => setPage(n)}
-                                            className={`w-10 h-10 flex items-center justify-center text-[15px] font-medium transition-colors ${n === page ? "bg-[#111] text-white border border-[#111]" : "border border-transparent text-[#555] hover:bg-gray-50 hover:border-[#ddd]"}`}
-                                        >
-                                            {n}
-                                        </button>
-                                    )
-                                )
-                            }
-                            <button
-                                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                                disabled={page === totalPages}
-                                className="w-10 h-10 flex items-center justify-center border border-[#ddd] text-[#333] hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-white transition-colors"
-                            >
-                                <ChevronRight className="h-5 w-5" />
-                            </button>
+                    {/* MAIN CONTENT */}
+                    <div className="flex-1 min-w-0">
+                        {/* Breadcrumbs */}
+                        <div className="flex items-center gap-2 text-[12px] text-[#999] mb-4 uppercase tracking-wider font-bold">
+                            <Link to="/" className="hover:text-[#111]">Home</Link>
+                            <ChevronRight className="h-3 w-3" />
+                            <button onClick={() => handleGoBack(-1)} className="hover:text-[#111] uppercase">{categoryData.name}</button>
+                            {currentPath.map((name, i) => (
+                                <span key={i} className="flex items-center gap-2">
+                                    <ChevronRight className="h-3 w-3" />
+                                    <button onClick={() => handleGoBack(i)} className={`uppercase ${i === currentPath.length - 1 ? 'text-[#ff1268]' : 'hover:text-[#111]'}`}>
+                                        {name}
+                                    </button>
+                                </span>
+                            ))}
                         </div>
-                    )}
+
+                        <h3 className="text-center text-[26px] font-bold text-[#111] mb-10 tracking-tight">
+                            {currentPath.length > 0 ? currentPath[currentPath.length - 1] : categoryData.name} Best Sellers
+                        </h3>
+
+                        <TopPills 
+                            subcategories={subcategoriesToShow} 
+                            currentPath={currentPath} 
+                            onNavigate={handleNavigateSub} 
+                        />
+
+                        <CategoryHeroBanner category={categoryData} products={products} />
+
+                        <div className="flex items-end justify-between mb-8 pb-3 border-b-2 border-[#111]">
+                            <h4 className="text-[20px] font-bold text-[#111]">Products</h4>
+                            <span className="text-[13px] text-[#777] font-medium block pb-0.5">Total <strong className="text-[#111]">{products.length}</strong></span>
+                        </div>
+
+                        {loading ? (
+                            <div className="flex items-center justify-center py-20">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff1268]"></div>
+                            </div>
+                        ) : paginatedProducts.length > 0 ? (
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12 mb-16">
+                                {paginatedProducts.map(p => (
+                                    <ListingCard key={p.id} product={p} />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="border border-[#eee] py-32 text-center text-gray-400 mb-16 rounded-lg bg-[#fcfcfc]">
+                                <p className="text-lg font-semibold mb-2">No products found</p>
+                                <p className="text-sm">We're stocking up on items for this category.</p>
+                            </div>
+                        )}
+
+                        {totalPages > 1 && (
+                            <div className="flex items-center justify-center gap-1 border-t border-[#eee] pt-10 pb-6">
+                                <button
+                                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                                    disabled={page === 1}
+                                    className="w-10 h-10 flex items-center justify-center border border-[#ddd] text-[#333] hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-white transition-colors"
+                                >
+                                    <ChevronLeft className="h-5 w-5" />
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                    .filter(n => n === 1 || n === totalPages || Math.abs(n - page) <= 1)
+                                    .reduce((acc, n, idx, arr) => {
+                                        if (idx > 0 && n - arr[idx - 1] > 1) acc.push("…")
+                                        acc.push(n)
+                                        return acc
+                                    }, [])
+                                    .map((n, i) =>
+                                        n === "…" ? (
+                                            <span key={`e-${i}`} className="w-10 h-10 flex items-center justify-center text-gray-400">…</span>
+                                        ) : (
+                                            <button
+                                                key={n}
+                                                onClick={() => setPage(n)}
+                                                className={`w-10 h-10 flex items-center justify-center text-[15px] font-medium transition-colors ${n === page ? "bg-[#111] text-white border border-[#111]" : "border border-transparent text-[#555] hover:bg-gray-50 hover:border-[#ddd]"}`}
+                                            >
+                                                {n}
+                                            </button>
+                                        )
+                                    )
+                                }
+                                <button
+                                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                    disabled={page === totalPages}
+                                    className="w-10 h-10 flex items-center justify-center border border-[#ddd] text-[#333] hover:bg-gray-50 disabled:opacity-30 disabled:hover:bg-white transition-colors"
+                                >
+                                    <ChevronRight className="h-5 w-5" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 

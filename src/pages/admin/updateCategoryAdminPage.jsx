@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import uploadFile from "../../utils/mediaUpload";
-import { FaTrash, FaPlus, FaImage } from "react-icons/fa";
+import { FaImage, FaChevronLeft } from "react-icons/fa";
 
 export default function UpdateCategoryAdminPage() {
     const location = useLocation();
@@ -12,44 +12,57 @@ export default function UpdateCategoryAdminPage() {
     // Attempt to get the category from location state (passed from the list view)
     const categoryData = location.state?.category;
 
+    // State for the category being edited
     const [categoryId, setCategoryId] = useState("");
     const [name, setName] = useState("");
-
-    // Main image tracking
-    const [existingImage, setExistingImage] = useState(""); // URL of the existing image if not changed
-    const [newImage, setNewImage] = useState(null); // File object if a new image is selected
-    const [imagePreview, setImagePreview] = useState(""); // Preview URL for the UI
-
-    // Subcategories tracking
-    // For subs, we track `name`, `existingImage` (URL), `newImage` (File), and `preview` (URL)
-    const [subcategories, setSubcategories] = useState([]);
+    const [parentId, setParentId] = useState("");
+    const [existingImage, setExistingImage] = useState("");
+    const [newImage, setNewImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState("");
+    const [allCategories, setAllCategories] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (!categoryData) {
+        const id = location.state?.categoryId;
+        if (!id) {
             toast.error("No category selected for updating");
             navigate("/admin/categories");
             return;
         }
+        setCategoryId(id);
+        fetchCategoryDetails(id);
+        fetchParentOptions(id);
+    }, [location.state, navigate]);
 
-        setCategoryId(categoryData.id);
-        setName(categoryData.name || "");
-
-        if (categoryData.image) {
-            setExistingImage(categoryData.image);
-            setImagePreview(categoryData.image);
+    const fetchCategoryDetails = async (id) => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + `/categories/${id}`, {
+                headers: { Authorization: "Bearer " + token }
+            });
+            const cat = res.data.category;
+            setName(cat.name || "");
+            setParentId(cat.parentId || "");
+            if (cat.image) {
+                setExistingImage(cat.image);
+                setImagePreview(cat.image);
+            }
+        } catch (error) {
+            console.error("Error fetching category details:", error);
+            toast.error("Failed to load category details");
         }
+    };
 
-        if (categoryData.subcategories && Array.isArray(categoryData.subcategories)) {
-            const mappedSubs = categoryData.subcategories.map(sub => ({
-                name: sub.name || "",
-                existingImage: sub.image || "",
-                newImage: null,
-                preview: sub.image || ""
-            }));
-            setSubcategories(mappedSubs);
+    const fetchParentOptions = async (currentId) => {
+        try {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/categories");
+            // Filter out self and potentially children (simplified: just self for now)
+            const filtered = (res.data.categories || []).filter(c => c.id !== currentId);
+            setAllCategories(filtered);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
         }
-    }, [categoryData, navigate]);
+    };
 
     const handleMainImageChange = (e) => {
         const file = e.target.files[0];
@@ -59,30 +72,6 @@ export default function UpdateCategoryAdminPage() {
         }
     };
 
-    const handleAddSubcategory = () => {
-        setSubcategories([...subcategories, { name: "", existingImage: "", newImage: null, preview: "" }]);
-    };
-
-    const handleSubNameChange = (index, value) => {
-        const newSubs = [...subcategories];
-        newSubs[index].name = value;
-        setSubcategories(newSubs);
-    };
-
-    const handleSubImageChange = (index, e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const newSubs = [...subcategories];
-            newSubs[index].newImage = file;
-            newSubs[index].preview = URL.createObjectURL(file);
-            setSubcategories(newSubs);
-        }
-    };
-
-    const handleRemoveSubcategory = (index) => {
-        const newSubs = subcategories.filter((_, i) => i !== index);
-        setSubcategories(newSubs);
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -104,29 +93,10 @@ export default function UpdateCategoryAdminPage() {
                 toast.dismiss(toastId);
             }
 
-            // Handle subcategory images sequentially
-            const processedSubcategories = [];
-            for (let i = 0; i < subcategories.length; i++) {
-                const sub = subcategories[i];
-                if (!sub.name.trim()) continue; // Skip empty names
-
-                let finalSubImageUrl = sub.existingImage;
-                if (sub.newImage) {
-                    const toastId = toast.loading(`Uploading image for ${sub.name}...`);
-                    finalSubImageUrl = await uploadFile(sub.newImage);
-                    toast.dismiss(toastId);
-                }
-
-                processedSubcategories.push({
-                    name: sub.name,
-                    image: finalSubImageUrl
-                });
-            }
-
             const payload = {
                 name,
                 image: finalMainImageUrl,
-                subcategories: processedSubcategories
+                parentId: parentId || null
             };
 
             const toastId = toast.loading("Updating category...");
@@ -147,7 +117,7 @@ export default function UpdateCategoryAdminPage() {
         }
     };
 
-    if (!categoryData) return null; // Wait for redirect to happen if no state
+
 
     return (
         <div className="w-full flex justify-center bg-gray-50 min-h-[calc(100vh-100px)] py-8 px-4">
@@ -155,14 +125,14 @@ export default function UpdateCategoryAdminPage() {
                 <div className="flex items-center justify-between mb-8 border-b border-slate-100 pb-4">
                     <div>
                         <h2 className="text-2xl font-bold text-slate-800">Update Category</h2>
-                        <p className="text-slate-500 text-sm mt-1">Modify details for "{categoryData.name}"</p>
+                        <p className="text-slate-500 text-sm mt-1">Modify details for this category</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Main Category Section */}
                     <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">Main Category</h3>
+                        <h3 className="text-lg font-semibold text-slate-800 border-b border-slate-100 pb-2">Category Details</h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="flex flex-col gap-2">
@@ -178,6 +148,20 @@ export default function UpdateCategoryAdminPage() {
                             </div>
 
                             <div className="flex flex-col gap-2">
+                                <label className="text-sm font-semibold text-slate-700">Parent Category</label>
+                                <select
+                                    value={parentId}
+                                    onChange={(e) => setParentId(e.target.value)}
+                                    className="w-full border border-slate-300 rounded-lg h-11 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white"
+                                >
+                                    <option value="">None (Top Level Category)</option>
+                                    {allCategories.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="flex flex-col gap-2 md:col-span-2">
                                 <label className="text-sm font-semibold text-slate-700">Category Image</label>
                                 <div className="flex items-center gap-4">
                                     <div className="flex-1">
@@ -198,75 +182,6 @@ export default function UpdateCategoryAdminPage() {
                         </div>
                     </div>
 
-                    {/* Subcategories Section */}
-                    <div className="space-y-4 pt-4">
-                        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                            <h3 className="text-lg font-semibold text-slate-800">Subcategories</h3>
-                            <button
-                                type="button"
-                                onClick={handleAddSubcategory}
-                                className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors"
-                            >
-                                <FaPlus /> Add Subcategory
-                            </button>
-                        </div>
-
-                        <div className="space-y-3">
-                            {subcategories.length === 0 ? (
-                                <p className="text-sm text-slate-500 text-center py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                                    No subcategories added yet. Click the button above to add one.
-                                </p>
-                            ) : (
-                                subcategories.map((sub, idx) => (
-                                    <div key={idx} className="flex flex-col md:flex-row items-start md:items-center gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl relative group">
-                                        <div className="flex-1 w-full">
-                                            <input
-                                                type="text"
-                                                value={sub.name}
-                                                onChange={(e) => handleSubNameChange(idx, e.target.value)}
-                                                className="w-full border border-slate-300 rounded-lg h-10 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                                placeholder="Subcategory Name (e.g. Toners)"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="flex-1 w-full flex items-center gap-3">
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                id={`sub-img-${idx}`}
-                                                className="sr-only"
-                                                onChange={(e) => handleSubImageChange(idx, e)}
-                                            />
-                                            <label
-                                                htmlFor={`sub-img-${idx}`}
-                                                className="flex-1 flex items-center justify-center gap-2 h-10 px-3 bg-white border border-slate-300 rounded-lg text-sm text-slate-600 cursor-pointer hover:bg-slate-50 transition-colors whitespace-nowrap overflow-hidden text-ellipsis"
-                                            >
-                                                <FaImage className="text-slate-400" />
-                                                {(sub.newImage || sub.existingImage) ? "Change Image" : "Upload Image"}
-                                            </label>
-
-                                            {sub.preview && (
-                                                <div className="w-10 h-10 rounded-md border border-slate-200 overflow-hidden shrink-0 bg-white">
-                                                    <img src={sub.preview} className="w-full h-full object-cover" alt="Preview" />
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => handleRemoveSubcategory(idx)}
-                                            className="w-full md:w-auto mt-2 md:mt-0 px-3 h-10 flex flex-row md:flex-col items-center justify-center gap-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors border border-transparent md:border-0 hover:border-red-100"
-                                            title="Remove Subcategory"
-                                        >
-                                            <FaTrash />
-                                            <span className="md:hidden text-sm font-medium">Remove</span>
-                                        </button>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    </div>
 
                     {/* Actions */}
                     <div className="flex justify-end gap-4 pt-6 mt-6 border-t border-slate-100">
