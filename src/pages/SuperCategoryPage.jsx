@@ -222,7 +222,7 @@ export default function SuperCategoryPage() {
             <Header />
 
             {/* ── Hero banner for the super category ── */}
-            <div className="w-full bg-gradient-to-r from-[#fff0f4] via-[#fff5f7] to-[#fff0f4] border-b border-[#eee] py-10 mb-0">
+            <div className="w-full bg-gradient-to-r from-[#fff0f4] via-[#fff5f7] to-[#fff0f4] border-b border-[#eee] py-10">
                 <div className="mx-auto max-w-[1200px] px-6 flex items-center gap-6">
                     {superCategory.image && (
                         <div className="w-[80px] h-[80px] rounded-full overflow-hidden border-2 border-[#ff1268]/20 shrink-0 hidden sm:block">
@@ -239,8 +239,8 @@ export default function SuperCategoryPage() {
                 </div>
             </div>
 
-            {/* ── Category circles ── */}
-            <div className="sticky top-0 z-20 bg-white border-b border-[#eee] py-6 shadow-sm">
+            {/* ── Category circles — STICKY at top of viewport ── */}
+            <div style={{ position: "sticky", top: 0, zIndex: 20 }} className="bg-white border-b border-[#eee] py-6 shadow-sm">
                 <div className="mx-auto max-w-[1200px] px-6">
                     {categories.length > 0 ? (
                         <CategoryCircles
