@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
@@ -8,6 +8,8 @@ import {
     Minus, Plus, Share2, Grid3x3, Flame
 } from "lucide-react"
 import axios from "axios"
+import { useCart } from "@/context/CartContext"
+import toast from "react-hot-toast"
 
 // Sample extended details keyed by product id (enriches the base product data)
 const DETAILS = {
@@ -63,6 +65,7 @@ function StarBar({ rating, reviews }) {
 
 export default function ProductPage() {
     const { id } = useParams()
+    const { addToCart } = useCart()
     const navigate = useNavigate()
 
     const [product, setProduct] = useState(null)
@@ -302,14 +305,16 @@ export default function ProductPage() {
                         </div>
 
                         {/* Bottom Action Area */}
-                        <div className="flex gap-2">
-                            <button className="flex-1 h-[56px] border border-[#111] bg-white text-[#111] font-bold text-[16px] rounded-[4px] hover:bg-[#f8f8f8] transition-colors">
-                                Cart
-                            </button>
-                            <button className="flex-[1.5] h-[56px] bg-[#111] text-white font-bold text-[16px] rounded-[4px] hover:bg-[#333] transition-colors">
-                                Buy Now
-                            </button>
-                        </div>
+                        <button
+                            onClick={() => {
+                                addToCart(product, 1)
+                                toast.success(`"${product.name}" added to cart!`, { icon: '🛒' })
+                            }}
+                            className="w-full h-[56px] bg-[#ff1268] text-white font-bold text-[16px] rounded-[4px] hover:bg-[#e00d59] transition-colors flex items-center justify-center gap-2"
+                        >
+                            <ShoppingCart className="h-5 w-5" />
+                            Add to Cart
+                        </button>
 
                     </div>
                 </div>

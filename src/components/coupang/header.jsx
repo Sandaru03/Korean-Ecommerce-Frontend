@@ -3,6 +3,7 @@
 import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut, LogIn } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link } from "react-router-dom"
+import { useCart } from "@/context/CartContext"
 
 // static NAV_CATEGORIES removed in favor of dynamic fetching
 
@@ -16,6 +17,7 @@ export function Header() {
   const [navCategories, setNavCategories] = useState([])
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const navigate = useNavigate()
+  const { totalItems } = useCart()
 
   useEffect(() => {
     const fetchCats = async () => {
@@ -148,7 +150,14 @@ export function Header() {
             onClick={handleCartClick}
             className="relative flex flex-col items-center gap-0.5 px-2 py-1 text-[#333] hover:text-coupang-blue transition-colors"
           >
-            <ShoppingCart className="h-5 w-5" />
+            <div className="relative">
+              <ShoppingCart className="h-5 w-5" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#ff1268] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                  {totalItems > 9 ? '9+' : totalItems}
+                </span>
+              )}
+            </div>
             <span className="text-[10px]">Cart</span>
           </button>
         </div>

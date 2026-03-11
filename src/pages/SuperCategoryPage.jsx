@@ -240,7 +240,7 @@ export default function SuperCategoryPage() {
             </div>
 
             {/* ── Category circles ── */}
-            <div className="sticky top-[64px] z-20 bg-white border-b border-[#eee] py-6 shadow-sm">
+            <div className="sticky top-0 z-20 bg-white border-b border-[#eee] py-6 shadow-sm">
                 <div className="mx-auto max-w-[1200px] px-6">
                     {categories.length > 0 ? (
                         <CategoryCircles
