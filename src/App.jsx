@@ -9,6 +9,7 @@ import ProfilePage from "./pages/ProfilePage";
 import CategoryPage from "./pages/CategoryPage";
 import SuperCategoryPage from "./pages/SuperCategoryPage";
 import ProductPage from "./pages/ProductPage";
+import BannerPage from "./pages/BannerPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/super-category/:slug" element={<SuperCategoryPage />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/banner/:id" element={<BannerPage />} />
         <Route path="/admin-login" element={<AdminLoginPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>

@@ -11,7 +11,7 @@ const banners = [
     subtitle: "Hydrate and glow with our curated selections",
     image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=1200&auto=format&fit=crop",
     accent: "New Season Drops",
-    href: "/super-category/skin-care",
+    href: "/banner/1",
   },
   {
     id: 2,
@@ -19,7 +19,7 @@ const banners = [
     subtitle: "Express yourself with bold colors",
     image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
     accent: "Limited Edition",
-    href: "/super-category/makeup",
+    href: "/banner/2",
   },
   {
     id: 3,
@@ -27,7 +27,7 @@ const banners = [
     subtitle: "Global favorites delivered to your door",
     image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?q=80&w=1200&auto=format&fit=crop",
     accent: "Bestsellers",
-    href: "/super-category/k-beauty",
+    href: "/banner/3",
   },
   {
     id: 4,
@@ -35,7 +35,7 @@ const banners = [
     subtitle: "Revitalize your hair with premium nutrients",
     image: "https://images.unsplash.com/photo-1527799822367-a4886d63f993?q=80&w=1200&auto=format&fit=crop",
     accent: "Daily Essentials",
-    href: "/super-category/hair-care",
+    href: "/banner/4",
   },
   {
     id: 5,
@@ -43,7 +43,7 @@ const banners = [
     subtitle: "Fuel your body with the best organic products",
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1200&auto=format&fit=crop",
     accent: "Bio Organic",
-    href: "/super-category/health",
+    href: "/banner/5",
   },
 ]
 
