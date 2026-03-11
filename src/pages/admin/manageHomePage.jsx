@@ -169,7 +169,7 @@ export default function ManageHomePage() {
         {/* Existing Topics */}
         <div className="space-y-8">
           {topics.map(topic => (
-            <div key={topic.id} className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div key={topic.id} className="bg-white rounded-lg shadow-sm border border-gray-100">
               {/* Topic Header */}
               <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-b border-gray-100">
                 <div className="flex items-center gap-4">
