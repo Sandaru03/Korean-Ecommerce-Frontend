@@ -61,7 +61,7 @@ function OliveCard({ p }) {
                     {discountPct && (
                         <span className="text-[18px] font-black text-[#e2211c] leading-none">{discountPct}%</span>
                     )}
-                    <span className="text-[18px] font-black text-[#111] leading-none">{rawPrice}<span className="text-[14px] font-bold text-[#111]">원</span></span>
+                    <span className="text-[18px] font-black text-[#111] leading-none">LKR {Number(rawPrice).toLocaleString('en-IN')}</span>
                     {p.originalPrice && (
                         <span className="text-[11px] text-[#999] line-through ml-0.5 leading-none">{p.originalPrice}</span>
                     )}
@@ -130,7 +130,7 @@ function FeatureRankingCard({ p, rank }) {
                     {discountPct && (
                         <span className="text-[22px] font-black text-[#e2211c] leading-none">{discountPct}%</span>
                     )}
-                    <span className="text-[22px] font-black text-[#111] leading-none">{rawPrice}<span className="text-[16px] font-bold text-[#111]">원</span></span>
+                    <span className="text-[22px] font-black text-[#111] leading-none">LKR {Number(rawPrice).toLocaleString('en-IN')}</span>
                 </div>
             </div>
         </Link>
@@ -167,7 +167,7 @@ function CuratedList({ title, products, link = "#" }) {
                                 <p className="text-[14px] text-[#333] mb-2 line-clamp-2 leading-tight">{p.name}</p>
                                 <div className="flex items-baseline gap-1.5">
                                     {p.discount && <span className="text-[16px] font-black text-[#e2211c] leading-none">{p.discount.replace("%", "")}%</span>}
-                                    <span className="text-[16px] font-black text-[#111] leading-none">{rawPrice}원</span>
+                                    <span className="text-[16px] font-black text-[#111] leading-none">LKR {Number(rawPrice).toLocaleString('en-IN')}</span>
                                 </div>
                             </div>
                         </Link>
@@ -180,6 +180,7 @@ function CuratedList({ title, products, link = "#" }) {
 
 export default function HomePage() {
     const [categories, setCategories] = useState([]);
+    const [topics, setTopics] = useState([]);
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
     useEffect(() => {
@@ -195,6 +196,19 @@ export default function HomePage() {
             }
         };
         fetchCategories();
+        
+        const fetchTopics = async () => {
+            try {
+                const response = await fetch(`${backendUrl}/homepage-topics`);
+                const data = await response.json();
+                if (data.success) {
+                    setTopics(data.topics);
+                }
+            } catch (error) {
+                console.error("Error fetching homepage topics:", error);
+            }
+        };
+        fetchTopics();
     }, [backendUrl]);
 
     // Use fetched categories for both the dropdown and the round icons
@@ -271,7 +285,7 @@ export default function HomePage() {
                                         </div>
                                         <div className="flex items-baseline gap-1 text-right">
                                             {p.discount && <span className="text-[16px] font-black text-[#e2211c]">{p.discount.replace("%", "")}%</span>}
-                                            <span className="text-[16px] font-bold text-[#111]">{rawPrice}<span className="text-[14px] font-medium ml-0.5">원</span></span>
+                                            <span className="text-[16px] font-bold text-[#111]">LKR {Number(rawPrice).toLocaleString('en-IN')}</span>
                                         </div>
                                     </Link>
                                 )
@@ -306,10 +320,17 @@ export default function HomePage() {
                     </Link>
                 </div>
 
-                {/* ── Horizontal Strips ── */}
-                <HorizontalProductStrip title="Editor's Pick Beauty Items" products={oilySkinProducts} link="/category/oily-skin" />
-                <HorizontalProductStrip title="Only at Olive Young!" products={healthProducts} link="/category/health" />
-                <HorizontalProductStrip title="Today's Deal" products={foodProducts} link="/category/foods" />
+                {/* ── Dynamic Horizontal Strips ── */}
+                {topics.map(topic => (
+                    topic.products && topic.products.length > 0 && (
+                        <HorizontalProductStrip 
+                            key={topic.id} 
+                            title={topic.title} 
+                            products={topic.products} 
+                            link={`/category/all`} // We can point to a general link for now
+                        />
+                    )
+                ))}
 
             </div>
 

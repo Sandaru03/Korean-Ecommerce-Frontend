@@ -3,20 +3,6 @@ import { Rocket, Truck } from "lucide-react"
 export function Footer() {
   return (
     <footer>
-      {/* Free Delivery Banner */}
-      <div className="bg-coupang-blue py-4">
-        <div className="mx-auto flex max-w-[1280px] items-center justify-center gap-4 px-4">
-          <Truck className="h-8 w-8 text-white" />
-          <div className="text-center">
-            <p className="text-lg font-bold text-white">Free Delivery on First Order!</p>
-            <p className="text-sm text-white/80">Sign up now and get free shipping on your first purchase</p>
-          </div>
-          <button className="rounded-full bg-white px-6 py-2 text-sm font-semibold text-coupang-blue hover:bg-[#f0f0f0] transition-colors">
-            Sign Up
-          </button>
-        </div>
-      </div>
-
       {/* Main Footer */}
       <div className="bg-white border-t border-[#e5e5e5]">
         <div className="mx-auto max-w-[1280px] px-4 py-8">

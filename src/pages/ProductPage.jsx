@@ -7,7 +7,7 @@ import {
     Shield, RotateCcw, Truck, PackageCheck,
     Minus, Plus, Share2, Grid3x3, Flame
 } from "lucide-react"
-import { ALL_PRODUCTS } from "@/lib/product-data"
+import axios from "axios"
 
 // Sample extended details keyed by product id (enriches the base product data)
 const DETAILS = {
@@ -28,7 +28,21 @@ const DETAILS = {
 }
 
 function getDetails(id) {
-    return DETAILS[id] || DETAILS["default"]
+    const defaultDetails = {
+        description: "Experience the best of Korean beauty and wellness. This premium product is crafted with high-quality ingredients, dermatologist-tested, and perfect for everyday use. Free from harmful chemicals and suitable for all skin types.",
+        highlights: [
+            "Dermatologist tested & approved",
+            "Free from parabens, sulfates & artificial fragrances",
+            "Cruelty-free & vegan formulation",
+            "Suitable for all skin types",
+            "Made in Korea — authentic K-beauty",
+        ],
+        howToUse: "Apply a small amount to clean skin and massage gently until fully absorbed. Use morning and/or evening as part of your skincare routine. Follow with sunscreen during the day.",
+        ingredients: "Water, Glycerin, Niacinamide, Hyaluronic Acid, Centella Asiatica Extract, Allantoin, Panthenol, Tocopherol, Fragrance-free formula.",
+        volume: ["30ml", "50ml", "100ml"],
+        shades: [],
+    }
+    return DETAILS[id] || defaultDetails
 }
 
 function StarBar({ rating, reviews }) {
@@ -51,7 +65,8 @@ export default function ProductPage() {
     const { id } = useParams()
     const navigate = useNavigate()
 
-    const product = ALL_PRODUCTS[id]
+    const [product, setProduct] = useState(null)
+    const [loading, setLoading] = useState(true)
     const details = getDetails(id)
 
     const [wished, setWished] = useState(false)
@@ -63,15 +78,42 @@ export default function ProductPage() {
     const [selectedItems, setSelectedItems] = useState([]) // Array of { id, name, qty, price }
     const [isTodayDream, setIsTodayDream] = useState(false)
 
-    // Thumbnail images: same seed with slight variation for demo
-    const images = product
-        ? [
-            product.image,
-            product.image.replace("/400/400", "/401/401"),
-            product.image.replace("/400/400", "/402/402"),
-            product.image.replace("/400/400", "/403/403"),
-        ]
-        : []
+    useEffect(() => {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`)
+            .then(res => {
+                setProduct(res.data)
+                setLoading(false)
+            })
+            .catch(err => {
+                console.error(err)
+                setLoading(false)
+            })
+    }, [id])
+
+    // Thumbnail images: Use real DB product images
+    let parsedImages = ["https://picsum.photos/seed/korea/400/400"];
+    if (product?.images) {
+        if (Array.isArray(product.images) && product.images.length > 0) {
+            parsedImages = product.images;
+        } else if (typeof product.images === "string") {
+            try {
+                const parsed = JSON.parse(product.images);
+                if (Array.isArray(parsed) && parsed.length > 0) parsedImages = parsed;
+                else parsedImages = [product.images];
+            } catch {
+                parsedImages = [product.images];
+            }
+        }
+    }
+    const images = parsedImages;
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center">
+                <p className="text-xl font-bold">Loading product details...</p>
+            </div>
+        )
+    }
 
     if (!product) {
         return (
@@ -89,13 +131,15 @@ export default function ProductPage() {
         )
     }
 
-    const discountPct = product.discount?.replace("%", "") || ""
-    const brandName = product.name.split(" ")[0]; // Extract first word as brand for UI
+    const discountPct = (product.labellPrice && product.price < product.labellPrice)
+        ? Math.round(((product.labellPrice - product.price) / product.labellPrice) * 100)
+        : null;
+    const brandName = product?.name?.split(" ")[0] || "Brand"; // Extract first word as brand for UI
 
-    // Parse numeric price for calculation
-    const rawPrice = parseFloat(product.price.replace(/[^0-9.]/g, ""));
+    // Parse numeric price for calculation (assuming LKR or raw DB number)
+    const rawPrice = Number(product.price || 0);
     const totalPrice = selectedItems.reduce((acc, item) => acc + (rawPrice * item.qty), 0);
-    const formattedTotal = new Intl.NumberFormat('en-US').format(totalPrice);
+    const formattedTotal = new Intl.NumberFormat('en-IN').format(totalPrice);
 
     const handleAddOption = (vol) => {
         const existing = selectedItems.find(item => item.name === vol);
@@ -199,7 +243,7 @@ export default function ProductPage() {
 
                         {/* Rating & Viewers */}
                         <div className="flex items-center gap-3 mb-6">
-                            <StarBar rating={product.rating} reviews={product.reviews} />
+                            <StarBar rating={Number(product.rating || 0)} reviews={Number(product.reviews || 0)} />
                             <div className="w-[1px] h-3 bg-[#ddd]"></div>
                             <span className="text-[13px] text-[#ff1268] font-semibold flex items-center gap-1">
                                 <Flame className="h-3.5 w-3.5" /> 1,204명이 보고 있어요
@@ -208,16 +252,16 @@ export default function ProductPage() {
 
                         {/* Price Area */}
                         <div className="flex flex-col mb-6">
-                            {product.originalPrice && (
-                                <span className="text-[14px] text-[#999] line-through font-medium leading-none mb-2">{product.originalPrice.replace('원', '')}</span>
+                            {product.labellPrice && product.labellPrice > product.price && (
+                                <span className="text-[14px] text-[#999] line-through font-medium leading-none mb-2">Rs. {Number(product.labellPrice).toLocaleString('en-IN')}</span>
                             )}
                             <div className="flex items-baseline gap-2 leading-none">
                                 {discountPct && (
                                     <span className="text-[32px] font-black text-[#e2211c]">{discountPct}%</span>
                                 )}
                                 <span className="text-[32px] font-black text-[#111]">
-                                    <span className="text-[22px] font-bold mr-0.5">₩</span>
-                                    {product.price.replace('$', '')}
+                                    <span className="text-[22px] font-bold mr-0.5">Rs. </span>
+                                    {Number(product.price).toLocaleString('en-IN')}
                                 </span>
                             </div>
                         </div>
@@ -246,125 +290,19 @@ export default function ProductPage() {
 
                         <hr className="border-[#eee] my-6" />
 
-                        {/* Delivery Info Box */}
-                        <div className="flex flex-col gap-3 mb-6">
-                            <p className="text-[14px] font-bold text-[#111]">Delivery Information</p>
-
-                            {/* Today Dream Checkbox */}
-                            <label className="flex items-center gap-2 cursor-pointer bg-[#fafcfb] border border-[#e8f1ec] p-3 rounded-md">
-                                <input
-                                    type="checkbox"
-                                    checked={isTodayDream}
-                                    onChange={(e) => setIsTodayDream(e.target.checked)}
-                                    className="w-4 h-4 accent-[#009b77] cursor-pointer"
-                                />
-                                <span className="text-[13px] font-semibold text-[#111] flex items-center gap-1">
-                                    <Rocket className="h-4 w-4 text-[#009b77]" /> Would you like to get it by Today's Delivery?
-                                </span>
-                            </label>
-
-                            {/* Delivery Options List */}
-                            <ul className="text-[13px] text-[#555] space-y-2.5 mt-2">
-                                <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
-                                    <div className="flex items-center gap-4">
-                                        <span className="w-[80px] font-medium text-[#777]">Standard</span>
-                                        <span>₩2,500 (Free over ₩20,000)</span>
-                                    </div>
-                                    <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
-                                </li>
-                                <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
-                                    <div className="flex items-center gap-4">
-                                        <span className="w-[80px] font-bold text-[#ff1268]">Today's Delivery</span>
-                                        <span className="text-[#a16b00] font-medium">Order by 1PM for 99% today delivery probability</span>
-                                    </div>
-                                    <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
-                                </li>
-                                <li className="flex justify-between items-center group cursor-pointer hover:text-[#111]">
-                                    <div className="flex items-center gap-4">
-                                        <span className="w-[80px] font-medium text-[#777]">Store Pickup</span>
-                                        <span>Available in selected stores</span>
-                                    </div>
-                                    <ChevronRight className="h-3.5 w-3.5 text-[#ccc] group-hover:text-[#111]" />
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* Options Selector */}
-                        <div className="relative mb-4">
-                            <button
-                                onClick={() => setShowOptions(!showOptions)}
-                                className={`w-full flex justify-between items-center border ${showOptions ? 'border-[#111]' : 'border-[#ddd]'} py-3.5 px-4 rounded-[4px] bg-white transition-colors`}
-                            >
-                                <span className="text-[14px] font-semibold text-[#111]">Please select an option.</span>
-                                <ChevronRight className={`h-4 w-4 text-[#111] transition-transform ${showOptions ? 'rotate-90' : 'rotate-90'}`} />
-                            </button>
-
-                            {/* Dropdown Menu */}
-                            {showOptions && (
-                                <div className="absolute top-full left-0 w-full mt-1 bg-white border border-[#111] max-h-[280px] overflow-y-auto z-30 shadow-xl rounded-[4px]">
-                                    {details.volume?.length > 0 ? details.volume.map(vol => (
-                                        <button
-                                            key={vol}
-                                            onClick={() => handleAddOption(vol)}
-                                            className="w-full text-left px-4 py-3 hover:bg-[#f8f8f8] border-b border-[#f0f0f0] last:border-0 flex justify-between items-center"
-                                        >
-                                            <span className="text-[13px] text-[#333]">{vol}</span>
-                                            <span className="text-[13px] font-bold text-[#111]">₩{product.price.replace('$', '')}</span>
-                                        </button>
-                                    )) : (
-                                        <button
-                                            onClick={() => handleAddOption("Single Product")}
-                                            className="w-full text-left px-4 py-3 hover:bg-[#f8f8f8] flex justify-between items-center"
-                                        >
-                                            <span className="text-[13px] text-[#333]">Single Product</span>
-                                            <span className="text-[13px] font-bold text-[#111]">₩{product.price.replace('$', '')}</span>
-                                        </button>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Selected Items List */}
-                        {selectedItems.length > 0 && (
-                            <div className="bg-[#fcfcfc] border border-[#eee] rounded-[4px] p-4 mb-6 space-y-4">
-                                {selectedItems.map(item => (
-                                    <div key={item.id} className="flex flex-col gap-3">
-                                        <div className="flex justify-between items-start">
-                                            <span className="text-[13px] font-semibold text-[#111] max-w-[80%] leading-tight">{product.name} - {item.name}</span>
-                                            <button onClick={() => handleRemoveItem(item.name)} className="text-[#999] hover:text-[#111] text-[18px] leading-none">&times;</button>
-                                        </div>
-                                        <div className="flex justify-between items-end">
-                                            {/* Qty Adjuster */}
-                                            <div className="flex items-center border border-[#ddd] bg-white h-[32px] w-[90px] rounded-[3px]">
-                                                <button onClick={() => handleUpdateQty(item.name, item.qty - 1)} className="flex-1 h-full flex items-center justify-center text-[#555] text-[18px]">&minus;</button>
-                                                <span className="w-[30px] text-center text-[13px] font-bold text-[#111] font-mono leading-none">{item.qty}</span>
-                                                <button onClick={() => handleUpdateQty(item.name, item.qty + 1)} className="flex-1 h-full flex items-center justify-center text-[#555] text-[16px]">&#43;</button>
-                                            </div>
-                                            <span className="text-[15px] font-bold text-[#111]">
-                                                ₩{new Intl.NumberFormat('en-US').format(item.price * item.qty)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
 
                         {/* Total Checkout Area */}
                         <div className="flex justify-between items-end mb-6 py-4 border-t-2 border-[#111]">
                             <span className="text-[14px] font-semibold text-[#555]">Total Product Price</span>
                             <div className="flex items-end gap-1">
                                 <span className="text-[14px] text-[#ff1268] font-semibold mb-1">Total {selectedItems.reduce((acc, item) => acc + item.qty, 0)} Items</span>
-                                <span className="text-[16px] font-bold text-[#111] leading-none mb-1">₩</span>
+                                <span className="text-[16px] font-bold text-[#111] leading-none mb-1">Rs. </span>
                                 <span className="text-[28px] font-black text-[#111] leading-none ml-0">{formattedTotal}</span>
                             </div>
                         </div>
 
                         {/* Bottom Action Area */}
                         <div className="flex gap-2">
-                            <button className="h-[56px] w-[56px] shrink-0 flex flex-col items-center justify-center border border-[#ddd] bg-white rounded-[4px] text-[#555] hover:border-[#111] transition-colors gap-0.5">
-                                <span className="text-[18px] leading-none">🎁</span>
-                                <span className="text-[10px] font-bold">Gift</span>
-                            </button>
                             <button className="flex-1 h-[56px] border border-[#111] bg-white text-[#111] font-bold text-[16px] rounded-[4px] hover:bg-[#f8f8f8] transition-colors">
                                 Cart
                             </button>

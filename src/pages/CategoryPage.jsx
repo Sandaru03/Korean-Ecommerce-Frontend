@@ -79,9 +79,7 @@ function ListingCard({ product }) {
                             <span className="text-[16px] font-bold text-[#ff4040]">{product.discount}</span>
                         )}
                         <span className="text-[16px] font-bold text-[#111]">
-                            {typeof product.price === 'string' 
-                                ? product.price.replace('$', '₩') 
-                                : `₩${product.price.toLocaleString()}`}
+                            LKR {Number(product.price).toLocaleString('en-IN')}
                         </span>
                     </div>
                 </div>

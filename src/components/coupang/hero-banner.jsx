@@ -10,50 +10,40 @@ const banners = [
     title: "Premium Skincare Collection",
     subtitle: "Hydrate and glow with our curated selections",
     image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=1200&auto=format&fit=crop",
-    bgColor: "from-[#fdfcfb] to-[#e2d1c3]",
-    textColor: "text-[#4a342e]",
     accent: "New Season Drops",
-    href: "/category/skin-care",
+    href: "/super-category/skin-care",
   },
   {
     id: 2,
     title: "Vibrant Makeup & Nails",
     subtitle: "Express yourself with bold colors",
     image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
-    bgColor: "from-[#fff1eb] to-[#ace0f9]",
-    textColor: "text-[#2c3e50]",
     accent: "Limited Edition",
-    href: "/category/makeup",
+    href: "/super-category/makeup",
   },
   {
     id: 3,
     title: "The Best of K-Beauty",
     subtitle: "Global favorites delivered to your door",
     image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?q=80&w=1200&auto=format&fit=crop",
-    bgColor: "from-[#a1c4fd] to-[#c2e9fb]",
-    textColor: "text-[#1e3a8a]",
     accent: "Bestsellers",
-    href: "/category/k-beauty",
+    href: "/super-category/k-beauty",
   },
   {
     id: 4,
     title: "Essential Hair Care",
     subtitle: "Revitalize your hair with premium nutrients",
     image: "https://images.unsplash.com/photo-1527799822367-a4886d63f993?q=80&w=1200&auto=format&fit=crop",
-    bgColor: "from-[#ff9a9e] to-[#fecfef]",
-    textColor: "text-[#5d1719]",
     accent: "Daily Essentials",
-    href: "/category/hair-care",
+    href: "/super-category/hair-care",
   },
   {
     id: 5,
     title: "Healthy Living & Supplements",
     subtitle: "Fuel your body with the best organic products",
     image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1200&auto=format&fit=crop",
-    bgColor: "from-[#84fab0] to-[#8fd3f4]",
-    textColor: "text-[#064e3b]",
     accent: "Bio Organic",
-    href: "/category/health",
+    href: "/super-category/health",
   },
 ]
 
@@ -82,34 +72,30 @@ export function HeroBanner() {
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
               }`}
           >
-            <Link to={slide.href} className="flex h-full w-full items-center">
-              <div className={`flex h-full w-full items-center bg-gradient-to-r ${slide.bgColor} px-8 md:px-16`}>
-                <div className="w-full md:w-1/2 z-10">
-                  <span className={`text-[12px] md:text-[14px] font-bold ${slide.textColor} opacity-80 mb-2 block tracking-wider uppercase`}>
+            <Link to={slide.href} className="flex h-full w-full items-center relative">
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="absolute inset-0 w-full h-full object-cover z-0"
+              />
+              <div className="absolute inset-0 bg-black/40 z-0"></div>
+              
+              <div className="relative z-10 w-full px-8 md:px-16 flex items-center h-full">
+                <div className="w-full md:w-1/2">
+                  <span className={`text-[12px] md:text-[14px] font-bold text-white opacity-80 mb-2 block tracking-wider uppercase`}>
                     {slide.accent}
                   </span>
-                  <h2 className={`text-[28px] md:text-[44px] font-black ${slide.textColor} leading-tight mb-4 tracking-tight`}>
+                  <h2 className={`text-[28px] md:text-[44px] font-black text-white leading-tight mb-4 tracking-tight`}>
                     {slide.title.split(' ').map((word, i) => (
                       <span key={i}>{word} </span>
                     ))}
                   </h2>
-                  <p className={`text-[14px] md:text-[17px] ${slide.textColor} opacity-90 mb-8 max-w-[400px]`}>
+                  <p className={`text-[14px] md:text-[17px] text-white opacity-90 mb-8 max-w-[400px]`}>
                     {slide.subtitle}
                   </p>
-                  <button className="inline-flex items-center gap-2 rounded-full border-2 border-current px-8 py-3 text-[14px] font-bold hover:bg-current hover:text-white transition-all duration-300">
+                  <button className="inline-flex items-center gap-2 rounded-full border-2 border-white px-8 py-3 text-[14px] font-bold text-white hover:bg-white hover:text-black transition-all duration-300">
                     Discover More
                   </button>
-                </div>
-
-                <div className="hidden md:flex absolute right-0 bottom-0 top-0 w-[55%] items-center justify-center p-8">
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl transform scale-75 opacity-60"></div>
-                    <img
-                      src={slide.image}
-                      alt={slide.title}
-                      className="relative z-10 w-[85%] h-[85%] object-cover rounded-2xl shadow-2xl transition-transform duration-700 hover:scale-105"
-                    />
-                  </div>
                 </div>
               </div>
             </Link>
@@ -140,14 +126,13 @@ export function HeroBanner() {
             <button
               key={i}
               onClick={() => setCurrentSlide(i)}
-              className={`h-1.5 transition-all duration-300 rounded-full ${i === currentSlide ? "w-8 bg-current" : "w-2 bg-current/30"
+              className={`h-1.5 transition-all duration-300 rounded-full ${i === currentSlide ? "w-8 bg-white" : "w-2 bg-white/50"
                 }`}
-              style={{ color: banners[currentSlide].textColor }}
               aria-label={`Go to slide ${i + 1}`}
             />
           ))}
         </div>
-        <span className="text-[14px] font-bold bg-white/20 backdrop-blur-md px-3 py-1 rounded-full" style={{ color: banners[currentSlide].textColor }}>
+        <span className="text-[14px] font-bold text-white bg-white/20 backdrop-blur-md px-3 py-1 rounded-full">
           {currentSlide + 1} / {banners.length}
         </span>
       </div>

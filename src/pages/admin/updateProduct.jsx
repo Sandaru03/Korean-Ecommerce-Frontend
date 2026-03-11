@@ -19,8 +19,15 @@ export default function UpdateProductPage() {
     const [stock, setStock] = useState(location.state.stock);
     const [isAvailable, setIsAvailable] = useState(location.state.isAvailable);
 
-    // Dynamic categories
-    const [allCategories, setAllCategories] = useState([]);
+    // Dynamic categories (Tree Structure)
+    const [allCategoriesTree, setAllCategoriesTree] = useState([]);
+    
+    // Derived lists based on selection
+    const [categoriesList, setCategoriesList] = useState([]);
+    const [subCategoriesList, setSubCategoriesList] = useState([]);
+
+    // Selected values (initialize from location.state if available)
+    const [superCategory, setSuperCategory] = useState(location.state.superCategory || "");
     const [category, setCategory] = useState(location.state.category || "");
     const [subCategory, setSubCategory] = useState(location.state.subCategory || "");
 
@@ -35,17 +42,26 @@ export default function UpdateProductPage() {
             const token = localStorage.getItem("token");
             if (!token) return navigate("/login");
 
-            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/categories", {
+            const res = await axios.get(import.meta.env.VITE_BACKEND_URL + "/categories?tree=true", {
                 headers: { Authorization: "Bearer " + token }
             });
-            const fetchedCategories = res.data.categories || [];
-            setAllCategories(fetchedCategories);
+            const fetchedTree = res.data.categories || [];
+            setAllCategoriesTree(fetchedTree);
 
-            // If the product doesn't have a category saved but there are categories in DB, set a default
-            if (!category && fetchedCategories.length > 0) {
-                setCategory(fetchedCategories[0].name);
-                if (fetchedCategories[0].subcategories?.length > 0) {
-                    setSubCategory(fetchedCategories[0].subcategories[0].name);
+            // If the product doesn't have a superCategory saved but there are categories in DB, set a default
+            if (!location.state.superCategory && fetchedTree.length > 0) {
+                const headSuper = fetchedTree[0];
+                setSuperCategory(headSuper.name);
+                setCategoriesList(headSuper.children || []);
+                
+                if (headSuper.children?.length > 0) {
+                    const headCat = headSuper.children[0];
+                    setCategory(headCat.name);
+                    setSubCategoriesList(headCat.children || []);
+                    
+                    if (headCat.children?.length > 0) {
+                        setSubCategory(headCat.children[0].name);
+                    }
                 }
             }
         } catch (error) {
@@ -54,17 +70,39 @@ export default function UpdateProductPage() {
         }
     };
 
-    // Auto-update subcategories when main category changes manually
-    const handleCategoryChange = (e) => {
-        const newCat = e.target.value;
-        setCategory(newCat);
-        const selectedCat = allCategories.find(c => c.name === newCat);
-        if (selectedCat && selectedCat.subcategories?.length > 0) {
-            setSubCategory(selectedCat.subcategories[0].name);
+    // Auto-update Categories when Super Category changes
+    useEffect(() => {
+        if (!superCategory || allCategoriesTree.length === 0) return;
+        const selectedSuper = allCategoriesTree.find(c => c.name === superCategory);
+        if (selectedSuper && selectedSuper.children?.length > 0) {
+            setCategoriesList(selectedSuper.children);
+            // Only auto-select first child if we are manually changing superCategory 
+            // and the current category isn't already inside this new list
+            if (!selectedSuper.children.find(c => c.name === category)) {
+                setCategory(selectedSuper.children[0].name);
+            }
         } else {
+            setCategoriesList([]);
+            setCategory("");
+        }
+    }, [superCategory, allCategoriesTree]);
+
+    // Auto-update Sub Categories when Category changes
+    useEffect(() => {
+        if (!category || categoriesList.length === 0) return;
+        const selectedCat = categoriesList.find(c => c.name === category);
+        if (selectedCat && selectedCat.children?.length > 0) {
+            setSubCategoriesList(selectedCat.children);
+            // Only auto-select first child if we are manually changing category
+            // and the current subCategory isn't already inside this new list
+            if (!selectedCat.children.find(c => c.name === subCategory)) {
+                setSubCategory(selectedCat.children[0].name);
+            }
+        } else {
+            setSubCategoriesList([]);
             setSubCategory("");
         }
-    };
+    }, [category, categoriesList]);
 
     async function handleSubmit() {
 
@@ -90,6 +128,7 @@ export default function UpdateProductPage() {
             description: description,
             stock: stock,
             isAvailable: isAvailable,
+            superCategory: superCategory,
             category: category,
             subCategory: subCategory
         }
@@ -196,9 +235,20 @@ export default function UpdateProductPage() {
                     </div>
 
                     <div className="flex-1 flex flex-col gap-1">
+                        <label className="text-sm font-semibold">Super Category</label>
+                        <select value={superCategory} onChange={(e) => setSuperCategory(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2">
+                            <option value="">None</option>
+                            {allCategoriesTree.map(c => (
+                                <option key={c.id} value={c.name}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="flex-1 flex flex-col gap-1">
                         <label className="text-sm font-semibold">Category</label>
-                        <select value={category} onChange={handleCategoryChange} className="w-full border-[2px] h-[40px] rounded-md px-2">
-                            {allCategories.map(c => (
+                        <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2" disabled={categoriesList.length === 0}>
+                            <option value="">None</option>
+                            {categoriesList.map(c => (
                                 <option key={c.id} value={c.name}>{c.name}</option>
                             ))}
                         </select>
@@ -206,10 +256,10 @@ export default function UpdateProductPage() {
 
                     <div className="flex-1 flex flex-col gap-1">
                         <label className="text-sm font-semibold">Subcategory</label>
-                        <select value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2">
+                        <select value={subCategory} onChange={(e) => setSubCategory(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2" disabled={subCategoriesList.length === 0}>
                             <option value="">None</option>
-                            {allCategories.find(c => c.name === category)?.subcategories?.map((sub, idx) => (
-                                <option key={idx} value={sub.name}>{sub.name}</option>
+                            {subCategoriesList.map(sub => (
+                                <option key={sub.id} value={sub.name}>{sub.name}</option>
                             ))}
                         </select>
                     </div>

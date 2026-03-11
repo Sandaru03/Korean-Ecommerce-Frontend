@@ -25,6 +25,7 @@ import UpdateCategoryAdminPage from "./admin/updateCategoryAdminPage";
 import SubCategoryAdminPage from "./admin/subCategoryAdminPage";
 import SuperCategoryAdminPage from "./admin/superCategoryAdminPage";
 import CategoriesOfSuperAdminPage from "./admin/categoriesOfSuperAdminPage";
+import ManageHomePage from "./admin/manageHomePage";
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -99,37 +100,37 @@ function DashboardHero() {
 }
 
 export default function AdminPage() {
-    const [status, setStatus] = useState("admin"); // "loading" | "admin" | "not-admin"
+    const [status, setStatus] = useState("loading"); // "loading" | "admin" | "not-admin"
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const navigate = useNavigate();
 
-    // Auth check - DISABLED for development
-    // useEffect(() => {
-    //     const token = localStorage.getItem("token");
-    //     if (!token) {
-    //         setStatus("not-admin");
-    //         return;
-    //     }
-    //     axios
-    //         .get(import.meta.env.VITE_BACKEND_URL + "/users/profile", {
-    //             headers: { Authorization: `Bearer ${token}` },
-    //         })
-    //         .then((res) => {
-    //             if (res.data.role === "admin") setStatus("admin");
-    //             else setStatus("not-admin");
-    //         })
-    //         .catch(() => setStatus("not-admin"));
-    // }, []);
+    // Auth check - Re-enabled for production
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setStatus("not-admin");
+            return;
+        }
+        axios
+            .get(import.meta.env.VITE_BACKEND_URL + "/users", {
+                headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => {
+                if (res.data.role === "admin") setStatus("admin");
+                else setStatus("not-admin");
+            })
+            .catch(() => setStatus("not-admin"));
+    }, []);
 
-    // // Toast when not-admin
-    // useEffect(() => {
-    //     if (status === "not-admin") {
-    //         toast.error("You must be logged in as admin to access this page");
-    //     }
-    // }, [status]);
+    // Toast when not-admin
+    useEffect(() => {
+        if (status === "not-admin") {
+            toast.error("You must be logged in as admin to access this page");
+        }
+    }, [status]);
 
-    // if (status === "loading") return <Loader />;
-    // if (status === "not-admin") return <Navigate to="/login" replace />;
+    if (status === "loading") return <Loader />;
+    if (status === "not-admin") return <Navigate to="/admin-login" replace />;
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -179,6 +180,7 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/super-categories" icon={FaFilePen} label="Super Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/categories" icon={FaFilePen} label="Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/reviews" icon={FaFilePen} label="Reviews" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/manage-homepage" icon={FaFilePen} label="Manage Topics" onClick={() => setSidebarOpen(false)} />
                     </nav>
 
                     {/* Sidebar Footer */}
@@ -249,6 +251,7 @@ export default function AdminPage() {
                             <Route path="categories/:parentId/subcategories" element={<SubCategoryAdminPage />} />
                             <Route path="add-category" element={<AddCategoryAdminPage />} />
                             <Route path="update-category" element={<UpdateCategoryAdminPage />} />
+                            <Route path="manage-homepage" element={<ManageHomePage />} />
                         </Routes>
                     </div>
                 </main>

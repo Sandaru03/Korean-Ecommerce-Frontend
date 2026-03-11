@@ -44,9 +44,7 @@ function ListingCard({ product }) {
                 <div className="mt-2.5 flex flex-col gap-0.5">
                     <div className="flex items-baseline gap-1.5 leading-none mt-1">
                         <span className="text-[16px] font-bold text-[#111]">
-                            {typeof product.price === "string"
-                                ? product.price.replace("$", "₩")
-                                : `₩${Number(product.price).toLocaleString()}`}
+                            LKR {Number(product.price).toLocaleString('en-IN')}
                         </span>
                     </div>
                 </div>
