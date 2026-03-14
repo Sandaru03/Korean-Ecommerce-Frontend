@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Plus, Trash2, Search, X } from "lucide-react";
+import { Plus, Trash2, Search, X, Upload, Image as ImageIcon } from "lucide-react";
 import toast from "react-hot-toast";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
@@ -9,6 +9,7 @@ export default function ManageHomePage() {
   const [topics, setTopics] = useState([]);
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [loading, setLoading] = useState(false);
+  const [bannerPreviews, setBannerPreviews] = useState({}); // { topicId: { file, url } }
   
   // Product search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -73,6 +74,48 @@ export default function ManageHomePage() {
       }
     } catch (error) {
       console.error("Error updating topic:", error);
+    }
+  };
+
+  const handleBannerSelect = (topicId, file) => {
+    if (!file) return;
+    const previewUrl = URL.createObjectURL(file);
+    setBannerPreviews(prev => ({
+      ...prev,
+      [topicId]: { file, url: previewUrl }
+    }));
+  };
+
+  const handleSaveBanner = async (topicId) => {
+    const preview = bannerPreviews[topicId];
+    if (!preview) return;
+
+    const formData = new FormData();
+    formData.append("images", preview.file);
+
+    try {
+      setLoading(true);
+      const uploadRes = await axios.post(`${backendUrl}/upload/cloudinary`, formData);
+      const imageUrl = uploadRes.data.urls[0];
+
+      const { data } = await axios.put(`${backendUrl}/homepage-topics/${topicId}`, {
+        bannerImage: imageUrl
+      });
+
+      if (data.success) {
+        setTopics(topics.map(t => t.id === topicId ? { ...t, bannerImage: imageUrl } : t));
+        setBannerPreviews(prev => {
+          const next = { ...prev };
+          delete next[topicId];
+          return next;
+        });
+        toast.success("Banner saved to Cloudinary successfully!");
+      }
+    } catch (error) {
+      console.error("Error saving banner:", error);
+      toast.error("Failed to save banner to Cloudinary");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -172,14 +215,53 @@ export default function ManageHomePage() {
             <div key={topic.id} className="bg-white rounded-lg shadow-sm border border-gray-100">
               {/* Topic Header */}
               <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-b border-gray-100">
-                <div className="flex items-center gap-4">
-                  <h2 className="text-xl font-bold text-gray-900">{topic.title}</h2>
-                  <button 
-                    onClick={() => handleToggleActive(topic)}
-                    className={`px-3 py-1 text-xs font-semibold rounded-full ${topic.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'}`}
-                  >
-                    {topic.active ? 'Active' : 'Hidden'}
-                  </button>
+                <div className="flex items-center gap-6">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="relative group/banner w-32 h-16 bg-gray-200 rounded overflow-hidden border border-gray-300 flex items-center justify-center shrink-0 shadow-inner">
+                      {bannerPreviews[topic.id] ? (
+                        <img src={bannerPreviews[topic.id].url} alt="Preview" className="w-full h-full object-cover ring-2 ring-primary ring-inset" />
+                      ) : topic.bannerImage ? (
+                        <img src={topic.bannerImage} alt="Banner" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="flex flex-col items-center text-gray-400">
+                          <ImageIcon className="w-5 h-5" />
+                          <span className="text-[10px]">No Banner</span>
+                        </div>
+                      )}
+                      <label className="absolute inset-0 bg-black/40 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                        <Upload className="w-5 h-5 text-white" />
+                        <input 
+                          type="file" 
+                          className="hidden" 
+                          accept="image/*"
+                          onChange={(e) => handleBannerSelect(topic.id, e.target.files[0])}
+                        />
+                      </label>
+                    </div>
+                    {bannerPreviews[topic.id] && (
+                      <button 
+                        onClick={() => handleSaveBanner(topic.id)}
+                        disabled={loading}
+                        className="w-full py-1 bg-primary text-white text-[10px] font-bold rounded hover:opacity-90 disabled:opacity-50 shadow-sm"
+                      >
+                        {loading ? "..." : "SAVE BANNER"}
+                      </button>
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900">{topic.title}</h2>
+                    <div className="flex items-center gap-2 mt-1">
+                      <button 
+                        onClick={() => handleToggleActive(topic)}
+                        className={`px-3 py-1 text-xs font-semibold rounded-full ${topic.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'}`}
+                      >
+                        {topic.active ? 'Active' : 'Hidden'}
+                      </button>
+                      <span className="text-[11px] text-gray-400 italic">
+                        {bannerPreviews[topic.id] ? "New banner selected" : topic.bannerImage ? "Banner layout active" : "Horizontal strip active"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
                 <button 
                   onClick={() => handleDeleteTopic(topic.id)}

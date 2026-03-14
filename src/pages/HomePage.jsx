@@ -2,6 +2,7 @@ import { TopBanner } from "@/components/coupang/top-banner"
 import { Header } from "@/components/coupang/header"
 import { HeroBanner } from "@/components/coupang/hero-banner"
 import { Footer } from "@/components/coupang/footer"
+import { BannerTopicSection } from "@/components/coupang/BannerTopicSection"
 import { ChevronRight, Heart, ShoppingBag } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
@@ -106,7 +107,7 @@ export default function HomePage() {
     }, [backendUrl])
 
     const rootCategories = categories.filter(c => c.parentId === null)
-    const activeTopicsWithProducts = topics.filter(t => t.active && t.products?.length > 0)
+    const activeTopicsWithProducts = topics.filter(t => t.active && (t.products?.length > 0 || t.bannerImage))
 
     return (
         <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white pb-20">
@@ -144,7 +145,11 @@ export default function HomePage() {
                     </div>
                 ) : activeTopicsWithProducts.length > 0 ? (
                     activeTopicsWithProducts.map(topic => (
-                        <TopicStrip key={topic.id} title={topic.title} products={topic.products} />
+                        topic.bannerImage ? (
+                            <BannerTopicSection key={topic.id} title={topic.title} products={topic.products} bannerImage={topic.bannerImage} />
+                        ) : (
+                            <TopicStrip key={topic.id} title={topic.title} products={topic.products} />
+                        )
                     ))
                 ) : (
                     <EmptyTopics />
