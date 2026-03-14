@@ -39,7 +39,7 @@ export function CollectionLinks() {
                 <a
                   key={item}
                   href="#"
-                  className="text-xs text-[#666] hover:text-coupang-blue hover:underline"
+                  className="text-xs text-[#666] hover:text-primary hover:underline"
                 >
                   {item}
                 </a>

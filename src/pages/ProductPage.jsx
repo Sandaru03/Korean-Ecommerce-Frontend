@@ -253,9 +253,9 @@ export default function ProductPage() {
                             )}
                             <div className="flex items-baseline gap-2 leading-none">
                                 {discountPct && (
-                                    <span className="text-[32px] font-black text-[#e2211c]">{discountPct}%</span>
+                                    <span className="text-primary font-bold">{discountPct}%</span>
                                 )}
-                                <span className="text-[32px] font-black text-[#111]">
+                                <span className="text-neutral-dark text-2xl font-bold">
                                     <span className="text-[22px] font-bold mr-0.5">Rs. </span>
                                     {Number(product.price).toLocaleString('en-IN')}
                                 </span>
@@ -287,9 +287,9 @@ export default function ProductPage() {
                         <div className="flex justify-between items-end mb-6 py-4 border-t-2 border-[#111]">
                             <span className="text-[14px] font-semibold text-[#555]">Total Product Price</span>
                             <div className="flex items-end gap-1">
-                                <span className="text-[14px] text-[#ff1268] font-semibold mb-1">Total {selectedItems.reduce((acc, item) => acc + item.qty, 0)} Items</span>
-                                <span className="text-[16px] font-bold text-[#111] leading-none mb-1">Rs. </span>
-                                <span className="text-[28px] font-black text-[#111] leading-none ml-0">{formattedTotal}</span>
+                                <span className="text-[14px] text-primary font-semibold mb-1">Total {selectedItems.reduce((acc, item) => acc + item.qty, 0)} Items</span>
+                                <span className="text-[16px] font-bold text-neutral-dark leading-none mb-1">Rs. </span>
+                                <span className="text-neutral-dark text-2xl font-bold leading-none ml-0">{formattedTotal}</span>
                             </div>
                         </div>
 
@@ -299,7 +299,7 @@ export default function ProductPage() {
                                 addToCart(product, 1)
                                 toast.success(`"${product.name}" added to cart!`, { icon: '🛒' })
                             }}
-                            className="w-full h-[56px] bg-[#ff1268] text-white font-bold text-[16px] rounded-[4px] hover:bg-[#e00d59] transition-colors flex items-center justify-center gap-2"
+                            className="w-full h-[56px] bg-primary text-white font-semibold transition-all hover:opacity-90 rounded-[4px] flex items-center justify-center gap-2"
                         >
                             <ShoppingCart className="h-5 w-5" />
                             Add to Cart
@@ -337,12 +337,12 @@ export default function ProductPage() {
                                 <p className="text-[15px] text-[#555] leading-[1.8] text-left">
                                     {details.description}
                                 </p>
-                                <div className="text-left bg-[#f8f8f8] p-8 mt-8 border border-[#eee]">
+                                <div className="text-left bg-accent/50 p-8 mt-8 border border-[#eee]">
                                     <h4 className="font-bold text-[#111] mb-4 text-[16px]">Check Points</h4>
                                     <ul className="space-y-3">
                                         {details.highlights?.map(h => (
                                             <li key={h} className="flex items-start gap-2 text-[14px] text-[#555]">
-                                                <span className="text-[#ff1268] font-bold mt-0.5">✓</span>
+                                                <span className="text-primary font-bold mt-0.5">✓</span>
                                                 {h}
                                             </li>
                                         ))}

@@ -10,8 +10,8 @@ export function Footer() {
             {/* Company Info */}
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-1 mb-4">
-                <Rocket className="h-5 w-5 text-coupang-blue" />
-                <span className="text-xl font-bold text-coupang-blue">Samee & Sandu</span>
+                <Rocket className="h-5 w-5 text-primary" />
+                <span className="text-xl font-bold text-primary">Samee & Sandu</span>
               </div>
               <p className="text-xs text-[#888] leading-relaxed">
                 Your one-stop shop for Korean Beauty and Health products. Delivering happiness to your doorstep.
@@ -22,11 +22,11 @@ export function Footer() {
             <div>
               <h3 className="mb-3 text-sm font-bold text-[#333]">Customer Service</h3>
               <ul className="flex flex-col gap-2">
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Help Center</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Returns & Refunds</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Shipping Info</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Order Tracking</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">FAQs</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Help Center</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Returns & Refunds</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Shipping Info</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Order Tracking</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">FAQs</a></li>
               </ul>
             </div>
 
@@ -34,10 +34,10 @@ export function Footer() {
             <div>
               <h3 className="mb-3 text-sm font-bold text-[#333]">About</h3>
               <ul className="flex flex-col gap-2">
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">About Us</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Careers</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Press</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Investor Relations</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">About Us</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Careers</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Press</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Investor Relations</a></li>
               </ul>
             </div>
 
@@ -45,10 +45,10 @@ export function Footer() {
             <div>
               <h3 className="mb-3 text-sm font-bold text-[#333]">Sell with Us</h3>
               <ul className="flex flex-col gap-2">
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Start Selling</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Seller Support</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Advertising</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Rocket Growth</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Start Selling</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Seller Support</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Advertising</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Rocket Growth</a></li>
               </ul>
             </div>
 
@@ -56,10 +56,10 @@ export function Footer() {
             <div>
               <h3 className="mb-3 text-sm font-bold text-[#333]">Policies</h3>
               <ul className="flex flex-col gap-2">
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Terms of Use</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Cookie Policy</a></li>
-                <li><a href="#" className="text-xs text-[#666] hover:text-coupang-blue transition-colors">Accessibility</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Terms of Use</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Cookie Policy</a></li>
+                <li><a href="#" className="text-xs text-neutral-muted hover:text-primary transition-colors">Accessibility</a></li>
               </ul>
             </div>
           </div>

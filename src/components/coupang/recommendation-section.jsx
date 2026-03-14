@@ -15,7 +15,7 @@ const recommendations = [
 
 export function RecommendationSection() {
   return (
-    <section className="bg-gradient-to-b from-[#eef4ff] to-[#fff] py-8">
+    <section className="bg-gradient-to-b from-accent to-bg-main py-8">
       <div className="mx-auto max-w-[1280px] px-4">
         <div className="mb-5 flex items-center justify-between">
           <div>
@@ -24,7 +24,7 @@ export function RecommendationSection() {
           </div>
           <a
             href="#"
-            className="flex items-center gap-0.5 text-sm text-[#666] hover:text-coupang-blue transition-colors"
+            className="flex items-center gap-0.5 text-sm text-[#666] hover:text-primary transition-colors"
           >
             See More
             <ChevronRight className="h-4 w-4" />
@@ -44,13 +44,13 @@ export function RecommendationSection() {
                   style={{ backgroundImage: `url(${item.image})` }}
                 />
                 <button
-                  className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#fff]/80 text-[#ccc] hover:text-coupang-red transition-colors"
+                  className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#fff]/80 text-[#ccc] hover:text-primary transition-colors"
                   onClick={(e) => e.preventDefault()}
                   aria-label={`Like ${item.name}`}
                 >
                   <Heart className="h-4 w-4" />
                 </button>
-                <span className="absolute left-1.5 top-1.5 rounded bg-coupang-blue px-1.5 py-0.5 text-[9px] font-bold text-[#fff]">
+                <span className="absolute left-1.5 top-1.5 rounded bg-primary px-1.5 py-0.5 text-[9px] font-bold text-[#fff]">
                   {item.tag}
                 </span>
               </div>

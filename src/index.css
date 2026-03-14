@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -80,8 +80,13 @@
 }
 
 @theme inline {
-  --font-sans: 'Noto Sans KR', 'Geist', sans-serif;
-  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  --font-sans: "Noto Sans KR", "Geist", sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-primary: #c31d23;
+  --color-accent: #fdf2f0;
+  --color-neutral-dark: #2d2d2d;
+  --color-neutral-muted: #757575;
+  --color-bg-main: #fafafa;
   --color-coupang-blue: var(--coupang-blue);
   --color-coupang-red: var(--coupang-red);
   --color-coupang-gold: var(--coupang-gold);
@@ -93,13 +98,11 @@
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -130,6 +133,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-bg-main text-neutral-dark;
   }
 }

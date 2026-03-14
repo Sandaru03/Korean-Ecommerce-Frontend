@@ -85,7 +85,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
             <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden">
                 {/* Header */}
-                <div className="bg-[#ff1268] px-6 py-4 flex items-center justify-between">
+                <div className="bg-primary px-6 py-4 flex items-center justify-between">
                     <h2 className="text-white font-black text-[20px]">Checkout</h2>
                     <button onClick={onClose} className="text-white/80 hover:text-white text-[24px] leading-none">×</button>
                 </div>
@@ -106,7 +106,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                                 <span>Rs. {fmt(subtotal)}</span>
                             </div>
                             {deliveryFee > 0 && (
-                                <div className="flex justify-between text-[13px] text-[#e2211c] font-semibold">
+                                <div className="flex justify-between text-[13px] text-primary font-semibold">
                                     <span>Delivery Fee ({totalItems} items)</span>
                                     <span>Rs. {fmt(deliveryFee)}</span>
                                 </div>
@@ -134,7 +134,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                                 placeholder="Full Name *"
                                 value={name}
                                 onChange={e => setName(e.target.value)}
-                                className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-[#ff1268] outline-none pr-24"
+                                className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-primary outline-none pr-24"
                             />
                             {name && (
                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-[#f0fff4] text-[#16a34a] font-bold px-2 py-0.5 rounded-full border border-[#b2f5cb]">
@@ -148,7 +148,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                                 placeholder="Phone Number *"
                                 value={phone}
                                 onChange={e => setPhone(e.target.value)}
-                                className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-[#ff1268] outline-none pr-24"
+                                className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-primary outline-none pr-24"
                             />
                             {phone && (
                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-[#f0fff4] text-[#16a34a] font-bold px-2 py-0.5 rounded-full border border-[#b2f5cb]">
@@ -161,7 +161,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                             value={address}
                             onChange={e => setAddress(e.target.value)}
                             rows={3}
-                            className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-[#ff1268] outline-none resize-none"
+                            className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-primary outline-none resize-none"
                         />
                     </div>
 
@@ -204,7 +204,7 @@ export default function CartPage() {
                     <p className="text-[14px] text-[#bbb]">Add products from the store to continue.</p>
                     <button
                         onClick={() => navigate("/")}
-                        className="mt-4 bg-[#ff1268] text-white px-8 py-3 rounded-full font-bold text-[14px] hover:bg-[#e00d59] transition"
+                        className="mt-4 bg-primary text-white px-8 py-3 rounded-full font-bold text-[14px] hover:bg-red-800 transition"
                     >
                         Continue Shopping
                     </button>
@@ -260,7 +260,7 @@ export default function CartPage() {
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
                                     <p className="font-bold text-[#111] text-[15px] leading-snug mb-1 line-clamp-2">{item.name}</p>
-                                    <p className="text-[#ff1268] font-black text-[18px] mb-3">Rs. {fmt(item.price)}</p>
+                                    <p className="text-primary font-black text-[18px] mb-3">Rs. {fmt(item.price)}</p>
 
                                     {/* Qty Controls */}
                                     <div className="flex items-center gap-3">
@@ -281,7 +281,7 @@ export default function CartPage() {
                                         </div>
                                         <button
                                             onClick={() => { removeFromCart(item.id); toast.success("Item removed") }}
-                                            className="flex items-center gap-1 text-[13px] text-[#e2211c] hover:underline"
+                                            className="flex items-center gap-1 text-[13px] text-primary hover:underline"
                                         >
                                             <Trash2 className="h-4 w-4" /> Remove
                                         </button>
@@ -301,11 +301,11 @@ export default function CartPage() {
                     <div className="w-full lg:w-[320px] shrink-0 sticky top-6 space-y-4">
                         {/* Delivery Fee Notice */}
                         {totalItems >= 3 && (
-                            <div className="bg-[#fff5f5] border border-[#ffc8c8] rounded-xl p-4 flex gap-3 items-start">
-                                <AlertCircle className="h-5 w-5 text-[#e2211c] shrink-0 mt-0.5" />
+                            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3 items-start">
+                                <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                                 <div>
-                                    <p className="text-[13px] font-bold text-[#e2211c]">Delivery Fee Applied</p>
-                                    <p className="text-[12px] text-[#e2211c]/80 mt-0.5">
+                                    <p className="text-[13px] font-bold text-primary">Delivery Fee Applied</p>
+                                    <p className="text-[12px] text-primary/80 mt-0.5">
                                         Orders with 3 or more items include a Rs. 500 delivery charge.
                                     </p>
                                 </div>
@@ -334,7 +334,7 @@ export default function CartPage() {
                                 <div className="flex justify-between text-[#555]">
                                     <span>Delivery</span>
                                     {deliveryFee > 0 ? (
-                                        <span className="font-semibold text-[#e2211c]">Rs. {fmt(deliveryFee)}</span>
+                                        <span className="font-semibold text-primary">Rs. {fmt(deliveryFee)}</span>
                                     ) : (
                                         <span className="font-semibold text-[#16a34a]">FREE</span>
                                     )}
@@ -350,7 +350,7 @@ export default function CartPage() {
 
                             <button
                                 onClick={() => setShowCheckout(true)}
-                                className="w-full mt-5 h-[52px] bg-[#ff1268] hover:bg-[#e00d59] text-white font-bold text-[16px] rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-pink-200"
+                                className="w-full mt-5 h-[52px] bg-primary hover:bg-red-800 text-white font-bold text-[16px] rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-200/50"
                             >
                                 Proceed to Checkout
                                 <ChevronRight className="h-5 w-5" />

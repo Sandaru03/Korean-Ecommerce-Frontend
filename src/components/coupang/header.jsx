@@ -82,7 +82,7 @@ export function Header() {
         {/* Logo */}
         <a href="/" className="shrink-0">
           <svg width="210" height="32" viewBox="0 0 210 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <text x="0" y="26" fill="#346AFF" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="22" letterSpacing="-0.5">
+            <text x="0" y="26" fill="#C31D23" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="22" letterSpacing="-0.5">
               Samee &amp; Sadu
             </text>
           </svg>
@@ -96,9 +96,9 @@ export function Header() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search for products"
-              className="h-10 w-full rounded-l-md border border-[#e5e5e5] bg-white px-4 text-sm text-[#333] placeholder:text-[#999] focus:border-coupang-blue focus:outline-none"
+              className="h-10 w-full rounded-l-md border border-[#e5e5e5] bg-white px-4 text-sm text-[#333] placeholder:text-[#999] focus:border-primary focus:outline-none"
             />
-            <button className="flex h-10 items-center justify-center rounded-r-md bg-coupang-blue px-4 text-white hover:bg-[#2a5ae0] transition-colors">
+            <button className="flex h-10 items-center justify-center rounded-r-md bg-primary px-4 text-white hover:bg-red-800 transition-colors">
               <Search className="h-5 w-5" />
             </button>
           </div>
@@ -110,7 +110,7 @@ export function Header() {
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setShowUserMenu((v) => !v)}
-              className="flex flex-col items-center gap-0.5 px-2 py-1 text-[#333] hover:text-coupang-blue transition-colors"
+              className="flex flex-col items-center gap-0.5 px-2 py-1 text-neutral-dark hover:text-primary transition-colors"
             >
               <User className="h-5 w-5" />
               <span className="text-[10px]">{isLoggedIn ? "My Account" : "Login"}</span>
@@ -148,7 +148,7 @@ export function Header() {
           {/* Cart */}
           <button
             onClick={handleCartClick}
-            className="relative flex flex-col items-center gap-0.5 px-2 py-1 text-[#333] hover:text-coupang-blue transition-colors"
+            className="relative flex flex-col items-center gap-0.5 px-2 py-1 text-neutral-dark hover:text-primary transition-colors"
           >
             <div className="relative">
               <ShoppingCart className="h-5 w-5" />
@@ -168,7 +168,7 @@ export function Header() {
         <div className="mx-auto max-w-[1280px] px-4 flex">
           {/* Categories Hover Trigger */}
           <div className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group" ref={catMenuRef}>
-            <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2 group-hover:text-coupang-blue transition-colors">
+            <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2 group-hover:text-primary transition-colors">
               <Menu className="h-5 w-5" />
               Category
             </button>
@@ -178,7 +178,7 @@ export function Header() {
               <ul className="py-2">
                 {navCategories.map(cat => (
                   <li key={cat.id || cat.name}>
-                    <Link to={`/category/${cat.slug}`} className="block px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-coupang-blue transition-colors">
+                    <Link to={`/category/${cat.slug}`} className="block px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-primary transition-colors">
                       {cat.name}
                     </Link>
                   </li>
@@ -188,12 +188,12 @@ export function Header() {
           </div>
           {/* Header Links */}
           <div className="flex-1 flex gap-8 items-center px-8 text-[15px] font-bold text-[#111]">
-            <Link to="/category/makeup" className="hover:text-coupang-blue transition">Special Deals</Link>
-            <Link to="/category/skin-care" className="hover:text-coupang-blue transition">Ranking</Link>
-            <Link to="/category/k-beauty" className="hover:text-coupang-blue transition">Only at OY</Link>
-            <Link to="/category/hair-care" className="hover:text-coupang-blue transition">LUXE EDIT</Link>
-            <Link to="/category/skin-care" className="hover:text-coupang-blue transition">Events</Link>
-            <Link to="/category/health" className="hover:text-coupang-blue transition">Sale</Link>
+            <Link to="/category/makeup" className="hover:text-primary transition">Special Deals</Link>
+            <Link to="/category/skin-care" className="hover:text-primary transition">Ranking</Link>
+            <Link to="/category/k-beauty" className="hover:text-primary transition">Only at OY</Link>
+            <Link to="/category/hair-care" className="hover:text-primary transition">LUXE EDIT</Link>
+            <Link to="/category/skin-care" className="hover:text-primary transition">Events</Link>
+            <Link to="/category/health" className="hover:text-primary transition">Sale</Link>
           </div>
         </div>
       </div>

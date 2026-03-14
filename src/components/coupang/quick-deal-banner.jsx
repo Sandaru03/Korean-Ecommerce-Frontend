@@ -36,11 +36,11 @@ export function QuickDealBanner() {
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <Zap className="h-5 w-5 text-coupang-red" />
+              <Zap className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-bold text-[#111]">Lightning Deals</h2>
             </div>
             <div className="flex items-center gap-1 rounded-md bg-[#111] px-2 py-1">
-              <Clock className="h-3.5 w-3.5 text-coupang-red" />
+              <Clock className="h-3.5 w-3.5 text-primary" />
               <span className="font-mono text-sm font-bold text-[#fff]">
                 {String(timeLeft.hours).padStart(2, "0")}:
                 {String(timeLeft.minutes).padStart(2, "0")}:
@@ -50,7 +50,7 @@ export function QuickDealBanner() {
           </div>
           <a
             href="#"
-            className="flex items-center gap-0.5 text-sm text-[#666] hover:text-coupang-blue transition-colors"
+            className="flex items-center gap-0.5 text-sm text-[#666] hover:text-primary transition-colors"
           >
             View All
             <ChevronRight className="h-4 w-4" />
@@ -70,14 +70,14 @@ export function QuickDealBanner() {
                   className="h-full w-full bg-cover bg-center transition-transform group-hover:scale-105"
                   style={{ backgroundImage: `url(${deal.image})` }}
                 />
-                <span className="absolute left-2 top-2 rounded bg-coupang-red px-2 py-0.5 text-xs font-bold text-[#fff]">
+                <span className="absolute left-2 top-2 rounded bg-primary px-2 py-0.5 text-xs font-bold text-[#fff]">
                   {deal.discount} OFF
                 </span>
               </div>
               <div className="flex flex-col gap-1.5 p-3">
                 <h3 className="line-clamp-1 text-sm text-[#333]">{deal.name}</h3>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-bold text-coupang-red">{deal.discount}</span>
+                  <span className="text-lg font-bold text-primary">{deal.discount}</span>
                   <span className="text-base font-bold text-[#111]">{deal.price}</span>
                 </div>
                 <span className="text-xs text-[#999] line-through">{deal.originalPrice}</span>
@@ -85,11 +85,11 @@ export function QuickDealBanner() {
                 <div className="mt-1">
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#f0f0f0]">
                     <div
-                      className="h-full rounded-full bg-coupang-red transition-all"
+                      className="h-full rounded-full bg-primary transition-all"
                       style={{ width: `${deal.soldPercent}%` }}
                     />
                   </div>
-                  <span className="mt-0.5 text-[10px] text-coupang-red font-medium">
+                  <span className="mt-0.5 text-[10px] text-primary font-medium">
                     {deal.soldPercent}% claimed
                   </span>
                 </div>

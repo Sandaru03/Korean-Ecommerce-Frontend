@@ -37,7 +37,7 @@ function OliveCard({ p }) {
                     onClick={(e) => { e.preventDefault(); setWished(w => !w) }}
                     className="absolute bottom-2 right-2 h-8 w-8 flex items-center justify-center rounded-full bg-white shadow-sm hover:scale-110 transition-transform"
                 >
-                    <Heart className={`h-4 w-4 ${wished ? "fill-[#ff1268] text-[#ff1268]" : "text-[#999]"}`} strokeWidth={1.5} />
+                    <Heart className={`h-4 w-4 ${wished ? "fill-primary text-primary" : "text-[#999]"}`} strokeWidth={1.5} />
                 </button>
             </div>
             <Link to={`/product/${p.id}`} className="flex flex-col flex-1">
@@ -49,7 +49,7 @@ function OliveCard({ p }) {
                     </span>
                 </div>
                 <div className="flex gap-1 mt-2.5 flex-wrap">
-                    <span className="bg-[#ffebf0] text-[#ff1268] text-[10px] font-bold px-1.5 py-0.5 rounded-[3px]">Today Delivery</span>
+                    <span className="bg-accent/50 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-[3px]">Today Delivery</span>
                 </div>
             </Link>
         </div>
@@ -109,7 +109,7 @@ export default function HomePage() {
     const activeTopicsWithProducts = topics.filter(t => t.active && t.products?.length > 0)
 
     return (
-        <div className="min-h-screen bg-white font-sans selection:bg-[#ff1268] selection:text-white pb-20">
+        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white pb-20">
             <Header />
 
             {/* Hero Banner */}
@@ -126,10 +126,10 @@ export default function HomePage() {
                                 <div className="w-[64px] h-[64px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-[#eaeaea] bg-[#f8f8f8] shrink-0">
                                     {cat.image
                                         ? <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
-                                        : <div className="w-full h-full bg-gradient-to-br from-[#ffebf0] to-[#ffe0ea]" />
+                                        : <div className="w-full h-full bg-gradient-to-br from-accent to-accent/50" />
                                     }
                                 </div>
-                                <span className="text-[12px] md:text-[13px] text-[#333] font-medium text-center leading-tight group-hover:text-[#ff1268] transition-colors">{cat.name}</span>
+                                <span className="text-[12px] md:text-[13px] text-[#333] font-medium text-center leading-tight group-hover:text-primary transition-colors">{cat.name}</span>
                             </Link>
                         ))}
                     </div>
@@ -140,7 +140,7 @@ export default function HomePage() {
             <div className="mx-auto max-w-[1040px] px-4 space-y-4">
                 {topicsLoading ? (
                     <div className="flex justify-center py-20">
-                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#ff1268]" />
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
                     </div>
                 ) : activeTopicsWithProducts.length > 0 ? (
                     activeTopicsWithProducts.map(topic => (

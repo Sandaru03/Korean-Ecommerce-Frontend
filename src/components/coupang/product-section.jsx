@@ -38,7 +38,7 @@ export function ProductSection({
           {showViewAll && (
             <a
               href="#"
-              className="flex items-center gap-0.5 text-sm text-[#666] hover:text-coupang-blue transition-colors"
+              className="flex items-center gap-0.5 text-sm text-[#666] hover:text-primary transition-colors"
             >
               View All
               <ChevronRight className="h-4 w-4" />

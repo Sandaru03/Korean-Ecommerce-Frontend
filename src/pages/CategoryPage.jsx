@@ -105,7 +105,7 @@ function ListingCard({ product }) {
 function CategoryHeroBanner({ category, products }) {
     if (!products || !products.length) return null
     return (
-        <div className="w-full bg-[#f8f6f4] rounded-xl overflow-hidden flex h-[260px] mb-12 relative cursor-pointer group border border-[#eee]">
+        <div className="w-full bg-accent rounded-xl overflow-hidden flex h-[260px] mb-12 relative cursor-pointer group border border-[#eee]">
             <div className="flex-1 px-12 py-10 flex flex-col justify-center relative z-10">
                 <span className="text-[12px] text-[#666] font-bold mb-3 tracking-widest uppercase">{category.name}</span>
                 <h2 className="text-[28px] font-black text-[#111] leading-[1.2] mb-4">
@@ -140,12 +140,12 @@ function TopPills({ subcategories, currentPath, onNavigate }) {
                         onClick={() => onNavigate(sub.name)}
                         className="flex flex-col items-center gap-3 group"
                     >
-                        <div className={`w-[96px] h-[96px] rounded-full overflow-hidden border-[3px] transition-all duration-300 border-transparent group-hover:border-[#ff1268]`}>
+                        <div className={`w-[96px] h-[96px] rounded-full overflow-hidden border-[3px] transition-all duration-300 border-transparent hover:ring-2 hover:ring-primary hover:ring-offset-2`}>
                             <div className="w-full h-full bg-[#f8f8f8]">
                                 <img src={sub.image || "https://picsum.photos/seed/cat/200/200"} alt={sub.name} className="w-full h-full object-cover flex shrink-0 group-hover:scale-110 transition-transform duration-500" />
                             </div>
                         </div>
-                        <span className={`text-[13px] text-[#666] font-medium group-hover:text-[#ff1268] group-hover:font-bold transition-all`}>{sub.name}</span>
+                        <span className={`text-[13px] text-[#666] font-medium group-hover:text-primary group-hover:font-bold transition-all`}>{sub.name}</span>
                     </button>
                 )
             })}
@@ -278,7 +278,7 @@ export default function CategoryPage() {
                         <div className="mb-6">
                             <button 
                                 onClick={() => handleGoBack(-1)}
-                                className={`text-left w-full py-2 text-[14px] transition-colors ${currentPath.length === 0 ? 'font-bold text-[#ff1268]' : 'text-[#666] hover:text-[#111]'}`}
+                                className={`text-left w-full py-2 text-[14px] transition-colors ${currentPath.length === 0 ? 'text-primary font-semibold' : 'text-[#666] hover:text-[#111]'}`}
                             >
                                 All {categoryData.name}
                             </button>
@@ -286,7 +286,7 @@ export default function CategoryPage() {
                                 <button 
                                     key={i}
                                     onClick={() => handleGoBack(i)}
-                                    className={`text-left w-full pl-3 py-2 text-[14px] border-l-2 ml-1 transition-colors ${i === currentPath.length - 1 ? 'font-bold border-[#ff1268] text-[#ff1268]' : 'border-gray-100 text-[#666] hover:text-[#111]'}`}
+                                    className={`text-left w-full pl-3 py-2 text-[14px] border-l-2 ml-1 transition-colors ${i === currentPath.length - 1 ? 'border-primary text-primary font-semibold' : 'border-gray-100 text-[#666] hover:text-[#111]'}`}
                                 >
                                     {name}
                                 </button>
@@ -304,7 +304,7 @@ export default function CategoryPage() {
                             {currentPath.map((name, i) => (
                                 <span key={i} className="flex items-center gap-2">
                                     <ChevronRight className="h-3 w-3" />
-                                    <button onClick={() => handleGoBack(i)} className={`uppercase ${i === currentPath.length - 1 ? 'text-[#ff1268]' : 'hover:text-[#111]'}`}>
+                                    <button onClick={() => handleGoBack(i)} className={`uppercase ${i === currentPath.length - 1 ? 'text-primary font-semibold' : 'hover:text-[#111]'}`}>
                                         {name}
                                     </button>
                                 </span>

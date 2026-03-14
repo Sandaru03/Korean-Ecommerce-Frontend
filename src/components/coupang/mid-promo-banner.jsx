@@ -4,10 +4,10 @@ const banners = [
   {
     title: "Fast Delivery",
     desc: "Order now, delivered by dawn!",
-    bgColor: "bg-[#e8f0fe]",
-    textColor: "text-[#1a56db]",
+    bgColor: "bg-accent",
+    textColor: "text-primary",
     icon: Rocket,
-    iconColor: "#346aff",
+    iconColor: "#C31D23",
   },
   {
     title: "Fresh Foods",

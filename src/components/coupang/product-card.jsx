@@ -28,7 +28,7 @@ export function ProductCard({
           }}
         />
         {badge && (
-          <span className="absolute left-2 top-2 rounded bg-coupang-red px-1.5 py-0.5 text-[10px] font-bold text-white">
+          <span className="absolute left-2 top-2 rounded bg-primary px-1.5 py-0.5 text-[10px] font-bold text-white">
             {badge}
           </span>
         )}
@@ -36,14 +36,14 @@ export function ProductCard({
 
       {/* Content */}
       <div className="flex flex-1 flex-col gap-1 p-3">
-        <h3 className="line-clamp-2 text-[13px] text-[#333] leading-snug group-hover:text-coupang-blue transition-colors">
+        <h3 className="line-clamp-2 text-[13px] text-[#333] leading-snug group-hover:text-primary transition-colors">
           {name}
         </h3>
 
         {/* Price */}
         <div className="mt-auto flex items-baseline gap-1.5">
           {discount && (
-            <span className="text-base font-bold text-coupang-red">{discount}</span>
+            <span className="text-base font-bold text-primary">{discount}</span>
           )}
           <span className="text-base font-bold text-[#111]">{price}</span>
         </div>
@@ -74,7 +74,7 @@ export function ProductCard({
         {/* Delivery Tags */}
         <div className="mt-1 flex flex-wrap items-center gap-1">
           {rocketDelivery && (
-            <span className="inline-flex items-center gap-0.5 rounded bg-[#346aff]/10 px-1.5 py-0.5 text-[10px] font-medium text-coupang-blue">
+            <span className="inline-flex items-center gap-0.5 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
               <Rocket className="h-2.5 w-2.5" />
               Rocket
             </span>

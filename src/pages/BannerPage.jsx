@@ -181,7 +181,7 @@ function StarRating({ rating, reviews }) {
     <div className="flex items-center gap-1 mt-1">
       <div className="flex">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Star key={i} className={`h-3 w-3 ${i < Math.floor(rating) ? "fill-[#ff1268] text-[#ff1268]" : "fill-gray-200 text-gray-200"}`} />
+          <Star key={i} className={`h-3 w-3 ${i < Math.floor(rating) ? "fill-primary text-primary" : "fill-gray-200 text-gray-200"}`} />
         ))}
       </div>
       <span className="text-[11px] text-[#888]">({reviews?.toLocaleString()})</span>
@@ -201,7 +201,7 @@ function ProductCard({ p }) {
           onClick={() => setWished(w => !w)}
           className="absolute top-2 right-2 h-8 w-8 flex items-center justify-center rounded-full bg-white shadow-md"
         >
-          <Heart className={`h-4 w-4 ${wished ? "fill-[#ff1268] text-[#ff1268]" : "text-[#bbb]"}`} strokeWidth={1.5} />
+          <Heart className={`h-4 w-4 ${wished ? "fill-primary text-primary" : "text-[#bbb]"}`} strokeWidth={1.5} />
         </button>
       </div>
       <div className="p-4">
@@ -210,7 +210,7 @@ function ProductCard({ p }) {
         <p className="text-[17px] font-black text-[#111] mt-2">LKR {p.price.toLocaleString("en-IN")}</p>
         <button
           onClick={() => { addToCart(p, 1); toast.success("Added to cart!", { icon: "🛒" }) }}
-          className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-[#ff1268] hover:bg-[#e00d59] text-white text-[12px] font-bold rounded-lg transition-colors"
+          className="mt-3 w-full flex items-center justify-center gap-2 py-2 bg-primary hover:bg-red-800 text-white text-[12px] font-bold rounded-lg transition-colors"
         >
           <ShoppingCart className="h-3.5 w-3.5" /> Add to Cart
         </button>
@@ -225,7 +225,7 @@ function SubTopicSection({ section }) {
       {/* Section header */}
       <div className="flex items-center gap-4 mb-3">
         <div>
-          <span className="text-[11px] font-bold text-[#ff1268] bg-[#ffebf0] px-2 py-0.5 rounded-full">{section.badge}</span>
+          <span className="text-[11px] font-bold text-primary bg-accent/50 px-2 py-0.5 rounded-full">{section.badge}</span>
           <h2 className="text-[24px] font-black text-[#111] mt-1">{section.title}</h2>
           <p className="text-[15px] text-[#666] mt-1 max-w-[600px]">{section.description}</p>
         </div>
@@ -251,7 +251,7 @@ export default function BannerPage() {
         <Header />
         <div className="flex flex-col items-center justify-center py-40 gap-4">
           <p className="text-[22px] font-bold text-[#aaa]">Banner not found</p>
-          <Link to="/" className="text-[#ff1268] hover:underline">← Back to Home</Link>
+          <Link to="/" className="text-primary hover:underline">← Back to Home</Link>
         </div>
         <Footer />
       </div>
@@ -259,7 +259,7 @@ export default function BannerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans">
+    <div className="min-h-screen bg-bg-main font-sans">
       <Header />
 
       {/* ── Full-width Banner Hero ── */}
@@ -288,7 +288,7 @@ export default function BannerPage() {
         ))}
 
         {/* ── Closing Info Block ── */}
-        <div className="bg-[#111] rounded-2xl p-8 md:p-12 text-white">
+        <div className="bg-neutral-dark rounded-2xl p-8 md:p-12 text-white">
           <h2 className="text-[24px] font-black mb-4">{banner.outroTitle}</h2>
           <p className="text-[15px] text-white/80 leading-relaxed mb-6 max-w-[720px]">{banner.outroText}</p>
           <div className="bg-white/10 rounded-xl p-4 border border-white/20">
@@ -296,7 +296,7 @@ export default function BannerPage() {
           </div>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 mt-8 bg-[#ff1268] hover:bg-[#e00d59] text-white font-bold px-8 py-3 rounded-full transition-colors"
+            className="inline-flex items-center gap-2 mt-8 bg-primary hover:bg-red-800 text-white font-bold px-8 py-3 rounded-full transition-colors"
           >
             Continue Shopping <ChevronRight className="h-4 w-4" />
           </Link>
