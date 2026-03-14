@@ -16,46 +16,9 @@ function resolveImage(p) {
     return p.image || null
 }
 
-// ── Single product card used inside topic strips ────────────────
-function OliveCard({ p }) {
-    const [wished, setWished] = useState(false)
-    const imageUrl = resolveImage(p)
-    const rawPrice = Number(p.price) || 0
-    const brandName = p.name ? p.name.split(" ")[0] : "Brand"
+import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 
-    return (
-        <div className="group flex flex-col relative w-[220px] shrink-0">
-            <div className="relative aspect-square overflow-hidden bg-[#f8f8f8] mb-3 border border-[#eee] rounded-[4px]">
-                <Link to={`/product/${p.id}`}>
-                    <img
-                        src={imageUrl}
-                        alt={p.name}
-                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                    />
-                </Link>
-                <button
-                    onClick={(e) => { e.preventDefault(); setWished(w => !w) }}
-                    className="absolute bottom-2 right-2 h-8 w-8 flex items-center justify-center rounded-full bg-white shadow-sm hover:scale-110 transition-transform"
-                >
-                    <Heart className={`h-4 w-4 ${wished ? "fill-primary text-primary" : "text-[#999]"}`} strokeWidth={1.5} />
-                </button>
-            </div>
-            <Link to={`/product/${p.id}`} className="flex flex-col flex-1">
-                <p className="text-[12px] font-bold text-[#111] mb-0.5">{brandName}</p>
-                <p className="text-[13px] text-[#333] line-clamp-2 leading-snug mb-2">{p.name}</p>
-                <div className="flex items-baseline gap-1.5 mt-auto">
-                    <span className="text-[17px] font-black text-[#111] leading-none">
-                        LKR {rawPrice.toLocaleString("en-IN")}
-                    </span>
-                </div>
-                <div className="flex gap-1 mt-2.5 flex-wrap">
-                    <span className="bg-accent/50 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-[3px]">Today Delivery</span>
-                </div>
-            </Link>
-        </div>
-    )
-}
+// Removed OliveCard local definition as it's now shared as CommonProductCard
 
 // ── Horizontal scrolling topic strip ───────────────────────────
 function TopicStrip({ title, products }) {
@@ -66,8 +29,8 @@ function TopicStrip({ title, products }) {
             </div>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 snap-x">
                 {products.slice(0, 10).map(p => (
-                    <div key={p.id} className="snap-start">
-                        <OliveCard p={p} />
+                    <div key={p.id} className="snap-start w-[240px] shrink-0">
+                        <CommonProductCard product={p} />
                     </div>
                 ))}
             </div>

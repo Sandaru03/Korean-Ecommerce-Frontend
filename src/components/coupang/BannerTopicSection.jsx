@@ -2,54 +2,9 @@ import { Link } from "react-router-dom"
 import { ChevronRight, Heart } from "lucide-react"
 import { useState } from "react"
 
-function resolveImage(p) {
-    let imgs = p.images
-    if (typeof imgs === "string") {
-        try { imgs = JSON.parse(imgs) } catch { imgs = [p.image || ""] }
-    }
-    if (Array.isArray(imgs) && imgs.length > 0) return imgs[0]
-    return p.image || null
-}
+import { CommonProductCard } from "./CommonProductCard"
 
-function GridCard({ p }) {
-    const [wished, setWished] = useState(false)
-    const imageUrl = resolveImage(p)
-    const rawPrice = Number(p.price) || 0
-    const brandName = p.name ? p.name.split(" ")[0] : "Brand"
-
-    return (
-        <div className="group flex flex-col relative w-full border border-[#f0f0f0] rounded-sm p-2 hover:shadow-sm transition-shadow">
-            <div className="relative aspect-square overflow-hidden bg-[#f8f8f8] mb-2 rounded-[2px]">
-                <Link to={`/product/${p.id}`}>
-                    <img
-                        src={imageUrl}
-                        alt={p.name}
-                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                    />
-                </Link>
-                <button
-                    onClick={(e) => { e.preventDefault(); setWished(w => !w) }}
-                    className="absolute bottom-1 right-1 h-6 w-6 flex items-center justify-center rounded-full bg-white/80 shadow-sm hover:scale-110 transition-transform"
-                >
-                    <Heart className={`h-3 w-3 ${wished ? "fill-primary text-primary" : "text-[#ccc]"}`} strokeWidth={1.5} />
-                </button>
-            </div>
-            <Link to={`/product/${p.id}`} className="flex flex-col flex-1">
-                <p className="text-[10px] font-bold text-[#999] mb-0.5">{brandName}</p>
-                <p className="text-[12px] text-[#333] line-clamp-2 leading-tight mb-1 h-[32px]">{p.name}</p>
-                <div className="flex items-baseline gap-1 mt-auto">
-                    <span className="text-[14px] font-black text-[#111]">
-                        Rs. {rawPrice.toLocaleString("en-US")}
-                    </span>
-                </div>
-                <div className="flex gap-1 mt-1.5 items-center">
-                   <img src="https://image6.coupangcdn.com/image/badges/rocket/rocket_logo.png" alt="rocket" className="h-2.5 object-contain" />
-                </div>
-            </Link>
-        </div>
-    )
-}
+// Removed local resolveImage and GridCard as they're now shared as CommonProductCard
 
 export function BannerTopicSection({ title, products, bannerImage }) {
     // Show only 6 products in a 3x2 grid
@@ -75,7 +30,7 @@ export function BannerTopicSection({ title, products, bannerImage }) {
                     
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                         {displayProducts.map(p => (
-                            <GridCard key={p.id} p={p} />
+                            <CommonProductCard key={p.id} product={p} />
                         ))}
                     </div>
                 </div>
