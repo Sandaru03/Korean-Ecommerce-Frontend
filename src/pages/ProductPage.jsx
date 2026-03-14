@@ -11,41 +11,7 @@ import axios from "axios"
 import { useCart } from "@/context/CartContext"
 import toast from "react-hot-toast"
 
-// Sample extended details keyed by product id (enriches the base product data)
-const DETAILS = {
-    default: {
-        description: "Experience the best of Korean beauty and wellness. This premium product is crafted with high-quality ingredients, dermatologist-tested, and perfect for everyday use. Free from harmful chemicals and suitable for all skin types.",
-        highlights: [
-            "Dermatologist tested & approved",
-            "Free from parabens, sulfates & artificial fragrances",
-            "Cruelty-free & vegan formulation",
-            "Suitable for all skin types",
-            "Made in Korea — authentic K-beauty",
-        ],
-        howToUse: "Apply a small amount to clean skin and massage gently until fully absorbed. Use morning and/or evening as part of your skincare routine. Follow with sunscreen during the day.",
-        ingredients: "Water, Glycerin, Niacinamide, Hyaluronic Acid, Centella Asiatica Extract, Allantoin, Panthenol, Tocopherol, Fragrance-free formula.",
-        volume: ["30ml", "50ml", "100ml"],
-        shades: [],
-    },
-}
-
-function getDetails(id) {
-    const defaultDetails = {
-        description: "Experience the best of Korean beauty and wellness. This premium product is crafted with high-quality ingredients, dermatologist-tested, and perfect for everyday use. Free from harmful chemicals and suitable for all skin types.",
-        highlights: [
-            "Dermatologist tested & approved",
-            "Free from parabens, sulfates & artificial fragrances",
-            "Cruelty-free & vegan formulation",
-            "Suitable for all skin types",
-            "Made in Korea — authentic K-beauty",
-        ],
-        howToUse: "Apply a small amount to clean skin and massage gently until fully absorbed. Use morning and/or evening as part of your skincare routine. Follow with sunscreen during the day.",
-        ingredients: "Water, Glycerin, Niacinamide, Hyaluronic Acid, Centella Asiatica Extract, Allantoin, Panthenol, Tocopherol, Fragrance-free formula.",
-        volume: ["30ml", "50ml", "100ml"],
-        shades: [],
-    }
-    return DETAILS[id] || defaultDetails
-}
+// Product details are now fetched directly from the database description field.
 
 function StarBar({ rating, reviews }) {
     return (
@@ -70,11 +36,9 @@ export default function ProductPage() {
 
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
-    const details = getDetails(id)
 
     const [wished, setWished] = useState(false)
     const [selectedImg, setSelectedImg] = useState(0)
-    const [activeTab, setActiveTab] = useState("description")
 
     // Options selector state
     const [showOptions, setShowOptions] = useState(false)
@@ -308,63 +272,24 @@ export default function ProductPage() {
                     </div>
                 </div>
 
-                {/* ── Tabs: Description / Reviews / Q&A ── */}
+                {/* ── Product Description Section ── */}
                 <div className="mt-20 border-t border-[#eee]">
-                    {/* Sticky Tab headers */}
-                    <div className="flex sticky top-[10px] bg-white z-20 border-b border-[#111] shadow-sm">
-                        {["Description", "Purchase Info", "Reviews", "Q&A"].map((tab, idx) => {
-                            const tabKeys = ["description", "info", "reviews", "qa"];
-                            const current = tabKeys[idx];
-                            return (
-                                <button
-                                    key={current}
-                                    onClick={() => setActiveTab(current)}
-                                    className={`flex-1 py-4 text-[15px] font-bold transition-colors ${activeTab === current ? "text-[#111] border-b-[3px] border-[#111] -mb-[1px]" : "text-[#777] hover:text-[#111]"}`}
-                                >
-                                    {tab} {current === 'reviews' && <span className="text-[#999] font-normal ml-0.5">({product.reviews?.toLocaleString()})</span>}
-                                </button>
-                            )
-                        })}
+                    <div className="flex bg-white z-20 border-b border-[#111]">
+                        <div className="py-4 px-8 text-[15px] font-bold text-[#111] border-b-[3px] border-[#111] -mb-[1px]">
+                            Product Description
+                        </div>
                     </div>
 
-                    {/* Tab content area */}
-                    <div className="py-16 max-w-[800px] mx-auto text-center">
-                        {activeTab === "description" && (
-                            <div className="space-y-8">
-                                <h3 className="text-[24px] font-black text-[#111] leading-snug tracking-tight mb-8">
-                                    {product.name}
-                                </h3>
-                                <p className="text-[15px] text-[#555] leading-[1.8] text-left">
-                                    {details.description}
-                                </p>
-                                <div className="text-left bg-accent/50 p-8 mt-8 border border-[#eee]">
-                                    <h4 className="font-bold text-[#111] mb-4 text-[16px]">Check Points</h4>
-                                    <ul className="space-y-3">
-                                        {details.highlights?.map(h => (
-                                            <li key={h} className="flex items-start gap-2 text-[14px] text-[#555]">
-                                                <span className="text-primary font-bold mt-0.5">✓</span>
-                                                {h}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-
-                                <div className="mt-12 text-left">
-                                    <h4 className="font-bold text-[#111] mb-3 text-[16px]">How to Use</h4>
-                                    <p className="text-[14px] text-[#666] leading-[1.8]">{details.howToUse}</p>
-                                </div>
-
-                                <div className="mt-12 text-left">
-                                    <h4 className="font-bold text-[#111] mb-3 text-[16px]">Full Ingredients</h4>
-                                    <p className="text-[13px] text-[#888] leading-[1.8] font-mono p-4 bg-[#fcfcfc] border border-[#f0f0f0]">{details.ingredients}</p>
-                                </div>
+                    <div className="py-16 max-w-[800px] mx-auto">
+                        <div className="space-y-12">
+                            <h3 className="text-[24px] font-black text-[#111] leading-snug tracking-tight text-center">
+                                {product.name}
+                            </h3>
+                            
+                            <div className="text-[16px] text-[#555] leading-[1.8] whitespace-pre-line">
+                                {product.description}
                             </div>
-                        )}
-                        {activeTab !== "description" && (
-                            <div className="py-32 text-[#999]">
-                                <p className="text-[15px]">This content is being prepared.</p>
-                            </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             </div>

@@ -81,11 +81,7 @@ export function Header() {
       <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-4 py-3">
         {/* Logo */}
         <a href="/" className="shrink-0">
-          <svg width="210" height="32" viewBox="0 0 210 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <text x="0" y="26" fill="#C31D23" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="22" letterSpacing="-0.5">
-              Samee &amp; Sadu
-            </text>
-          </svg>
+          <img src="/logo.png" alt="Samee & Sadu" className="h-8 w-auto object-contain" />
         </a>
 
         {/* Search Bar */}

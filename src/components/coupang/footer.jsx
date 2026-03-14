@@ -10,8 +10,7 @@ export function Footer() {
             {/* Company Info */}
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-1 mb-4">
-                <Rocket className="h-5 w-5 text-primary" />
-                <span className="text-xl font-bold text-primary">Samee & Sandu</span>
+                <img src="/logo.png" alt="Samee & Sadu" className="h-6 w-auto object-contain" />
               </div>
               <p className="text-xs text-[#888] leading-relaxed">
                 Your one-stop shop for Korean Beauty and Health products. Delivering happiness to your doorstep.
