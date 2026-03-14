@@ -1,0 +1,74 @@
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(250, 249, 246, 0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  transition: opacity 0.5s ease-out;
+}
+
+.loader-content {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-split {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.logo-split img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Samee part (Left) */
+.samee {
+  clip-path: inset(0 50% 0 0);
+  transform: translateX(-100%);
+  animation: slideInLeft 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Sadu part (Right) */
+.sadu {
+  clip-path: inset(0 0 0 50%);
+  transform: translateX(100%);
+  animation: slideInRight 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.loader-container.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}

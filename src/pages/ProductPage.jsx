@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom"
 import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
 import {
-    Star, Rocket, ShoppingCart, Heart, ChevronRight,
+    Star, Rocket, ShoppingCart, ChevronRight,
     Shield, RotateCcw, Truck, PackageCheck,
     Minus, Plus, Share2, Grid3x3, Flame
 } from "lucide-react"
@@ -36,9 +36,6 @@ export default function ProductPage() {
 
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
-
-    const [wished, setWished] = useState(false)
-    const [selectedImg, setSelectedImg] = useState(0)
 
     // Options selector state
     const [showOptions, setShowOptions] = useState(false)
@@ -156,35 +153,12 @@ export default function ProductPage() {
                         {/* Main image */}
                         <div className="relative aspect-square w-full bg-[#f8f8f8] mb-4 overflow-hidden border border-[#eee]">
                             <img
-                                src={images[selectedImg]}
+                                src={images[0]}
                                 alt={product.name}
                                 className="h-full w-full object-cover transition-all duration-300"
                             />
-                            {/* Image Counter */}
-                            <div className="absolute bottom-4 right-4 bg-black/30 backdrop-blur-sm text-white text-[11px] font-bold px-3 py-1 rounded-full tracking-widest">
-                                {selectedImg + 1} | {images.length}
-                            </div>
                         </div>
 
-                        {/* Thumbnails + Compare Button */}
-                        <div className="flex gap-2.5 items-center">
-                            <button className="h-[64px] shrink-0 flex flex-col items-center justify-center border border-[#ddd] bg-[#fdfdfd] text-[#555] px-3 font-semibold text-[11px] hover:border-[#111] transition-colors gap-1">
-                                <Grid3x3 className="h-4 w-4" />
-                                색상비교
-                            </button>
-                            <div className="flex gap-2.5 overflow-x-auto scrollbar-hide">
-                                {images.map((img, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => setSelectedImg(i)}
-                                        className={`h-[64px] w-[64px] shrink-0 border relative transition-all ${i === selectedImg ? "border-[#111]" : "border-transparent hover:border-[#ddd]"}`}
-                                    >
-                                        <img src={img} alt={`view ${i + 1}`} className="h-full w-full object-cover" />
-                                        {i === selectedImg && <div className="absolute inset-0 ring-1 ring-inset ring-[#111]"></div>}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
                     </div>
 
                     {/* Right: Sticky Product info */}
@@ -197,9 +171,6 @@ export default function ProductPage() {
                             </Link>
                             <div className="flex gap-3">
                                 <button className="text-[#999] hover:text-[#111] transition-colors"><Share2 className="h-6 w-6" strokeWidth={1.5} /></button>
-                                <button onClick={() => setWished(w => !w)} className="transition-colors">
-                                    <Heart className={`h-6 w-6 ${wished ? "fill-[#ff1268] text-[#ff1268]" : "text-[#999] hover:text-[#111]"}`} strokeWidth={1.5} />
-                                </button>
                             </div>
                         </div>
 
@@ -247,15 +218,6 @@ export default function ProductPage() {
                         <hr className="border-[#eee] my-6" />
 
 
-                        {/* Total Checkout Area */}
-                        <div className="flex justify-between items-end mb-6 py-4 border-t-2 border-[#111]">
-                            <span className="text-[14px] font-semibold text-[#555]">Total Product Price</span>
-                            <div className="flex items-end gap-1">
-                                <span className="text-[14px] text-primary font-semibold mb-1">Total {selectedItems.reduce((acc, item) => acc + item.qty, 0)} Items</span>
-                                <span className="text-[16px] font-bold text-neutral-dark leading-none mb-1">Rs. </span>
-                                <span className="text-neutral-dark text-2xl font-bold leading-none ml-0">{formattedTotal}</span>
-                            </div>
-                        </div>
 
                         {/* Bottom Action Area */}
                         <button

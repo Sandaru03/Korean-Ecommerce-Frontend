@@ -1,10 +1,8 @@
-import { useState } from "react"
+// Product cards now focused on selection and purchase.
 import { Link } from "react-router-dom"
-import { Heart } from "lucide-react"
 
 /* eslint-disable react/prop-types */
 export function CommonProductCard({ product }) {
-    const [wished, setWished] = useState(false)
     const brandName = product.name ? product.name.split(" ")[0] : "Brand"
 
     // Robust image handling
@@ -36,12 +34,6 @@ export function CommonProductCard({ product }) {
                     className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                 />
-                <button
-                    onClick={(e) => { e.preventDefault(); setWished(w => !w); }}
-                    className="absolute top-2 right-2 z-10 flex items-center justify-center p-1"
-                >
-                    <Heart className={`h-[22px] w-[22px] ${wished ? "fill-primary text-primary" : "text-[#ccc] hover:text-[#999]"}`} strokeWidth={1.5} />
-                </button>
             </div>
 
             <div className="px-0.5 text-left">

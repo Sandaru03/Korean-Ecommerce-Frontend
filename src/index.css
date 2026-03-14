@@ -4,14 +4,14 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #f5f5f5;
+  --background: #FAF9F6;
   --foreground: #111111;
-  --card: #ffffff;
+  --card: #FAF9F6;
   --card-foreground: #111111;
-  --popover: #ffffff;
+  --popover: #FAF9F6;
   --popover-foreground: #111111;
   --primary: #346aff;
-  --primary-foreground: #ffffff;
+  --primary-foreground: #FAF9F6;
   --secondary: #f5f5f5;
   --secondary-foreground: #111111;
   --muted: #f0f0f0;
@@ -19,7 +19,7 @@
   --accent: #f0f0f0;
   --accent-foreground: #111111;
   --destructive: #e44d2e;
-  --destructive-foreground: #ffffff;
+  --destructive-foreground: #FAF9F6;
   --border: #e5e5e5;
   --input: #e5e5e5;
   --ring: #346aff;
@@ -86,7 +86,8 @@
   --color-accent: #fdf2f0;
   --color-neutral-dark: #2d2d2d;
   --color-neutral-muted: #757575;
-  --color-bg-main: #fafafa;
+  --color-bg-main: #FAF9F6;
+  --color-white: #FAF9F6;
   --color-coupang-blue: var(--coupang-blue);
   --color-coupang-red: var(--coupang-red);
   --color-coupang-gold: var(--coupang-gold);

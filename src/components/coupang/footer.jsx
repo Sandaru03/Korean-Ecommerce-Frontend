@@ -5,7 +5,7 @@ export function Footer() {
     <footer>
       {/* Main Footer */}
       <div className="bg-white border-t border-[#e5e5e5]">
-        <div className="mx-auto max-w-[1280px] px-4 py-8">
+        <div className="mx-auto max-w-[1040px] px-4 py-8">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
             {/* Company Info */}
             <div className="col-span-2 md:col-span-1">
@@ -66,7 +66,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-[#f0f0f0]">
-          <div className="mx-auto flex max-w-[1280px] items-center justify-between px-4 py-4">
+          <div className="mx-auto flex max-w-[1040px] items-center justify-between px-4 py-4">
             <p className="text-[11px] text-[#aaa]">
               {"Samee and Sandu Corp. | Business Reg. No: 123-45-67890"}
             </p>

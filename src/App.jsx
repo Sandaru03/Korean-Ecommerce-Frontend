@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -11,10 +12,17 @@ import SuperCategoryPage from "./pages/SuperCategoryPage";
 import ProductPage from "./pages/ProductPage";
 import BannerPage from "./pages/BannerPage";
 import { ScrollToTop } from "./components/ScrollToTop";
+import Loader from "./components/common/Loader";
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  // You can also add logic here to hide the loader once specific data is fetched
+  // For now, it's handled by the Loader's internal timer and this state.
+
   return (
     <>
+      {isLoading && <Loader onFinished={() => setIsLoading(false)} />}
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />

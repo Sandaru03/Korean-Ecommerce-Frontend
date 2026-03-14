@@ -78,7 +78,7 @@ export function Header() {
   return (
     <header className="relative z-50 bg-white shadow-sm">
       {/* ── Main Header Row ── */}
-      <div className="mx-auto flex max-w-[1280px] items-center gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-[1040px] items-center gap-4 px-4 py-3">
         {/* Logo */}
         <a href="/" className="shrink-0">
           <img src="/logo.png" alt="Samee & Sadu" className="h-8 w-auto object-contain" />
@@ -161,7 +161,7 @@ export function Header() {
 
       {/* ── Top Navigation Bar (Unified) ── */}
       <div className="border-b border-[#eee] bg-white relative z-50 hidden md:block">
-        <div className="mx-auto max-w-[1280px] px-4 flex">
+        <div className="mx-auto max-w-[1040px] px-4 flex">
           {/* Categories Hover Trigger */}
           <div className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group" ref={catMenuRef}>
             <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2 group-hover:text-primary transition-colors">
