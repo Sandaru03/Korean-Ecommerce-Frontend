@@ -244,14 +244,7 @@ export default function ProductPage() {
                             {product.name}
                         </h1>
 
-                        {/* Rating & Viewers */}
-                        <div className="flex items-center gap-3 mb-6">
-                            <StarBar rating={Number(product.rating || 0)} reviews={Number(product.reviews || 0)} />
-                            <div className="w-[1px] h-3 bg-[#ddd]"></div>
-                            <span className="text-[13px] text-[#ff1268] font-semibold flex items-center gap-1">
-                                <Flame className="h-3.5 w-3.5" /> 1,204명이 보고 있어요
-                            </span>
-                        </div>
+
 
                         {/* Price Area */}
                         <div className="flex flex-col mb-6">
@@ -271,11 +264,7 @@ export default function ProductPage() {
 
                         {/* Badges */}
                         <div className="flex gap-1.5 mb-6 flex-wrap">
-                            {product.rocketDelivery && (
-                                <span className="bg-[#ffebf0] text-[#ff1268] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
-                                    Today's Delivery
-                                </span>
-                            )}
+
                             <span className="bg-[#f0f0f0] text-[#555] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
                                 BEST
                             </span>

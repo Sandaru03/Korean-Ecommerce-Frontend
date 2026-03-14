@@ -85,11 +85,7 @@ function ListingCard({ product }) {
                 </div>
 
                 <div className="flex gap-1.5 mt-3 flex-wrap">
-                    {product.rocketDelivery && (
-                        <span className="bg-[#f0f0f0] text-[#555] text-[10px] font-semibold px-1.5 py-[2px] rounded-[3px]">
-                            Today's Dream
-                        </span>
-                    )}
+
                     {product.freeShipping && (
                         <span className="bg-[#fff0f0] text-[#ff4040] text-[10px] font-semibold px-1.5 py-[2px] rounded-[3px]">
                             Sale

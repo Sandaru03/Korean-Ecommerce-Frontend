@@ -300,24 +300,24 @@ export default function CartPage() {
                     {/* Order Summary Sidebar */}
                     <div className="w-full lg:w-[320px] shrink-0 sticky top-6 space-y-4">
                         {/* Delivery Fee Notice */}
-                        {totalItems > 3 && (
+                        {totalItems >= 3 && (
                             <div className="bg-[#fff5f5] border border-[#ffc8c8] rounded-xl p-4 flex gap-3 items-start">
                                 <AlertCircle className="h-5 w-5 text-[#e2211c] shrink-0 mt-0.5" />
                                 <div>
                                     <p className="text-[13px] font-bold text-[#e2211c]">Delivery Fee Applied</p>
                                     <p className="text-[12px] text-[#e2211c]/80 mt-0.5">
-                                        Orders with more than 3 items include a Rs. 500 delivery charge.
+                                        Orders with 3 or more items include a Rs. 500 delivery charge.
                                     </p>
                                 </div>
                             </div>
                         )}
-                        {totalItems <= 3 && (
+                        {totalItems < 3 && (
                             <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-4 flex gap-3 items-start">
                                 <AlertCircle className="h-5 w-5 text-[#16a34a] shrink-0 mt-0.5" />
                                 <div>
                                     <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery!</p>
                                     <p className="text-[12px] text-[#16a34a]/80 mt-0.5">
-                                        Orders of 3 items or fewer ship free. Add more than 3 items total for a Rs. 500 delivery fee.
+                                        Orders under 3 items ship free. 3 or more items adds a Rs. 500 delivery fee.
                                     </p>
                                 </div>
                             </div>
