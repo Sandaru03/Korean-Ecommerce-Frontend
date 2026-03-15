@@ -21,10 +21,16 @@ const Loader = ({ onFinished }) => {
   return (
     <div className="loader-container">
       <div className="loader-content">
-        <div className="logo-split samee">
+        <div className="logo-part icon">
+          <img src="/logo.png" alt="Logo Icon" />
+        </div>
+        <div className="logo-part samee">
           <img src="/logo.png" alt="Samee" />
         </div>
-        <div className="logo-split sadu">
+        <div className="logo-part and">
+          <img src="/logo.png" alt="And" />
+        </div>
+        <div className="logo-part sadu">
           <img src="/logo.png" alt="Sadu" />
         </div>
       </div>

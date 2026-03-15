@@ -22,7 +22,7 @@
   align-items: center;
 }
 
-.logo-split {
+.logo-part {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -30,24 +30,56 @@
   transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-.logo-split img {
+.logo-part img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-/* Samee part (Left) */
+/* Icon part (Top) */
+.icon {
+  clip-path: inset(0 0 16% 0); /* Keeps the top part */
+  transform: translateY(-100%);
+  animation: slideInTop 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Samee part (Bottom Left) */
 .samee {
-  clip-path: inset(0 50% 0 0);
+  clip-path: inset(84% 63% 0 0); /* Isolates "SAMEE" */
   transform: translateX(-100%);
   animation: slideInLeft 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-/* Sadu part (Right) */
+/* And part (Bottom Middle) */
+.and {
+  clip-path: inset(84% 40% 0 37%); /* Isolates "AND" */
+  transform: translateY(100%);
+  animation: slideInBottom 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Sadu part (Bottom Right) */
 .sadu {
-  clip-path: inset(0 0 0 50%);
+  clip-path: inset(84% 0 0 60%); /* Isolates "SADU" */
   transform: translateX(100%);
   animation: slideInRight 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideInLeft {

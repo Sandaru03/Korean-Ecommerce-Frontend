@@ -15,7 +15,7 @@ const BANNER_DATA = {
     accent: "New Season Drops",
     color: "from-[#fff0f4] to-[#ffe0ea]",
     introTitle: "Your Glow Starts Here",
-    introText: `Korean skincare is more than a routine — it's a ritual. Rooted in centuries of beauty tradition, K-beauty combines gentle, science-backed ingredients with luxurious textures to deliver visible, lasting results. Whether you're building your first routine or refining a multi-step regimen, our curated collection has everything you need. Start with a gentle cleanser, layer on your essences and serums, and seal it all in with a deeply nourishing moisturiser. Your skin will thank you.`,
+    introText: `ලංකාවේ පවතින රස්නය, අධික දාඩිය සහ දූවිල්ල නිසා ඇතිවන Acne (කුරුලෑ) පාලනය කරන්න කොරියානු නිෂ්පාදන ඉතාමත් සාර්ථකයි. විශේෂයෙන්ම කුරුලෑ නිසා ඇතිවන තුවාල සුව කිරීමටත්, ලප මැකීමටත් (Acne Scars) මේවා උදව් වෙනවා.`,
     sections: [
       {
         id: "s1",
@@ -54,8 +54,10 @@ const BANNER_DATA = {
         ],
       },
     ],
-    outroTitle: "Build Your Perfect Routine",
-    outroText: `The secret to Korean skincare isn't having the most steps — it's layering the right products in the right order, from lightest to heaviest. Listen to your skin: if it feels tight, reach for more hydration. If it looks dull, add a brightening step. Consistency is everything. Most results take 4–8 weeks to show, so stick with it and enjoy the ritual. Remember to always patch test new products, and when in doubt, less is more. Shop our full collection and build a routine that's uniquely yours.`,
+    outroTitle: "⚠️ වැදගත් උපදෙස්:",
+    outroText: `Double Cleansing: ඔබ සන්ස්ක්රීන් හෝ මේකප් පාවිච්චි කරන්නේ නම්, රාත්රියට මුලින්ම Anua Cleansing Oil වැනි එකකින් මුහුණ පිරිසිදු කර පසුව ෆේස් වොෂ් පාවිච්චි කරන්න.
+
+අභ්යන්තර පෝෂණය: කුරුලෑ නිතරම එන්නේ නම්, සම ඇතුළතින් සුවපත් කිරීමට Ever Collagen වැනි කොලජන් එකක් පාවිච්චි කිරීමත් ඉතා ගුණදායකයි.`,
     outroTip: "💡 Pro Tip: Apply products from thinnest to thickest consistency and wait 30 seconds between layers for maximum absorption.",
   },
   2: {
@@ -291,15 +293,6 @@ export default function BannerPage() {
         <div className="bg-neutral-dark rounded-2xl p-8 md:p-12 text-white">
           <h2 className="text-[24px] font-black mb-4">{banner.outroTitle}</h2>
           <p className="text-[15px] text-white/80 leading-relaxed mb-6 max-w-[720px]">{banner.outroText}</p>
-          <div className="bg-white/10 rounded-xl p-4 border border-white/20">
-            <p className="text-[14px] text-white/90 leading-relaxed">{banner.outroTip}</p>
-          </div>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 mt-8 bg-primary hover:bg-red-800 text-white font-bold px-8 py-3 rounded-full transition-colors"
-          >
-            Continue Shopping <ChevronRight className="h-4 w-4" />
-          </Link>
         </div>
 
       </div>
