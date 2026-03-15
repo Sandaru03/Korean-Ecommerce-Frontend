@@ -9,7 +9,7 @@ const banners = [
     id: 1,
     title: "Premium Skincare Collection",
     subtitle: "Hydrate and glow with our curated selections",
-    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=1200&auto=format&fit=crop",
+    image: "https://res.cloudinary.com/dchwarwua/image/upload/v1773578772/upscale_bmtvrk.png",
     accent: "New Season Drops",
     href: "/banner/1",
   },
@@ -78,26 +78,6 @@ export function HeroBanner() {
                 alt={slide.title}
                 className="absolute inset-0 w-full h-full object-cover z-0"
               />
-              <div className="absolute inset-0 bg-black/40 z-0"></div>
-              
-              <div className="relative z-10 w-full px-8 md:px-16 flex items-center h-full">
-                <div className="w-full md:w-1/2">
-                  <span className={`text-[12px] md:text-[14px] font-bold text-white opacity-80 mb-2 block tracking-wider uppercase`}>
-                    {slide.accent}
-                  </span>
-                  <h2 className={`text-[28px] md:text-[44px] font-black text-white leading-tight mb-4 tracking-tight`}>
-                    {slide.title.split(' ').map((word, i) => (
-                      <span key={i}>{word} </span>
-                    ))}
-                  </h2>
-                  <p className={`text-[14px] md:text-[17px] text-white opacity-90 mb-8 max-w-[400px]`}>
-                    {slide.subtitle}
-                  </p>
-                  <button className="inline-flex items-center gap-2 rounded-full border-2 border-white px-8 py-3 text-[14px] font-bold text-white hover:bg-white hover:text-black transition-all duration-300">
-                    Discover More
-                  </button>
-                </div>
-              </div>
             </Link>
           </div>
         ))}
