@@ -265,7 +265,7 @@ export default function ManageBannerCategories() {
                         const editData = editing[section.id] || {};
 
                         return (
-                            <div key={section.id} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div key={section.id} className="bg-white rounded-xl shadow-sm border border-slate-200">
                                 {/* Section Header */}
                                 <div className="bg-slate-50 px-6 py-4 flex items-start justify-between border-b border-slate-100">
                                     <div className="flex-1 min-w-0 pr-4">

@@ -14,25 +14,9 @@ export function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const userMenuRef = useRef(null)
   const catMenuRef = useRef(null)
-  const [navCategories, setNavCategories] = useState([])
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const navigate = useNavigate()
   const { totalItems } = useCart()
-
-  useEffect(() => {
-    const fetchCats = async () => {
-      try {
-        const res = await fetch(`${backendUrl}/categories?tree=true`)
-        const data = await res.json()
-        if (data.categories) {
-          setNavCategories(data.categories)
-        }
-      } catch (err) {
-          console.error("Error fetching header categories:", err)
-      }
-    }
-    fetchCats()
-  }, [backendUrl])
 
   // Check login state on mount + whenever storage changes
   useEffect(() => {
@@ -74,6 +58,19 @@ export function Header() {
     setIsLoggedIn(false)
     navigate("/")
   }
+
+  const NAV_CATEGORIES = [
+    { name: "Skin Care", slug: "skin-care" },
+    { name: "Collagen", slug: "collagen" },
+    { name: "Branded Items", slug: "branded-items" },
+    { name: "Fashion", slug: "fashion" },
+    { name: "K-pop", slug: "k-pop" },
+    { name: "Baby & Kids", slug: "baby-kids" },
+    { name: "Makeup", slug: "makeup" },
+    { name: "Electrical Items", slug: "electrical-items" },
+    { name: "Food", slug: "food" },
+    { name: "Give a Gift", slug: "give-a-gift" },
+  ]
 
   return (
     <header className="relative z-50 bg-white shadow-sm">
@@ -172,8 +169,8 @@ export function Header() {
             {/* Hover Dropdown Menu */}
             <div className="absolute top-full left-[-1px] w-[200px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
               <ul className="py-2">
-                {navCategories.map(cat => (
-                  <li key={cat.id || cat.name}>
+                {NAV_CATEGORIES.map(cat => (
+                  <li key={cat.slug}>
                     <Link to={`/category/${cat.slug}`} className="block px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-primary transition-colors">
                       {cat.name}
                     </Link>
@@ -182,14 +179,15 @@ export function Header() {
               </ul>
             </div>
           </div>
+
           {/* Header Links */}
           <div className="flex-1 flex gap-8 items-center px-8 text-[15px] font-bold text-[#111]">
-            <Link to="/category/makeup" className="hover:text-primary transition">Special Deals</Link>
-            <Link to="/category/skin-care" className="hover:text-primary transition">Ranking</Link>
-            <Link to="/category/k-beauty" className="hover:text-primary transition">Only at OY</Link>
-            <Link to="/category/hair-care" className="hover:text-primary transition">LUXE EDIT</Link>
-            <Link to="/category/skin-care" className="hover:text-primary transition">Events</Link>
-            <Link to="/category/health" className="hover:text-primary transition">Sale</Link>
+            <Link to="/category/hair-care" className="hover:text-primary transition uppercase">Hair Care</Link>
+            <Link to="/category/body-care" className="hover:text-primary transition uppercase">Body Care</Link>
+            <Link to="/category/health" className="hover:text-primary transition uppercase">Health</Link>
+            <Link to="/category/home-kitchen" className="hover:text-primary transition uppercase">Home & Kitchen</Link>
+            <Link to="/category/sports" className="hover:text-primary transition uppercase">Sports</Link>
+            <Link to="/category/pet-supplies" className="hover:text-primary transition uppercase">Pet Supplies</Link>
           </div>
         </div>
       </div>
