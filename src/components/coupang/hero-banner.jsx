@@ -9,7 +9,7 @@ const banners = [
     id: 1,
     title: "Premium Skincare Collection",
     subtitle: "Hydrate and glow with our curated selections",
-    image: "https://res.cloudinary.com/dchwarwua/image/upload/v1773578772/upscale_bmtvrk.png",
+    image: "https://res.cloudinary.com/dchwarwua/image/upload/v1773635774/Gemini_Generated_Image_qciyuoqciyuoqciy_rlh9db.png",
     accent: "New Season Drops",
     href: "/banner/1",
   },
@@ -69,9 +69,9 @@ export function HeroBanner() {
   }
 
   return (
-    <div className="relative group w-full bg-[#f8f9fa] py-8 md:py-12 overflow-hidden px-4 md:px-8">
+    <div className="relative group w-full bg-[#f8f9fa] py-6 md:py-10 overflow-hidden px-2 md:px-4">
       <div className="max-w-[1400px] mx-auto">
-        <div className="relative flex items-center justify-center gap-2 md:gap-4 h-[300px] md:h-[550px]">
+        <div className="relative flex items-end justify-center gap-1 md:gap-3 h-[300px] md:h-[600px]">
           {[-2, -1, 0, 1, 2].map((offset) => {
             const index = getDisplayIndex(offset)
             const slide = banners[index]
@@ -80,40 +80,33 @@ export function HeroBanner() {
 
             return (
               <div
-                key={`${slide.id}-${offset}`}
-                className={`relative transition-all duration-700 ease-out rounded-[2rem] overflow-hidden cursor-pointer
+                key={slide.id}
+                className={`relative transition-all duration-1000 cubic-bezier-[0.22,1,0.36,1] rounded-2xl md:rounded-[2.5rem] overflow-hidden cursor-pointer
                   ${isCenter 
-                    ? "w-[35%] md:w-[45%] h-full z-20 shadow-2xl" 
+                    ? "w-[60%] md:w-[32%] h-full z-20 shadow-2xl" 
                     : isNearCenter 
-                      ? "w-[20%] md:w-[20%] h-[85%] md:h-[90%] z-10 opacity-80" 
-                      : "w-[10%] md:w-[7%] h-[75%] md:h-[80%] z-0 opacity-40 grayscale-[50%]"
+                      ? "w-[18%] md:w-[27%] h-[85%] md:h-[90%] z-10 opacity-70" 
+                      : "w-[2%] md:w-[7%] h-[75%] md:h-[80%] z-0 opacity-30 grayscale"
                   }
                 `}
+                style={{
+                   transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)'
+                }}
                 onClick={() => setCurrentSlide(index)}
               >
                 <Link to={slide.href} className="block w-full h-full group/item">
-                  <div className="absolute inset-0 bg-black/10 group-hover/item:bg-transparent transition-colors duration-300 z-10" />
+                  <div className="absolute inset-0 bg-black/5 group-hover/item:bg-transparent transition-colors duration-300 z-10" />
                   <img
                     src={slide.image}
                     alt={slide.title}
-                    className={`w-full h-full object-cover transition-transform duration-700 
-                      ${isCenter ? "scale-105 group-hover/item:scale-110" : "scale-100 group-hover/item:scale-105"}
+                    className={`w-full h-full object-cover transition-all duration-1000 cubic-bezier-[0.22,1,0.36,1]
+                      ${isCenter ? "scale-100 opacity-100" : "scale-110 opacity-90"}
                     `}
+                    style={{
+                      transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)'
+                    }}
                   />
                   
-                  {isCenter && (
-                    <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20 transition-opacity duration-300">
-                      <span className="inline-block px-3 py-1 bg-white text-black text-[10px] md:text-xs font-bold rounded-full mb-3 uppercase tracking-wider">
-                        {slide.accent}
-                      </span>
-                      <h2 className="text-white text-xl md:text-4xl font-bold mb-2 leading-tight">
-                        {slide.title}
-                      </h2>
-                      <p className="text-white/80 text-sm md:text-lg line-clamp-1">
-                        {slide.subtitle}
-                      </p>
-                    </div>
-                  )}
                 </Link>
               </div>
             )

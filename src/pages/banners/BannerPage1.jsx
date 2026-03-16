@@ -12,7 +12,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 const DATA = {
     title: "Premium Skincare Collection",
     subtitle: "Hydrate and glow with our curated selections",
-    image: "https://res.cloudinary.com/dchwarwua/image/upload/v1773578772/upscale_bmtvrk.png",
+    image: "https://res.cloudinary.com/dchwarwua/image/upload/v1773636886/Gemini_Generated_Image_4tkdlb4tkdlb4tkd_vxbhlc.png",
     accent: "New Season Drops",
     color: "from-[#fff0f4] to-[#ffe0ea]",
     introTitle: "Your Glow Starts Here",
