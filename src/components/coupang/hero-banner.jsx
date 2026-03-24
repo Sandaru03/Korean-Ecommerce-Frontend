@@ -4,69 +4,55 @@ import { useState, useEffect, useCallback } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Link } from "react-router-dom"
 
-const banners = [
-  {
-    id: 1,
-    title: "Premium Skincare Collection",
-    subtitle: "Hydrate and glow with our curated selections",
-    image: "https://res.cloudinary.com/dchwarwua/image/upload/v1773635774/Gemini_Generated_Image_qciyuoqciyuoqciy_rlh9db.png",
-    accent: "New Season Drops",
-    href: "/banner/1",
-  },
-  {
-    id: 2,
-    title: "Vibrant Makeup & Nails",
-    subtitle: "Express yourself with bold colors",
-    image: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=1200&auto=format&fit=crop",
-    accent: "Limited Edition",
-    href: "/banner/2",
-  },
-  {
-    id: 3,
-    title: "The Best of K-Beauty",
-    subtitle: "Global favorites delivered to your door",
-    image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?q=80&w=1200&auto=format&fit=crop",
-    accent: "Bestsellers",
-    href: "/banner/3",
-  },
-  {
-    id: 4,
-    title: "Essential Hair Care",
-    subtitle: "Revitalize your hair with premium nutrients",
-    image: "https://images.unsplash.com/photo-1527799822367-a4886d63f993?q=80&w=1200&auto=format&fit=crop",
-    accent: "Daily Essentials",
-    href: "/banner/4",
-  },
-  {
-    id: 5,
-    title: "Healthy Living & Supplements",
-    subtitle: "Fuel your body with the best organic products",
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1200&auto=format&fit=crop",
-    accent: "Bio Organic",
-    href: "/banner/5",
-  },
-]
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 export function HeroBanner() {
-  const [currentSlide, setCurrentSlide] = useState(2) // Start with middle item centered
-
-  const nextSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev + 1) % banners.length)
-  }, [])
-
-  const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length)
-  }, [])
+  const [banners, setBanners] = useState([]);
+  const [currentSlide, setCurrentSlide] = useState(0); 
 
   useEffect(() => {
+    fetch(`${backendUrl}/banners`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          const activeBanners = d.banners.filter(b => b.isActive);
+          setBanners(activeBanners);
+          if (activeBanners.length >= 3) {
+            setCurrentSlide(Math.floor(activeBanners.length / 2));
+          } else {
+            setCurrentSlide(0);
+          }
+        }
+      })
+      .catch(console.error);
+  }, []);
+
+  const nextSlide = useCallback(() => {
+    if (banners.length === 0) return;
+    setCurrentSlide((prev) => (prev + 1) % banners.length)
+  }, [banners.length])
+
+  const prevSlide = useCallback(() => {
+    if (banners.length === 0) return;
+    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length)
+  }, [banners.length])
+
+  useEffect(() => {
+    if (banners.length === 0) return;
     const interval = setInterval(nextSlide, 5000)
     return () => clearInterval(interval)
-  }, [nextSlide])
+  }, [nextSlide, banners.length])
 
   // Helper to determine order/display
   const getDisplayIndex = (offset) => {
+    if (banners.length === 0) return 0;
     return (currentSlide + offset + banners.length) % banners.length
   }
+
+  if (banners.length === 0) {
+    return <div className="w-full h-[300px] md:h-[600px] bg-slate-100 flex items-center justify-center animate-pulse rounded-2xl md:rounded-[2.5rem] my-6">Loading Banners...</div>;
+  }
+
 
   return (
     <div className="relative group w-full bg-[#f8f9fa] py-6 md:py-10 overflow-hidden px-2 md:px-4">
@@ -94,10 +80,10 @@ export function HeroBanner() {
                 }}
                 onClick={() => setCurrentSlide(index)}
               >
-                <Link to={slide.href} className="block w-full h-full group/item">
+                <Link to={`/banner/${slide.id}`} className="block w-full h-full group/item">
                   <div className="absolute inset-0 bg-black/5 group-hover/item:bg-transparent transition-colors duration-300 z-10" />
                   <img
-                    src={slide.image}
+                    src={slide.heroImage || slide.image}
                     alt={slide.title}
                     className={`w-full h-full object-cover transition-all duration-1000 cubic-bezier-[0.22,1,0.36,1]
                       ${isCenter ? "scale-100 opacity-100" : "scale-110 opacity-90"}

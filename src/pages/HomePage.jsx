@@ -6,6 +6,8 @@ import { BannerTopicSection } from "@/components/coupang/BannerTopicSection"
 import { ChevronRight, Heart, ShoppingBag } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
+import { AdBannerSlider } from "@/components/coupang/AdBannerSlider"
+import { ReelsSection } from "@/components/coupang/ReelsSection"
 
 function resolveImage(p) {
     let imgs = p.images
@@ -83,7 +85,7 @@ export default function HomePage() {
 
             {/* Round Icon Categories */}
             {rootCategories.length > 0 && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-20">
+                <div className="mx-auto max-w-[1040px] px-4 mb-16">
                     <div className="flex flex-wrap md:grid md:grid-cols-10 gap-y-8 gap-x-2">
                         {rootCategories.map((cat, idx) => (
                             <Link key={cat.id || idx} to={`/super-category/${cat.slug}`} className="flex flex-col items-center gap-3 group w-[20%] md:w-auto">
@@ -99,6 +101,10 @@ export default function HomePage() {
                     </div>
                 </div>
             )}
+
+            <div className="mx-auto max-w-[1040px] px-4">
+                <AdBannerSlider />
+            </div>
 
             {/* Dynamic Topics from Admin */}
             <div className="mx-auto max-w-[1040px] px-4 space-y-4">
@@ -118,6 +124,9 @@ export default function HomePage() {
                     <EmptyTopics />
                 )}
             </div>
+
+            {/* Shorts & Reels Section */}
+            <ReelsSection />
 
             <Footer />
         </div>

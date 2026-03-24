@@ -27,6 +27,9 @@ import CategoriesOfSuperAdminPage from "./admin/categoriesOfSuperAdminPage";
 import ManageHomePage from "./admin/manageHomePage";
 import AdminAdminPage from "./admin/adminAdminPage";
 import ManageBannerCategories from "./admin/manageBannerCategories";
+import ManageBannersPage from "./admin/ManageBannersPage";
+import ManageAdBannersPage from "./admin/ManageAdBannersPage";
+import ManageReelsPage from "./admin/ManageReelsPage";
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -75,7 +78,9 @@ function DashboardHero() {
                     { label: "Super Categories", to: "/admin/super-categories", icon: FaFilePen, color: "bg-pink-500" },
                     { label: "Categories", to: "/admin/categories", icon: FaFilePen, color: "bg-purple-500" },
                     { label: "Manage Topics", to: "/admin/manage-homepage", icon: FaFilePen, color: "bg-rose-500" },
-                    { label: "Banner Categories", to: "/admin/banner-categories", icon: FaFilePen, color: "bg-cyan-500" },
+                    { label: "Banners", to: "/admin/banners", icon: FaFilePen, color: "bg-cyan-500" },
+                    { label: "Ad Banners", to: "/admin/ad-banners", icon: FaFilePen, color: "bg-blue-400" },
+                    { label: "Reels", to: "/admin/reels", icon: FaFilePen, color: "bg-indigo-500" },
                     { label: "Admins", to: "/admin/admin", icon: RiAdminFill, color: "bg-slate-500" },
                 ].map((c) => (
                     <NavLink
@@ -184,7 +189,9 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/categories" icon={FaFilePen} label="Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/admin" icon={RiAdminFill} label="Admins" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/manage-homepage" icon={FaFilePen} label="Manage Topics" onClick={() => setSidebarOpen(false)} />
-                        <SidebarLink to="/admin/banner-categories" icon={FaFilePen} label="Banner Categories" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/banners" icon={FaFilePen} label="Banners" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/ad-banners" icon={FaFilePen} label="Ad Banners" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/reels" icon={FaFilePen} label="Manage Reels" onClick={() => setSidebarOpen(false)} />
                     </nav>
 
                     {/* Sidebar Footer */}
@@ -256,7 +263,10 @@ export default function AdminPage() {
                             <Route path="add-category" element={<AddCategoryAdminPage />} />
                             <Route path="update-category" element={<UpdateCategoryAdminPage />} />
                             <Route path="manage-homepage" element={<ManageHomePage />} />
+                            <Route path="banners" element={<ManageBannersPage />} />
+                            <Route path="ad-banners" element={<ManageAdBannersPage />} />
                             <Route path="banner-categories" element={<ManageBannerCategories />} />
+                            <Route path="reels" element={<ManageReelsPage />} />
                         </Routes>
                     </div>
                 </main>

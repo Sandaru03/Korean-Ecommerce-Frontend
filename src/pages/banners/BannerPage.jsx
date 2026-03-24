@@ -1,28 +1,13 @@
-import { Link } from "react-router-dom"
-import { Header } from "@/components/coupang/header"
-import { Footer } from "@/components/coupang/footer"
-import { Heart, Star, ShoppingCart, Loader2 } from "lucide-react"
-import { useState, useEffect } from "react"
-import { useCart } from "@/context/CartContext"
-import toast from "react-hot-toast"
-import axios from "axios"
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { Header } from "@/components/coupang/header";
+import { Footer } from "@/components/coupang/footer";
+import { Heart, Star, ShoppingCart, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useCart } from "@/context/CartContext";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-
-const DATA = {
-    title: "Premium Skincare Collection",
-    subtitle: "Hydrate and glow with our curated selections",
-    image: "https://res.cloudinary.com/dchwarwua/image/upload/v1773938251/New_res_nvec0h.jpg",
-    accent: "New Season Drops",
-    color: "from-[#fff0f4] to-[#ffe0ea]",
-    introTitle: "Your Glow Starts Here",
-    introText: `ලංකාවේ පවතින රස්නය, අධික දාඩිය සහ දූවිල්ල නිසා ඇතිවන Acne (කුරුලෑ) පාලනය කරන්න කොරියානු නිෂ්පාදන ඉතාමත් සාර්ථකයි. විශේෂයෙන්ම කුරුලෑ නිසා ඇතිවන තුවාල සුව කිරීමටත්, ලප මැකීමටත් (Acne Scars) මේවා උදව් වෙනවා.`,
-    outroTitle: "⚠️ වැදගත් උපදෙස්:",
-    outroText: `Double Cleansing: ඔබ සන්ස්ක්රීන් හෝ මේකප් පාවිච්චි කරන්නේ නම්, රාත්රියට මුලින්ම Anua Cleansing Oil වැනි එකකින් මුහුණ පිරිසිදු කර පසුව ෆේස් වොෂ් පාවිච්චි කරන්න.
-    
-අභ්යන්තර පෝෂණය: කුරුලෑ නිතරම එන්නේ නම්, සම ඇතුළතින් සුවපත් කිරීමට Ever Collagen වැනි කොලජන් එකක් පාවිච්චි කිරීමත් ඉතා ගුණදායකයි.`,
-    outroTip: "💡 Pro Tip: Apply products from thinnest to thickest consistency and wait 30 seconds between layers for maximum absorption.",
-}
 
 function resolveImage(p) {
     if (p.images && Array.isArray(p.images) && p.images.length > 0) return p.images[0];
@@ -55,7 +40,7 @@ function ProductCard({ p }) {
 
     return (
         <div className="group bg-white border border-[#eee] rounded-xl overflow-hidden hover:shadow-lg transition-shadow shrink-0 w-[220px]">
-            <Link to={`/product/${p.productId}`} className="block relative aspect-square overflow-hidden bg-[#f8f8f8]">
+            <Link to={`/product/${p.id}`} className="block relative aspect-square overflow-hidden bg-[#f8f8f8]">
                 <img src={productImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 <button
                     onClick={(e) => { e.preventDefault(); setWished(w => !w); }}
@@ -65,7 +50,7 @@ function ProductCard({ p }) {
                 </button>
             </Link>
             <div className="p-4">
-                <Link to={`/product/${p.productId}`}>
+                <Link to={`/product/${p.id}`}>
                     <p className="text-[13px] font-semibold text-[#111] line-clamp-2 leading-snug mb-1 hover:text-primary transition-colors">{p.name}</p>
                 </Link>
                 <StarRating rating={p.rating} reviews={p.reviews} />
@@ -88,9 +73,7 @@ function SubTopicSection({ section }) {
         <div className="mb-16">
             <div className="flex items-center gap-4 mb-3">
                 <div>
-                    {section.badge && <span className="text-[11px] font-bold text-primary bg-accent/50 px-2 py-0.5 rounded-full">{section.badge}</span>}
                     <h2 className="text-[24px] font-black text-[#111] mt-1">{section.title}</h2>
-                    <p className="text-[15px] text-[#666] mt-1 max-w-[600px]">{section.description}</p>
                 </div>
             </div>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4">
@@ -102,44 +85,73 @@ function SubTopicSection({ section }) {
     )
 }
 
-export default function BannerPage1() {
+export default function BannerPage() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [banner, setBanner] = useState(null);
     const [sections, setSections] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchSections = async () => {
+        const fetchBannerData = async () => {
             try {
-                const { data } = await axios.get(`${backendUrl}/banner-sections?bannerId=1`);
-                if (data.success) {
-                    setSections(data.sections);
+                setLoading(true);
+                const [bannerRes, sectionsRes] = await Promise.all([
+                    axios.get(`${backendUrl}/banners/${id}`),
+                    axios.get(`${backendUrl}/banner-sections?bannerId=${id}`)
+                ]);
+
+                if (bannerRes.data.success) {
+                    setBanner(bannerRes.data.banner);
+                } else {
+                    toast.error("Banner not found");
+                    navigate("/");
+                }
+                
+                if (sectionsRes.data.success) {
+                    setSections(sectionsRes.data.sections);
                 }
             } catch (err) {
-                console.error("Error fetching banner sections:", err);
+                console.error("Error fetching banner details:", err);
+                toast.error("Failed to load banner");
+                navigate("/");
             } finally {
                 setLoading(false);
             }
         };
-        fetchSections();
-    }, []);
+
+        if(id) fetchBannerData();
+    }, [id, navigate]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-bg-main">
+                <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+                <p className="text-gray-500 font-medium">Loading banner...</p>
+            </div>
+        );
+    }
+
+    if (!banner) return null;
 
     return (
         <div className="min-h-screen bg-bg-main font-sans">
             <Header />
-            <div className="relative h-[320px] md:h-[500px] w-full overflow-hidden">
-                <img src={DATA.image} alt={DATA.title} className="absolute inset-0 w-full h-full object-cover" />
-            </div>
-            <div className="mx-auto max-w-[1100px] px-4 md:px-8 py-14">
-                <div className={`bg-gradient-to-br ${DATA.color} rounded-2xl p-8 md:p-12 mb-16`}>
-                    <h2 className="text-[26px] font-black text-[#111] mb-4">{DATA.introTitle}</h2>
-                    <p className="text-[16px] text-[#444] leading-relaxed max-w-[720px]">{DATA.introText}</p>
+            {banner.topBannerImage && (
+                <div className="relative h-[320px] md:h-[500px] w-full overflow-hidden bg-slate-100">
+                    <img src={banner.topBannerImage} alt={banner.title} className="absolute inset-0 w-full h-full object-cover" />
                 </div>
-
-                {loading ? (
-                    <div className="flex flex-col items-center py-20">
-                        <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
-                        <p className="text-gray-500 font-medium">Loading recommendations...</p>
+            )}
+            
+            <div className="mx-auto max-w-[1100px] px-4 md:px-8 py-14">
+                {(banner.topInstructionsTitle || banner.topInstructionsText) && (
+                    <div className={`bg-gradient-to-br ${banner.bgGradient || 'from-slate-100 to-slate-200'} rounded-2xl p-8 md:p-12 mb-16`}>
+                        {banner.topInstructionsTitle && <h2 className="text-[26px] font-black text-[#111] mb-4">{banner.topInstructionsTitle}</h2>}
+                        {banner.topInstructionsText && <p className="text-[16px] text-[#444] leading-relaxed max-w-[720px] whitespace-pre-wrap">{banner.topInstructionsText}</p>}
                     </div>
-                ) : sections.length > 0 ? (
+                )}
+
+                {sections.length > 0 ? (
                     sections.map(section => (
                         <SubTopicSection key={section.id} section={section} />
                     ))
@@ -149,13 +161,15 @@ export default function BannerPage1() {
                     </div>
                 )}
 
-                <div className="bg-[#111] rounded-2xl p-8 md:p-12 text-white">
-                    <h2 className="text-[24px] font-black mb-4">{DATA.outroTitle}</h2>
-                    <p className="text-[15px] text-white/80 leading-relaxed mb-6 max-w-[720px]">{DATA.outroText}</p>
-                    <p className="text-[14px] font-bold text-primary">{DATA.outroTip}</p>
-                </div>
+                {(banner.bottomInstructionsTitle || banner.bottomInstructionsText || banner.bottomInstructionsTip) && (
+                    <div className="bg-[#111] rounded-2xl p-8 md:p-12 text-white">
+                        {banner.bottomInstructionsTitle && <h2 className="text-[24px] font-black mb-4">{banner.bottomInstructionsTitle}</h2>}
+                        {banner.bottomInstructionsText && <p className="text-[15px] text-white/80 leading-relaxed mb-6 max-w-[720px] whitespace-pre-wrap">{banner.bottomInstructionsText}</p>}
+                        {banner.bottomInstructionsTip && <p className="text-[14px] font-bold text-primary">{banner.bottomInstructionsTip}</p>}
+                    </div>
+                )}
             </div>
             <Footer />
         </div>
-    )
+    );
 }
