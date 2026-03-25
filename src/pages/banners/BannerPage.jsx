@@ -161,11 +161,11 @@ export default function BannerPage() {
                     </div>
                 )}
 
-                {(banner.bottomInstructionsTitle || banner.bottomInstructionsText || banner.bottomInstructionsTip) && (
+
+                {(banner.bottomInstructionsTitle || banner.bottomInstructionsText) && (
                     <div className="bg-[#111] rounded-2xl p-8 md:p-12 text-white">
                         {banner.bottomInstructionsTitle && <h2 className="text-[24px] font-black mb-4">{banner.bottomInstructionsTitle}</h2>}
-                        {banner.bottomInstructionsText && <p className="text-[15px] text-white/80 leading-relaxed mb-6 max-w-[720px] whitespace-pre-wrap">{banner.bottomInstructionsText}</p>}
-                        {banner.bottomInstructionsTip && <p className="text-[14px] font-bold text-primary">{banner.bottomInstructionsTip}</p>}
+                        {banner.bottomInstructionsText && <p className="text-[15px] text-white/80 leading-relaxed max-w-[720px] whitespace-pre-wrap">{banner.bottomInstructionsText}</p>}
                     </div>
                 )}
             </div>

@@ -231,17 +231,9 @@ function BannerEditor({ banner, onBack, onSaveSuccess }) {
                 <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                     <h2 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">1. Hero Banner (Home Page Carousel)</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="col-span-full md:col-span-1">
+                        <div className="col-span-full">
                             <label className="block text-sm font-semibold text-slate-700 mb-1">Title *</label>
                             <input name="title" value={formData.title} onChange={handleChange} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Premium Skincare Collection" />
-                        </div>
-                        <div className="col-span-full md:col-span-1">
-                            <label className="block text-sm font-semibold text-slate-700 mb-1">Accent Badge</label>
-                            <input name="accent" value={formData.accent} onChange={handleChange} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. New Season Drops" />
-                        </div>
-                        <div className="col-span-full">
-                            <label className="block text-sm font-semibold text-slate-700 mb-1">Subtitle</label>
-                            <input name="subtitle" value={formData.subtitle} onChange={handleChange} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Hydrate and glow with our curated selections" />
                         </div>
                         <div className="col-span-full">
                             <label className="block text-sm font-semibold text-slate-700 mb-1">Hero Image URL (Home Page Carousel Image)</label>
@@ -286,19 +278,14 @@ function BannerEditor({ banner, onBack, onSaveSuccess }) {
                         </div>
                         <div className="col-span-full">
                             <label className="block text-sm font-semibold text-slate-700 mb-1">Top Instructions Text</label>
-                            <textarea name="topInstructionsText" value={formData.topInstructionsText} onChange={handleChange} rows={3} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Introduction paragraph..." />
                         </div>
                     </div>
 
                     <h3 className="text-md font-bold text-slate-700 mb-3 mt-6 border-t border-slate-100 pt-4">Bottom Instructions (Footer of Banner Page)</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="col-span-full md:col-span-1">
+                        <div className="col-span-full">
                             <label className="block text-sm font-semibold text-slate-700 mb-1">Bottom Title</label>
                             <input name="bottomInstructionsTitle" value={formData.bottomInstructionsTitle} onChange={handleChange} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. ⚠️ Important Advice" />
-                        </div>
-                        <div className="col-span-full md:col-span-1">
-                            <label className="block text-sm font-semibold text-slate-700 mb-1">Pro Tip (Highlighted Text)</label>
-                            <input name="bottomInstructionsTip" value={formData.bottomInstructionsTip} onChange={handleChange} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. 💡 Pro Tip: Apply products from thinnest to thickest..." />
                         </div>
                         <div className="col-span-full">
                             <label className="block text-sm font-semibold text-slate-700 mb-1">Bottom Text</label>

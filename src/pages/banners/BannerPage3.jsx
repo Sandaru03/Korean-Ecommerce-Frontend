@@ -110,10 +110,10 @@ export default function BannerPage3() {
                 {DATA.sections.map(section => (
                     <SubTopicSection key={section.id} section={section} />
                 ))}
+
                 <div className="bg-[#111] rounded-2xl p-8 md:p-12 text-white">
                     <h2 className="text-[24px] font-black mb-4">{DATA.outroTitle}</h2>
-                    <p className="text-[15px] text-white/80 leading-relaxed mb-6 max-w-[720px]">{DATA.outroText}</p>
-                    <p className="text-[14px] font-bold text-primary">{DATA.outroTip}</p>
+                    <p className="text-[15px] text-white/80 leading-relaxed max-w-[720px]">{DATA.outroText}</p>
                 </div>
             </div>
             <Footer />
