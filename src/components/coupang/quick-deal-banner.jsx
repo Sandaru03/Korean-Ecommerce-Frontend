@@ -4,10 +4,10 @@ import { Clock, Zap, ChevronRight } from "lucide-react"
 import { useEffect, useState } from "react"
 
 const deals = [
-  { name: "Smart Air Purifier HEPA Filter", price: "$79.99", originalPrice: "$159.99", discount: "50%", image: "https://picsum.photos/seed/deal1/200/200", soldPercent: 78 },
-  { name: "Wireless Charging Pad Fast 15W", price: "$12.99", originalPrice: "$29.99", discount: "57%", image: "https://picsum.photos/seed/deal2/200/200", soldPercent: 62 },
-  { name: "Electric Kettle Temperature Control", price: "$34.99", originalPrice: "$69.99", discount: "50%", image: "https://picsum.photos/seed/deal3/200/200", soldPercent: 85 },
-  { name: "Noise Cancelling Headphones Pro", price: "$59.99", originalPrice: "$129.99", discount: "54%", image: "https://picsum.photos/seed/deal4/200/200", soldPercent: 45 },
+  { name: "Smart Air Purifier HEPA Filter", price: "LKR 79", originalPrice: "LKR 159", discount: "50%", image: "https://picsum.photos/seed/deal1/200/200", soldPercent: 78 },
+  { name: "Wireless Charging Pad Fast 15W", price: "LKR 12", originalPrice: "LKR 29", discount: "57%", image: "https://picsum.photos/seed/deal2/200/200", soldPercent: 62 },
+  { name: "Electric Kettle Temperature Control", price: "LKR 34", originalPrice: "LKR 69", discount: "50%", image: "https://picsum.photos/seed/deal3/200/200", soldPercent: 85 },
+  { name: "Noise Cancelling Headphones Pro", price: "LKR 59", originalPrice: "LKR 129", discount: "54%", image: "https://picsum.photos/seed/deal4/200/200", soldPercent: 45 },
 ]
 
 export function QuickDealBanner() {

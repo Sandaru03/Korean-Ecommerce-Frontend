@@ -40,11 +40,11 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
 
 
     const orderLines = cart.map(item =>
-        `• ${item.name} x${item.qty} — Rs. ${fmt(item.price * item.qty)}`
+        `• ${item.name} x${item.qty} — LKR ${fmt(item.price * item.qty)}`
     ).join("\n")
 
     const deliveryLine = deliveryFee > 0
-        ? `\nDelivery Fee: Rs. ${fmt(deliveryFee)} (${totalItems} items)`
+        ? `\nDelivery Fee: LKR ${fmt(deliveryFee)} (${totalItems} items)`
         : "\nDelivery: Free"
 
     const summaryText =
@@ -54,7 +54,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         `*Address:* ${address || "—"}\n\n` +
         `*Items:*\n${orderLines}\n` +
         `${deliveryLine}\n` +
-        `*Total: Rs. ${fmt(grandTotal)}*`
+        `*Total: LKR ${fmt(grandTotal)}*`
 
     function handleWhatsApp() {
         if (!name || !phone || !address) {
@@ -97,23 +97,23 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                         {cart.map(item => (
                             <div key={item.id} className="flex justify-between text-[13px] text-[#555]">
                                 <span className="truncate max-w-[70%]">{item.name} × {item.qty}</span>
-                                <span className="font-semibold text-[#111]">Rs. {fmt(item.price * item.qty)}</span>
+                                <span className="font-semibold text-[#111]">LKR {fmt(item.price * item.qty)}</span>
                             </div>
                         ))}
                         <div className="border-t border-[#eee] pt-2 mt-2 space-y-1">
                             <div className="flex justify-between text-[13px] text-[#555]">
                                 <span>Subtotal</span>
-                                <span>Rs. {fmt(subtotal)}</span>
+                                <span>LKR {fmt(subtotal)}</span>
                             </div>
                             {deliveryFee > 0 && (
                                 <div className="flex justify-between text-[13px] text-primary font-semibold">
                                     <span>Delivery Fee ({totalItems} items)</span>
-                                    <span>Rs. {fmt(deliveryFee)}</span>
+                                    <span>LKR {fmt(deliveryFee)}</span>
                                 </div>
                             )}
                             <div className="flex justify-between text-[16px] font-black text-[#111] pt-1 border-t border-[#ddd]">
                                 <span>Total</span>
-                                <span>Rs. {fmt(grandTotal)}</span>
+                                <span>LKR {fmt(grandTotal)}</span>
                             </div>
                         </div>
                     </div>
@@ -260,7 +260,7 @@ export default function CartPage() {
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
                                     <p className="font-bold text-[#111] text-[15px] leading-snug mb-1 line-clamp-2">{item.name}</p>
-                                    <p className="text-primary font-black text-[18px] mb-3">Rs. {fmt(item.price)}</p>
+                                    <p className="text-primary font-black text-[18px] mb-3">LKR {fmt(item.price)}</p>
 
                                     {/* Qty Controls */}
                                     <div className="flex items-center gap-3">
@@ -291,7 +291,7 @@ export default function CartPage() {
                                 {/* Line Total */}
                                 <div className="shrink-0 text-right">
                                     <p className="text-[12px] text-[#999]">Item Total</p>
-                                    <p className="font-black text-[18px] text-[#111]">Rs. {fmt(item.price * item.qty)}</p>
+                                    <p className="font-black text-[18px] text-[#111]">LKR {fmt(item.price * item.qty)}</p>
                                 </div>
                             </div>
                         ))}
@@ -306,7 +306,7 @@ export default function CartPage() {
                                 <div>
                                     <p className="text-[13px] font-bold text-primary">Delivery Fee Applied</p>
                                     <p className="text-[12px] text-primary/80 mt-0.5">
-                                        Orders with 3 or more items include a Rs. 500 delivery charge.
+                                        Orders with 3 or more items include a LKR 500 delivery charge.
                                     </p>
                                 </div>
                             </div>
@@ -317,7 +317,7 @@ export default function CartPage() {
                                 <div>
                                     <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery!</p>
                                     <p className="text-[12px] text-[#16a34a]/80 mt-0.5">
-                                        Orders under 3 items ship free. 3 or more items adds a Rs. 500 delivery fee.
+                                        Orders under 3 items ship free. 3 or more items adds a LKR 500 delivery fee.
                                     </p>
                                 </div>
                             </div>
@@ -329,12 +329,12 @@ export default function CartPage() {
                             <div className="space-y-2.5 text-[14px]">
                                 <div className="flex justify-between text-[#555]">
                                     <span>Subtotal ({totalItems} items)</span>
-                                    <span className="font-semibold text-[#111]">Rs. {fmt(subtotal)}</span>
+                                    <span className="font-semibold text-[#111]">LKR {fmt(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between text-[#555]">
                                     <span>Delivery</span>
                                     {deliveryFee > 0 ? (
-                                        <span className="font-semibold text-primary">Rs. {fmt(deliveryFee)}</span>
+                                        <span className="font-semibold text-primary">LKR {fmt(deliveryFee)}</span>
                                     ) : (
                                         <span className="font-semibold text-[#16a34a]">FREE</span>
                                     )}
@@ -344,7 +344,7 @@ export default function CartPage() {
                                 <span className="font-bold text-[#111] text-[15px]">Total</span>
                                 <div className="text-right">
                                     <p className="text-[11px] text-[#999]">LKR</p>
-                                    <p className="font-black text-[28px] text-[#111] leading-none">Rs. {fmt(grandTotal)}</p>
+                                    <p className="font-black text-[28px] text-[#111] leading-none">LKR {fmt(grandTotal)}</p>
                                 </div>
                             </div>
 

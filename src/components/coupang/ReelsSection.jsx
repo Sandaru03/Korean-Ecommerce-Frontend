@@ -23,7 +23,8 @@ export function ReelsSection() {
     const scroll = (direction) => {
         if (scrollRef.current) {
             const { scrollLeft, clientWidth } = scrollRef.current;
-            const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+            const cardWidth = clientWidth / 4;
+            const scrollTo = direction === 'left' ? scrollLeft - cardWidth : scrollLeft + cardWidth;
             scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
         }
     };
@@ -53,16 +54,17 @@ export function ReelsSection() {
                     </div>
                 </div>
 
-                {/* Horizontal Scroll Container */}
+                {/* Horizontal Scroll Container — shows exactly 4 reels at once */}
                 <div 
                     ref={scrollRef}
-                    className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
+                    className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {reels.map((reel) => (
                         <div 
                             key={reel.id} 
-                            className="min-w-[110px] sm:min-w-[140px] md:min-w-[170px] snap-start"
+                            className="flex-shrink-0 snap-start"
+                            style={{ width: 'calc(25% - 9px)' }}
                             onClick={() => setSelectedReel(reel)}
                         >
                             <ReelCard reel={reel} />

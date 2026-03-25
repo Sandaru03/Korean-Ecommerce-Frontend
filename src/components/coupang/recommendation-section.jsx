@@ -3,14 +3,14 @@
 import { ChevronRight, Heart } from "lucide-react"
 
 const recommendations = [
-  { id: 1, name: "Wireless Earbuds Pro Max", price: "$29.99", image: "https://picsum.photos/seed/rec1/300/300", tag: "Popular" },
-  { id: 2, name: "Silk Pillowcase 100% Mulberry", price: "$19.99", image: "https://picsum.photos/seed/rec2/300/300", tag: "New" },
-  { id: 3, name: "Stainless Steel Tumbler 900ml", price: "$14.99", image: "https://picsum.photos/seed/rec3/300/300", tag: "Best Seller" },
-  { id: 4, name: "Aroma Diffuser LED Ultrasonic", price: "$24.99", image: "https://picsum.photos/seed/rec4/300/300", tag: "Trending" },
-  { id: 5, name: "Portable Mini Projector HD", price: "$89.99", image: "https://picsum.photos/seed/rec5/300/300", tag: "Hot Deal" },
-  { id: 6, name: "Travel Makeup Organizer Bag", price: "$12.99", image: "https://picsum.photos/seed/rec6/300/300", tag: "Popular" },
-  { id: 7, name: "Bamboo Desktop Organizer Shelf", price: "$22.99", image: "https://picsum.photos/seed/rec7/300/300", tag: "New" },
-  { id: 8, name: "Smart Scale Body Composition", price: "$34.99", image: "https://picsum.photos/seed/rec8/300/300", tag: "Best Seller" },
+  { id: 1, name: "Wireless Earbuds Pro Max", price: "LKR 29", image: "https://picsum.photos/seed/rec1/300/300", tag: "Popular" },
+  { id: 2, name: "Silk Pillowcase 100% Mulberry", price: "LKR 19", image: "https://picsum.photos/seed/rec2/300/300", tag: "New" },
+  { id: 3, name: "Stainless Steel Tumbler 900ml", price: "LKR 14", image: "https://picsum.photos/seed/rec3/300/300", tag: "Best Seller" },
+  { id: 4, name: "Aroma Diffuser LED Ultrasonic", price: "LKR 24", image: "https://picsum.photos/seed/rec4/300/300", tag: "Trending" },
+  { id: 5, name: "Portable Mini Projector HD", price: "LKR 89", image: "https://picsum.photos/seed/rec5/300/300", tag: "Hot Deal" },
+  { id: 6, name: "Travel Makeup Organizer Bag", price: "LKR 12", image: "https://picsum.photos/seed/rec6/300/300", tag: "Popular" },
+  { id: 7, name: "Bamboo Desktop Organizer Shelf", price: "LKR 22", image: "https://picsum.photos/seed/rec7/300/300", tag: "New" },
+  { id: 8, name: "Smart Scale Body Composition", price: "LKR 34", image: "https://picsum.photos/seed/rec8/300/300", tag: "Best Seller" },
 ]
 
 export function RecommendationSection() {

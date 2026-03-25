@@ -43,8 +43,6 @@ export default function ProductAdminPage() {
                                 <th className="p-4">Product Name</th>
                                 <th className="p-4">Label Price</th>
                                 <th className="p-4">Price</th>
-                                <th className="p-4">Stock</th>
-                                <th className="p-4">Category</th>
                                 <th className="p-4 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -75,26 +73,13 @@ export default function ProductAdminPage() {
 
                                     {/* Label Price */}
                                     <td className="p-4 text-gray-500">
-                                        $ {product.labellPrice}
+                                        LKR {product.labellPrice}
                                     </td>
 
                                     {/* Price */}
                                     <td className="p-4 text-red-600 font-semibold">
-                                        $ {product.price}
+                                        LKR {product.price}
                                     </td>
-
-                                    {/* Stock */}
-                                    <td
-                                        className={`p-4 font-medium ${product.stock > 0
-                                            ? "text-green-600"
-                                            : "text-red-600 font-semibold"
-                                            }`}
-                                    >
-                                        {product.stock}
-                                    </td>
-
-                                    {/* Category */}
-                                    <td className="p-4 text-gray-700">{product.category}</td>
 
                                     {/* Actions */}
                                     <td className="p-4 flex items-center justify-center gap-3">

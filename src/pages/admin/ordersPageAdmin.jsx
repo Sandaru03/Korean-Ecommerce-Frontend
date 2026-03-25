@@ -97,7 +97,7 @@ export default function OrdersPageAdmin() {
                                                 {new Date(order.date).toLocaleDateString()}
                                             </td>
                                             <td className="p-3 text-right font-medium text-gray-800">
-                                                $ {order.total}
+                                                LKR {order.total}
                                             </td>
                                         </tr>
                                     ))
@@ -258,7 +258,7 @@ export default function OrdersPageAdmin() {
                                                             </p>
                                                         </div>
                                                         <p className="font-semibold text-gray-700">
-                                                            $ {item.price * item.qty}
+                                                            LKR {item.price * item.qty}
                                                         </p>
                                                     </div>
                                                 ))}
@@ -270,7 +270,7 @@ export default function OrdersPageAdmin() {
                                     <div className="flex justify-between items-center border-t pt-4 mt-2">
                                         <span className="text-xl font-bold text-gray-800">Total</span>
                                         <span className="text-xl font-bold text-blue-600">
-                                            $ {clickOrder.total}
+                                            LKR {clickOrder.total}
                                         </span>
                                     </div>
                                 </div>

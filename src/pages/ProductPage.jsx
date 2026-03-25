@@ -184,14 +184,14 @@ export default function ProductPage() {
                         {/* Price Area */}
                         <div className="flex flex-col mb-6">
                             {product.labellPrice && product.labellPrice > product.price && (
-                                <span className="text-[14px] text-[#999] line-through font-medium leading-none mb-2">Rs. {Number(product.labellPrice).toLocaleString('en-IN')}</span>
+                                <span className="text-[14px] text-[#999] line-through font-medium leading-none mb-2">LKR {Number(product.labellPrice).toLocaleString('en-IN')}</span>
                             )}
                             <div className="flex items-baseline gap-2 leading-none">
                                 {discountPct && (
                                     <span className="text-primary font-bold">{discountPct}%</span>
                                 )}
                                 <span className="text-neutral-dark text-2xl font-bold">
-                                    <span className="text-[22px] font-bold mr-0.5">Rs. </span>
+                                    <span className="text-[22px] font-bold mr-0.5">LKR </span>
                                     {Number(product.price).toLocaleString('en-IN')}
                                 </span>
                             </div>
