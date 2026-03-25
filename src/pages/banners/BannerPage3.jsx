@@ -9,7 +9,7 @@ import toast from "react-hot-toast"
 const DATA = {
     title: "The Best of K-Beauty",
     subtitle: "Global favorites delivered to your door",
-    image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?q=80&w=1600&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1612817288484-6f916006741a?q=80&w=2560&h=660&auto=format&fit=crop",
     accent: "Bestsellers",
     color: "from-[#fff8f0] to-[#ffe8cc]",
     introTitle: "Why the World Loves K-Beauty",
@@ -99,7 +99,7 @@ export default function BannerPage3() {
     return (
         <div className="min-h-screen bg-bg-main font-sans">
             <Header />
-            <div className="relative h-[320px] md:h-[500px] w-full overflow-hidden">
+            <div className="relative aspect-[2560/660] w-full overflow-hidden">
                 <img src={DATA.image} alt={DATA.title} className="absolute inset-0 w-full h-full object-cover" />
             </div>
             <div className="mx-auto max-w-[1100px] px-4 md:px-8 py-14">

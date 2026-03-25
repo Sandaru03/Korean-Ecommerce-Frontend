@@ -8,7 +8,7 @@ import { HiMenu, HiX } from "react-icons/hi";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { MdDashboard } from "react-icons/md";
-import { FaFilePen } from "react-icons/fa6";
+import { FaFilePen, FaVideo } from "react-icons/fa6";
 import { IoMdHome } from "react-icons/io";
 
 // Pages
@@ -25,7 +25,6 @@ import SubCategoryAdminPage from "./admin/subCategoryAdminPage";
 import SuperCategoryAdminPage from "./admin/superCategoryAdminPage";
 import CategoriesOfSuperAdminPage from "./admin/categoriesOfSuperAdminPage";
 import ManageHomePage from "./admin/manageHomePage";
-import AdminAdminPage from "./admin/adminAdminPage";
 import ManageBannerCategories from "./admin/manageBannerCategories";
 import ManageBannersPage from "./admin/ManageBannersPage";
 import ManageAdBannersPage from "./admin/ManageAdBannersPage";
@@ -80,8 +79,7 @@ function DashboardHero() {
                     { label: "Manage Topics", to: "/admin/manage-homepage", icon: FaFilePen, color: "bg-rose-500" },
                     { label: "Banners", to: "/admin/banners", icon: FaFilePen, color: "bg-cyan-500" },
                     { label: "Ad Banners", to: "/admin/ad-banners", icon: FaFilePen, color: "bg-blue-400" },
-                    { label: "Reels", to: "/admin/reels", icon: FaFilePen, color: "bg-indigo-500" },
-                    { label: "Admins", to: "/admin/admin", icon: RiAdminFill, color: "bg-slate-500" },
+                    { label: "Reels", to: "/admin/reels", icon: FaVideo, color: "bg-indigo-500" },
                 ].map((c) => (
                     <NavLink
                         key={c.label}
@@ -187,11 +185,10 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/customers" icon={FaUser} label="Customers" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/super-categories" icon={FaFilePen} label="Super Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/categories" icon={FaFilePen} label="Categories" onClick={() => setSidebarOpen(false)} />
-                        <SidebarLink to="/admin/admin" icon={RiAdminFill} label="Admins" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/reels" icon={FaVideo} label="Manage Reels" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/manage-homepage" icon={FaFilePen} label="Manage Topics" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/banners" icon={FaFilePen} label="Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/ad-banners" icon={FaFilePen} label="Ad Banners" onClick={() => setSidebarOpen(false)} />
-                        <SidebarLink to="/admin/reels" icon={FaFilePen} label="Manage Reels" onClick={() => setSidebarOpen(false)} />
                     </nav>
 
                     {/* Sidebar Footer */}
@@ -255,7 +252,6 @@ export default function AdminPage() {
                             <Route path="newproduct" element={<AddProductPage />} />
                             <Route path="updateproduct" element={<UpdateProductPage />} />
                             <Route path="customers" element={<CustomerAdminPage />} />
-                            <Route path="admin" element={<AdminAdminPage />} />
                             <Route path="super-categories" element={<SuperCategoryAdminPage />} />
                             <Route path="super-categories/:superCatId/categories" element={<CategoriesOfSuperAdminPage />} />
                             <Route path="categories" element={<CategoryAdminPage />} />

@@ -125,7 +125,7 @@ export default function BannerPage1() {
     return (
         <div className="min-h-screen bg-bg-main font-sans">
             <Header />
-            <div className="relative h-[320px] md:h-[500px] w-full overflow-hidden">
+            <div className="relative aspect-[2560/660] w-full overflow-hidden">
                 <img src={DATA.image} alt={DATA.title} className="absolute inset-0 w-full h-full object-cover" />
             </div>
             <div className="mx-auto max-w-[1100px] px-4 md:px-8 py-14">

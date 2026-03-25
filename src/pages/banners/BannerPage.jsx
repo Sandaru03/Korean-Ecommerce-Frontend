@@ -138,7 +138,7 @@ export default function BannerPage() {
         <div className="min-h-screen bg-bg-main font-sans">
             <Header />
             {banner.topBannerImage && (
-                <div className="relative h-[320px] md:h-[500px] w-full overflow-hidden bg-slate-100">
+                <div className="relative aspect-[2560/660] w-full overflow-hidden bg-slate-100">
                     <img src={banner.topBannerImage} alt={banner.title} className="absolute inset-0 w-full h-full object-cover" />
                 </div>
             )}

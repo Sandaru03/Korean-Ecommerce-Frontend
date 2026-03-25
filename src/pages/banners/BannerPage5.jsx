@@ -9,7 +9,7 @@ import toast from "react-hot-toast"
 const DATA = {
     title: "Healthy Living & Supplements",
     subtitle: "Fuel your body with the best organic products",
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=1600&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=2560&h=660&auto=format&fit=crop",
     accent: "Bio Organic",
     color: "from-[#f0fdf4] to-[#dcfce7]",
     introTitle: "Wellness from Within",
@@ -99,7 +99,7 @@ export default function BannerPage5() {
     return (
         <div className="min-h-screen bg-bg-main font-sans">
             <Header />
-            <div className="relative h-[320px] md:h-[500px] w-full overflow-hidden">
+            <div className="relative aspect-[2560/660] w-full overflow-hidden">
                 <img src={DATA.image} alt={DATA.title} className="absolute inset-0 w-full h-full object-cover" />
             </div>
             <div className="mx-auto max-w-[1100px] px-4 md:px-8 py-14">

@@ -9,7 +9,7 @@ import toast from "react-hot-toast"
 const DATA = {
     title: "Essential Hair Care",
     subtitle: "Revitalize your hair with premium nutrients",
-    image: "https://images.unsplash.com/photo-1527799822367-a4886d63f993?q=80&w=1600&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1527799822367-a4886d63f993?q=80&w=2560&h=660&auto=format&fit=crop",
     accent: "Daily Essentials",
     color: "from-[#f0fff4] to-[#d4f5e1]",
     introTitle: "Healthy Hair, Happy You",
@@ -99,7 +99,7 @@ export default function BannerPage4() {
     return (
         <div className="min-h-screen bg-bg-main font-sans">
             <Header />
-            <div className="relative h-[320px] md:h-[500px] w-full overflow-hidden">
+            <div className="relative aspect-[2560/660] w-full overflow-hidden">
                 <img src={DATA.image} alt={DATA.title} className="absolute inset-0 w-full h-full object-cover" />
             </div>
             <div className="mx-auto max-w-[1100px] px-4 md:px-8 py-14">
