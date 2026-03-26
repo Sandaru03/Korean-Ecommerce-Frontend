@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaLayerGroup, FaImage } from "react-icons/fa";
 import { Search, X, ChevronDown, ChevronUp, Package } from "lucide-react";
@@ -17,7 +17,7 @@ function resolveImage(p) {
 }
 
 // ── Product Manager for a single sub-category ─────────────────
-function SubCategoryProductManager({ sub, rootName, token }) {
+function SubCategoryProductManager({ sub, parentName, rootName, token }) {
     const [open, setOpen] = useState(false);
     const [products, setProducts] = useState([]);
     const [loadingProducts, setLoadingProducts] = useState(false);
@@ -72,8 +72,12 @@ function SubCategoryProductManager({ sub, rootName, token }) {
         try {
             const res = await axios.put(
                 `${backendUrl}/products/${product.productId}`,
-                // Save both root category and final subcategory
-                { subCategory: sub.name, category: rootName },
+                // Save complete hierarchy lineage to ensure global discovery
+                { 
+                    subCategory: sub.name, 
+                    category: parentName || "",
+                    superCategory: rootName || ""
+                },
                 { headers: getHeaders() }
             );
             if (res.status === 200) {
@@ -125,50 +129,53 @@ function SubCategoryProductManager({ sub, rootName, token }) {
             </button>
 
             {open && (
-                <div className="px-6 pb-5 pt-2 space-y-4">
-                    {/* Add product search */}
-                    <div>
-                        {!searchOpen ? (
-                            <button
-                                onClick={() => setSearchOpen(true)}
-                                className="flex items-center gap-2 text-sm text-purple-600 font-semibold hover:underline"
-                            >
-                                <FaPlus className="text-xs" /> Add Product to "{sub.name}"
-                            </button>
-                        ) : (
-                            <div className="relative max-w-md">
-                                <div className="flex items-center gap-2 border border-purple-300 rounded-xl px-3 py-2 bg-white shadow-sm">
-                                    <Search className="w-4 h-4 text-slate-400 shrink-0" />
-                                    <input
-                                        autoFocus
-                                        type="text"
-                                        value={searchQuery}
-                                        onChange={e => setSearchQuery(e.target.value)}
-                                        placeholder="Search products by name..."
-                                        className="flex-1 text-sm outline-none"
-                                    />
-                                    <button onClick={() => { setSearchOpen(false); setSearchQuery(""); setSearchResults([]); }}>
-                                        <X className="w-4 h-4 text-slate-400" />
-                                    </button>
+                <div className="px-6 pb-6 pt-4 space-y-6">
+                    {/* Primary Search Header: Always visible */}
+                    <div className="relative group/search">
+                        <div className="flex items-center gap-3 bg-white border-2 border-purple-100 rounded-[1.25rem] px-5 py-4 shadow-sm focus-within:border-purple-400 focus-within:shadow-lg focus-within:shadow-purple-100/50 transition-all duration-300">
+                            <Search className="w-5 h-5 text-purple-400 shrink-0" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                placeholder={`Search global inventory to add to "${sub.name}"...`}
+                                className="flex-1 text-sm font-bold text-slate-700 outline-none placeholder:text-slate-300"
+                            />
+                            {searchQuery && (
+                                <button 
+                                    onClick={() => { setSearchQuery(""); setSearchResults([]); }}
+                                    className="p-1 hover:bg-slate-100 rounded-full transition-colors"
+                                >
+                                    <X className="w-4 h-4 text-slate-400" />
+                                </button>
+                            )}
+                        </div>
+                        
+                        {/* Instant Search Results Overlay */}
+                        {searchResults.length > 0 && (
+                            <div className="absolute z-[30] left-0 right-0 top-[110%] bg-white border border-slate-200 rounded-2xl shadow-2xl max-h-[400px] overflow-y-auto animate-in slide-in-from-top-2 duration-200 divide-y divide-slate-50">
+                                <div className="px-4 py-2 bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    Search Results ({searchResults.length})
                                 </div>
-                                {searchResults.length > 0 && (
-                                    <div className="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl max-h-64 overflow-y-auto">
-                                        {searchResults.map(product => (
-                                            <button
-                                                key={product.id}
-                                                onClick={() => handleAssignProduct(product)}
-                                                className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-purple-50 border-b border-slate-100 text-left transition-colors"
-                                            >
-                                                <img src={resolveImage(product)} className="w-9 h-9 object-cover rounded-lg border border-slate-200 shrink-0" alt={product.name} />
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-sm font-medium text-slate-800 truncate">{product.name}</p>
-                                                    <p className="text-xs text-slate-400">LKR {Number(product.price).toLocaleString()}</p>
-                                                </div>
-                                                <span className="text-xs text-purple-600 font-semibold shrink-0">Add</span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
+                                {searchResults.map(product => (
+                                    <button
+                                        key={product.id}
+                                        onClick={() => handleAssignProduct(product)}
+                                        className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-purple-50 text-left transition-colors group/item"
+                                    >
+                                        <div className="relative w-12 h-12 shrink-0">
+                                            <img src={resolveImage(product)} className="w-full h-full object-cover rounded-xl border border-slate-100 group-hover/item:scale-105 transition-transform" alt={product.name} />
+                                            <div className="absolute inset-0 bg-purple-600/0 group-hover/item:bg-purple-600/10 rounded-xl transition-colors flex items-center justify-center">
+                                                <FaPlus className="text-white opacity-0 group-hover/item:opacity-100 scale-50 group-hover/item:scale-100 transition-all" />
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-black text-slate-800 truncate group-hover/item:text-purple-700 transition-colors uppercase tracking-tight">{product.name}</p>
+                                            <p className="text-xs text-slate-400 font-bold mt-0.5">LKR {Number(product.price).toLocaleString()}</p>
+                                        </div>
+                                        <span className="text-[10px] font-black text-purple-600 bg-purple-50 px-2 py-1 rounded-lg opacity-0 group-hover/item:opacity-100 transition-opacity">ASSIGN</span>
+                                    </button>
+                                ))}
                             </div>
                         )}
                     </div>
@@ -218,18 +225,22 @@ export default function SubCategoryAdminPage() {
     const [subcategories, setSubcategories] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // NO LONGER SHOWING ADD FORM AS PER USER REQUEST 
-    // subcategories don't need to create more categories inside them
+    // Form states
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [addName, setAddName] = useState("");
+    const [addImage, setAddImage] = useState("");
+    const [addFile, setAddFile] = useState(null);
+    const [adding, setAdding] = useState(false);
 
     const token = localStorage.getItem("token");
+    const getHeaders = () => token ? { Authorization: `Bearer ${token}` } : {};
+
+    const [rootCategoryName, setRootCategoryName] = useState("");
+    const [parentCategoryName, setParentCategoryName] = useState("");
 
     useEffect(() => {
         fetchData();
     }, [parentId]);
-
-    const getHeaders = () => token ? { Authorization: `Bearer ${token}` } : {};
-
-    const [rootCategoryName, setRootCategoryName] = useState("");
 
     const fetchData = async () => {
         try {
@@ -239,25 +250,24 @@ export default function SubCategoryAdminPage() {
                 { headers: getHeaders() }
             );
             const cat = res.data.category;
+            if (!cat) throw new Error("Category not found");
+            
             setParentCategory(cat);
             setSubcategories(cat.children || []);
 
-            // Find Root Category Name for product assignment
+            // Determine Root Category Name for product assignment (Level 0, 1, or 2)
             if (!cat.parentId) {
                 setRootCategoryName(cat.name);
+                setParentCategoryName("");
+            } else if (cat.parent && !cat.parent.parentId) {
+                setRootCategoryName(cat.parent.name);
+                setParentCategoryName(cat.name); // If at Level 1, parent is Level 0
+            } else if (cat.parent && cat.parent.parent) {
+                setRootCategoryName(cat.parent.parent.name);
+                setParentCategoryName(cat.parent.name);
             } else {
-                // If this is already a subcategory, we need to find its parent's parent... 
-                // but usually subCategory field in products table refers to the child 
-                // and category refers to the top-level. 
-                // Let's fetch the ancestors if needed, or just assume the top-level is what we want.
-                try {
-                    const rootRes = await axios.get(`${backendUrl}/categories/slug/${cat.slug}`, { headers: getHeaders() });
-                    // This might not give root. Let's just use the current parent for now 
-                    // unless we want to be recursive.
-                    setRootCategoryName(cat.name); 
-                } catch {
-                    setRootCategoryName(cat.name);
-                }
+                setRootCategoryName(cat.name);
+                setParentCategoryName("");
             }
         } catch (error) {
             console.error("Error fetching category:", error);
@@ -268,22 +278,25 @@ export default function SubCategoryAdminPage() {
     };
 
     const handleDelete = async (id, name) => {
-        if (!window.confirm(`Delete subcategory "${name}"? This will also remove its children.`)) return;
+        if (!window.confirm(`Delete "${name}"? This will also remove its children.`)) return;
         try {
             await axios.delete(`${backendUrl}/categories/${id}`, { headers: getHeaders() });
-            toast.success(`"${name}" deleted`);
+            toast.success(`"${name}" deletedSuccessfully`);
             setSubcategories(prev => prev.filter(s => s.id !== id));
         } catch (error) {
             console.error(error);
-            toast.error("Failed to delete subcategory.");
+            toast.error("Failed to delete category.");
         }
     };
 
     const handleAdd = async (e) => {
         e.preventDefault();
-        if (!addName.trim()) return toast.error("Name is required.");
+        const trimmedName = addName?.trim();
+        if (!trimmedName) return toast.error("Name is required.");
+        
         try {
             setAdding(true);
+            console.log("Adding new category:", { trimmedName, parentId });
 
             let finalImageUrl = addImage.trim() || null;
             if (addFile) {
@@ -292,21 +305,34 @@ export default function SubCategoryAdminPage() {
                 toast.dismiss(toastId);
             }
 
-            const slug = addName.trim().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+            const slug = trimmedName.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+            const payload = { 
+                name: trimmedName, 
+                slug, 
+                image: finalImageUrl, 
+                parentId: parseInt(parentId) 
+            };
+
+            console.log("Payload to backend:", payload);
+            
             const res = await axios.post(
                 `${backendUrl}/categories`,
-                { name: addName.trim(), slug, image: finalImageUrl, parentId: parseInt(parentId) },
+                payload,
                 { headers: getHeaders() }
             );
-            toast.success(`"${addName}" added!`);
+            
+            toast.success(`"${trimmedName}" added!`);
             setSubcategories(prev => [...prev, res.data.category]);
+            
+            // Success cleanup
             setAddName("");
             setAddImage("");
             setAddFile(null);
-            setShowAddForm(false);
+            setIsAddModalOpen(false);
         } catch (error) {
-            console.error(error);
-            toast.error(error?.response?.data?.message || "Failed to add subcategory.");
+            console.error("Add category error details:", error?.response?.data || error.message);
+            const msg = error?.response?.data?.message || "Failed to add. Please check if name already exists.";
+            toast.error(msg);
         } finally {
             setAdding(false);
         }
@@ -314,52 +340,214 @@ export default function SubCategoryAdminPage() {
 
     if (loading) return <Loader />;
 
+    // Level detection: 0=Root(Super), 1=Middle(Category), 2=Leaf(Subcategory)
+    const level = !parentCategory?.parentId ? 0 : (!parentCategory?.parent?.parentId ? 1 : 2);
+
     return (
         <div className="space-y-6 animate-in fade-in duration-300">
-            {/* Header */}
-            <div className="flex items-center gap-4">
-                <button
-                    onClick={() => navigate("/admin/categories")}
-                    className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors"
-                >
-                    <FaArrowLeft />
-                </button>
-                <div>
-                    <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Categories</p>
-                    <h1 className="text-2xl font-bold text-slate-800 flex items-center gap-3">
-                        <FaLayerGroup className="text-purple-500" />
-                        {parentCategory?.name} — Subcategories
-                    </h1>
+            {/* Page Header */}
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => navigate("/admin/categories")}
+                        className="p-2 rounded-lg text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors bg-white shadow-sm"
+                    >
+                        <FaArrowLeft />
+                    </button>
+                    <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">
+                            {level === 0 ? "Root SuperCategory" : (level === 1 ? "Middle Category" : "Leaf Subcategory")}
+                        </p>
+                        <h1 className="text-2xl font-black text-slate-800 flex items-center gap-3">
+                            <FaLayerGroup className="text-purple-500" />
+                            {parentCategory?.name}
+                        </h1>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    {level < 2 && (
+                        <button
+                            onClick={() => setIsAddModalOpen(true)}
+                            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-black hover:shadow-xl hover:scale-105 transition-all active:scale-95 text-sm"
+                        >
+                            <FaPlus /> Add {level === 0 ? "Category" : "Subcategory"}
+                        </button>
+                    )}
                 </div>
             </div>
 
-            {/* Card */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/30">
-                    <div>
-                        <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <Package className="w-5 h-5 text-purple-600" />
-                            Products in "{parentCategory?.name}"
-                        </h2>
-                        <p className="text-sm text-slate-500 mt-1 caps">Manage products directly assigned to this category level</p>
-                    </div>
-                    <div className="flex gap-2">
-                        {/* Add button removed per user request */}
-                    </div>
-                </div>
+            {/* Main Content Area */}
+            <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                {level < 2 ? (
+                    /* Render Folder View (Levels 0 and 1) */
+                    <>
+                        <div className="p-6 border-b border-slate-50 bg-slate-50/40">
+                            <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                                <FaLayerGroup className="w-5 h-5 text-indigo-600" />
+                                {level === 0 ? "Direct Categories" : "Leaf Subcategories"}
+                            </h2>
+                            <p className="text-sm text-slate-500 mt-1">
+                                {level === 0 ? "These act as grouping containers for your store." : "These are the final groups where products will be added."}
+                            </p>
+                        </div>
 
-                {/* Main Category Product Manager */}
-                {parentCategory && (
-                    <div className="border-b border-slate-200">
-                        <SubCategoryProductManager sub={parentCategory} rootName={rootCategoryName} token={token} />
+                        {subcategories.length === 0 ? (
+                            <div className="p-20 text-center flex flex-col items-center">
+                                <div className="inline-block p-6 bg-indigo-50 rounded-[2rem] mb-6 shadow-sm border border-indigo-100">
+                                    <FaLayerGroup className="w-12 h-12 text-indigo-400" />
+                                </div>
+                                <h3 className="text-xl font-black text-slate-800 mb-2 uppercase tracking-tight">Empty Organization Folder</h3>
+                                <p className="text-sm text-slate-400 max-w-[320px] mx-auto leading-relaxed">
+                                    "{parentCategory?.name}" acts as a **Middle Category**. 
+                                    Products must be assigned into its **Sub-Groups** (Level 2).
+                                </p>
+                                <div className="mt-8 flex flex-col items-center gap-4">
+                                    <button
+                                        onClick={() => setIsAddModalOpen(true)}
+                                        className="px-8 py-3.5 bg-indigo-600 text-white font-black rounded-2xl shadow-lg shadow-indigo-200 hover:scale-105 transition-all text-sm uppercase tracking-widest"
+                                    >
+                                        + Create First Subcategory
+                                    </button>
+                                    <p className="text-[11px] text-slate-300 font-bold uppercase tracking-widest">
+                                        THEN you can add products to it
+                                    </p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="divide-y divide-slate-50">
+                                {subcategories.map(sub => (
+                                    <div key={sub.id} className="p-5 hover:bg-slate-50/80 transition-all flex items-center justify-between group">
+                                        <div className="flex items-center gap-5">
+                                            {/* Only show images for Categories (Level 1), not Subcategories (Level 2) */}
+                                            {level === 0 && (
+                                                sub.image ? (
+                                                    <img src={sub.image} className="w-14 h-14 object-cover rounded-xl border shadow-sm group-hover:scale-110 transition-transform" alt={sub.name} />
+                                                ) : (
+                                                    <div className="w-14 h-14 bg-slate-100 rounded-xl flex items-center justify-center border border-dashed border-slate-200">
+                                                        <FaImage className="text-slate-300" />
+                                                    </div>
+                                                )
+                                            )}
+                                            <div>
+                                                <h3 className="font-bold text-slate-800 text-base">{sub.name}</h3>
+                                                <p className="text-xs text-slate-400 font-mono mt-0.5">{sub.slug}</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={() => navigate(`/admin/categories/${sub.id}/subcategories`)}
+                                                className="px-4 py-2 bg-indigo-50 text-indigo-600 text-[13px] font-black rounded-xl hover:bg-indigo-100 transition-colors flex items-center gap-2"
+                                            >
+                                                Manage {level === 0 ? "Subcategories" : "Products"}
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(sub.id, sub.name)}
+                                                className="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                            >
+                                                <FaTrash />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    /* Render Product Management View (Level 2) */
+                    <div className="animate-in fade-in zoom-in duration-300">
+                        <div className="p-6 border-b border-slate-50 bg-slate-50/40">
+                            <h2 className="text-lg font-black text-slate-800 flex items-center gap-3">
+                                <Package className="w-6 h-6 text-indigo-600" />
+                                Product Inventory Management
+                            </h2>
+                            <p className="text-sm text-slate-500 mt-1">Manage items assigned to this subcategory.</p>
+                        </div>
+                        <div className="p-4">
+                            <SubCategoryProductManager 
+                                sub={parentCategory} 
+                                parentName={parentCategoryName}
+                                rootName={rootCategoryName} 
+                                token={token} 
+                            />
+                        </div>
                     </div>
                 )}
-
-                {/* Product Manager Panel for the current category already shown above */}
-                <div className="p-8 text-center text-slate-400 text-sm italic">
-                    All subcategory products managed above.
-                </div>
             </div>
+
+            {/* Creation Modal */}
+            {isAddModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md transition-all">
+                    <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-10 animate-in zoom-in slide-in-from-bottom-10 duration-300 border border-slate-100">
+                        <div className="flex justify-between items-center mb-8">
+                            <div>
+                                <h3 className="text-2xl font-black text-slate-800">New {level === 0 ? "Category" : "Subcategory"}</h3>
+                                <p className="text-sm text-slate-400 mt-1">Fill in the details to expand your store hierarchy.</p>
+                            </div>
+                            <button onClick={() => setIsAddModalOpen(false)} className="p-3 hover:bg-slate-100 rounded-full transition-colors">
+                                <X className="w-6 h-6 text-slate-400" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleAdd} className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-black text-slate-500 uppercase tracking-widest px-1">Display Name</label>
+                                <input
+                                    type="text"
+                                    value={addName}
+                                    onChange={e => setAddName(e.target.value)}
+                                    className="w-full px-5 py-3.5 bg-slate-50 border-none rounded-2xl focus:ring-4 focus:ring-indigo-500/10 outline-none font-bold text-slate-800 transition-all placeholder:text-slate-300"
+                                    placeholder={level === 0 ? "e.g. Skin Care" : "e.g. Cleansers"}
+                                    autoFocus
+                                />
+                            </div>
+                            
+                            {/* Image input: only for SuperCategories adding Categories (Level 1) */}
+                            {level === 0 && (
+                                <div className="space-y-2">
+                                    <label className="text-xs font-black text-slate-500 uppercase tracking-widest px-1">Visual Identity (Optional)</label>
+                                    <div className="flex gap-3">
+                                        <input
+                                            type="text"
+                                            value={addImage}
+                                            onChange={e => setAddImage(e.target.value)}
+                                            className="flex-1 px-5 py-3.5 bg-slate-50 border-none rounded-2xl outline-none font-bold text-slate-800 placeholder:text-slate-300 transition-all"
+                                            placeholder="Cloudinary/Image URL"
+                                        />
+                                        <label className="p-4 bg-slate-100 rounded-2xl cursor-pointer hover:bg-slate-200 transition-colors flex items-center justify-center aspect-square">
+                                            <FaImage className="text-slate-500 w-5 h-5" />
+                                            <input type="file" className="hidden" onChange={e => setAddFile(e.target.files[0])} />
+                                        </label>
+                                    </div>
+                                    {addFile && (
+                                        <div className="mt-2 p-3 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center gap-3">
+                                            <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                                            <p className="text-[11px] text-indigo-700 font-black truncate">FILE SELECTED: {addFile.name}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            <div className="pt-6 flex gap-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsAddModalOpen(false)}
+                                    className="flex-1 px-6 py-4 bg-slate-100 text-slate-600 font-black rounded-2xl hover:bg-slate-200 transition-all active:scale-95"
+                                >
+                                    Discard
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={adding}
+                                    className="flex-1 px-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black rounded-2xl hover:shadow-xl hover:shadow-indigo-200 transition-all active:scale-95 disabled:grayscale"
+                                >
+                                    {adding ? "Deploying..." : "Enact Change"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

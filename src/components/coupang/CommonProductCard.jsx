@@ -25,9 +25,14 @@ export function CommonProductCard({ product }) {
     }
     
     if (Array.isArray(images) && images.length > 0) {
-        imageUrl = images[0]
-    } else if (typeof images === 'string') {
-        imageUrl = images
+        imageUrl = images[0] || "https://via.placeholder.com/300"
+    } else if (typeof images === 'string' && images.trim()) {
+        imageUrl = images.trim()
+    }
+    
+    // Final safety check
+    if (!imageUrl || imageUrl === "undefined" || imageUrl === "null") {
+        imageUrl = "https://via.placeholder.com/300"
     }
 
     const price = Number(product.price) || 0

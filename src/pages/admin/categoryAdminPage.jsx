@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FaPlus, FaEdit, FaTrash, FaLayerGroup } from "react-icons/fa";
+import { Package } from "lucide-react";
 import Loader from "../../components/admin-utils/loader";
 
 export default function CategoryAdminPage() {
@@ -102,10 +103,17 @@ export default function CategoryAdminPage() {
                                 <tr key={category.id} className="hover:bg-slate-50 transition-colors">
                                     <td className="p-4">
                                         <div className="w-12 h-12 rounded bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200">
-                                            {category.image ? (
-                                                <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
+                                            {/* Hide images for leaf subcategories (depth 2) */}
+                                            {category.depth < 2 ? (
+                                                category.image ? (
+                                                    <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span className="text-xs text-slate-400">N/A</span>
+                                                )
                                             ) : (
-                                                <span className="text-xs text-slate-400">N/A</span>
+                                                <div className="w-full h-full bg-slate-50 flex items-center justify-center">
+                                                    <span className="text-[10px] text-slate-300 font-bold">SUB</span>
+                                                </div>
                                             )}
                                         </div>
                                     </td>
@@ -121,19 +129,20 @@ export default function CategoryAdminPage() {
                                     </td>
 
                                     <td className="p-4 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            {/* Manage subcategories — only for top-level */}
-                                            {category.depth === 0 && (
+                                        <div className="flex justify-end gap-2 text-left">
+                                            {/* Manage Children — for SuperCategory (depth 0) and Category (depth 1) */}
+                                            {category.depth < 2 && (
                                                 <button
                                                     onClick={() => navigate(`/admin/categories/${category.id}/subcategories`)}
                                                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-colors"
-                                                    title="Manage subcategories"
+                                                    title={category.depth === 0 ? "Manage Categories" : "Manage Subcategories"}
                                                 >
                                                     <FaLayerGroup className="text-xs" /> Manage
                                                 </button>
                                             )}
-                                            {/* Manage Products — for subcategories (depth > 0) */}
-                                            {category.depth > 0 && (
+
+                                            {/* Manage Products — exclusively for Leaf Subcategories (depth 2) */}
+                                            {category.depth === 2 && (
                                                 <button
                                                     onClick={() => navigate(`/admin/categories/${category.id}/subcategories`)}
                                                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition-colors"

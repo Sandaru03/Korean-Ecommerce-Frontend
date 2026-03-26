@@ -77,6 +77,7 @@ export default function SuperCategoryPage() {
         fetch()
     }, [slug])
 
+
     // Shuffle utility
     const shuffleArray = (array) => {
         const shuffled = [...array]
