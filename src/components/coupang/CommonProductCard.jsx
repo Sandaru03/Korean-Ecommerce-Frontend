@@ -41,6 +41,11 @@ export function CommonProductCard({ product }) {
                 <p className="text-[13px] text-[#555] leading-[1.3] line-clamp-2 min-h-[34px] group-hover:underline decoration-1 underline-offset-2">
                     {product.name}
                 </p>
+                {product.miniDescription && (
+                    <p className="text-[11px] text-[#888] line-clamp-1 mt-1 font-medium">
+                        {product.miniDescription}
+                    </p>
+                )}
 
                 <div className="mt-2.5 flex flex-col gap-0.5">
                     {product.originalPrice && (

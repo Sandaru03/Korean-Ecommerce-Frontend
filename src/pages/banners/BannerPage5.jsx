@@ -63,7 +63,11 @@ function ProductCard({ p }) {
             </div>
             <div className="p-4">
                 <p className="text-[13px] font-semibold text-[#111] line-clamp-2 leading-snug mb-1">{p.name}</p>
-                <StarRating rating={p.rating} reviews={p.reviews} />
+                {p.miniDescription && (
+                    <p className="text-[11px] text-[#888] line-clamp-1 mt-1 font-medium">
+                        {p.miniDescription}
+                    </p>
+                )}
                 <p className="text-[17px] font-black text-[#111] mt-2">LKR {p.price.toLocaleString("en-IN")}</p>
                 <button
                     onClick={() => { addToCart(p, 1); toast.success("Added to cart!", { icon: "🛒" }) }}
@@ -104,7 +108,6 @@ export default function BannerPage5() {
             </div>
             <div className="mx-auto max-w-[1100px] px-4 md:px-8 py-14">
                 <div className={`bg-gradient-to-br ${DATA.color} rounded-2xl p-8 md:p-12 mb-16`}>
-                    <h2 className="text-[26px] font-black text-[#111] mb-4">{DATA.introTitle}</h2>
                     <p className="text-[16px] text-[#444] leading-relaxed max-w-[720px]">{DATA.introText}</p>
                 </div>
                 {DATA.sections.map(section => (

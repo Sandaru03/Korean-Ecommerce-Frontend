@@ -39,7 +39,7 @@ export default function ManageBannersPage() {
     const handleCreateNew = () => {
         setCurrentBanner({
             title: "", subtitle: "", heroImage: "", accent: "", topBannerImage: "",
-            topInstructionsTitle: "", topInstructionsText: "", bgGradient: "from-[#fff0f4] to-[#ffe0ea]",
+            topInstructionsText: "", bgGradient: "from-[#fff0f4] to-[#ffe0ea]",
             bottomInstructionsTitle: "", bottomInstructionsText: "", bottomInstructionsTip: "", isActive: true
         });
         setView("edit");
@@ -269,15 +269,12 @@ function BannerEditor({ banner, onBack, onSaveSuccess }) {
                             {formData.topBannerImage && <img src={formData.topBannerImage} alt="Top Preview" className="mt-3 h-24 object-cover rounded-lg border border-slate-200" />}
                         </div>
                         <div className="col-span-full md:col-span-1">
-                            <label className="block text-sm font-semibold text-slate-700 mb-1">Top Instructions Title</label>
-                            <input name="topInstructionsTitle" value={formData.topInstructionsTitle} onChange={handleChange} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. Your Glow Starts Here" />
-                        </div>
-                        <div className="col-span-full md:col-span-1">
                             <label className="block text-sm font-semibold text-slate-700 mb-1">Background Gradient (Tailwind Class)</label>
                             <input name="bgGradient" value={formData.bgGradient} onChange={handleChange} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. from-[#fff0f4] to-[#ffe0ea]" />
                         </div>
                         <div className="col-span-full">
-                            <label className="block text-sm font-semibold text-slate-700 mb-1">Top Instructions Text</label>
+                            <label className="block text-sm font-semibold text-slate-700 mb-1">Top Instructions</label>
+                            <textarea name="topInstructionsText" value={formData.topInstructionsText} onChange={handleChange} rows={4} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Detailed instructions at the top..." />
                         </div>
                     </div>
 

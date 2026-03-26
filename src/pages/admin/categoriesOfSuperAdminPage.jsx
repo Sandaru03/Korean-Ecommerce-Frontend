@@ -1,10 +1,93 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaLayerGroup } from "react-icons/fa";
 import Loader from "../../components/admin-utils/loader";
 
+// ── Cloudinary upload helper ─────────────────────────────────────────────────
+async function uploadImageToCloudinary(file, backendUrl) {
+    const formData = new FormData();
+    formData.append("images", file);
+    const res = await axios.post(`${backendUrl}/upload/cloudinary`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+    });
+    return res.data.urls[0];
+}
+
+// ── CloudinaryImagePicker ────────────────────────────────────────────────────
+function CloudinaryImagePicker({ value, onChange, label = "Image", accentColor = "purple" }) {
+    const fileRef = useRef(null);
+    const [uploading, setUploading] = useState(false);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+
+    const handleFile = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+            setUploading(true);
+            const url = await uploadImageToCloudinary(file, backendUrl);
+            onChange(url);
+            toast.success("Image uploaded!");
+        } catch {
+            toast.error("Image upload failed.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    return (
+        <div className="space-y-2">
+            <label className="block text-sm font-medium text-slate-700">
+                {label} <span className="text-slate-400">(optional)</span>
+            </label>
+            <div className="flex items-center gap-3">
+                {value && (
+                    <img
+                        src={value}
+                        alt="preview"
+                        className="w-12 h-12 rounded-full object-cover border-2 border-slate-200 shrink-0"
+                        onError={e => e.target.style.display = "none"}
+                    />
+                )}
+                <button
+                    type="button"
+                    disabled={uploading}
+                    onClick={() => fileRef.current?.click()}
+                    className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border transition-colors
+                        ${uploading
+                            ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
+                            : `bg-${accentColor}-50 text-${accentColor}-700 border-${accentColor}-200 hover:bg-${accentColor}-100`
+                        }`}
+                >
+                    {uploading ? (
+                        <><span className="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full" /> Uploading…</>
+                    ) : (
+                        value ? "Change Image" : "Upload Image"
+                    )}
+                </button>
+                {value && (
+                    <button
+                        type="button"
+                        onClick={() => onChange("")}
+                        className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                    >
+                        Remove
+                    </button>
+                )}
+            </div>
+            <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFile}
+            />
+        </div>
+    );
+}
+
+// ── Main Page ────────────────────────────────────────────────────────────────
 export default function CategoriesOfSuperAdminPage() {
     const { superCatId } = useParams();
     const navigate = useNavigate();
@@ -60,7 +143,7 @@ export default function CategoriesOfSuperAdminPage() {
             const slug = addName.trim().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
             const res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/categories`,
-                { name: addName.trim(), slug, image: addImage.trim() || null, parentId: parseInt(superCatId) },
+                { name: addName.trim(), slug, image: addImage || null, parentId: parseInt(superCatId) },
                 { headers: getHeaders() }
             );
             toast.success(`"${addName}" added!`);
@@ -94,12 +177,12 @@ export default function CategoriesOfSuperAdminPage() {
             const slug = editName.trim().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
             await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/categories/${id}`,
-                { name: editName.trim(), slug, image: editImage.trim() || null },
+                { name: editName.trim(), slug, image: editImage || null },
                 { headers: getHeaders() }
             );
             toast.success("Category updated!");
             setCategories(prev =>
-                prev.map(c => c.id === id ? { ...c, name: editName.trim(), slug, image: editImage.trim() || null } : c)
+                prev.map(c => c.id === id ? { ...c, name: editName.trim(), slug, image: editImage || null } : c)
             );
             cancelEdit();
         } catch (error) {
@@ -175,40 +258,29 @@ export default function CategoriesOfSuperAdminPage() {
 
                 {/* Add form */}
                 {showAddForm && (
-                    <form onSubmit={handleAdd} className="p-6 bg-purple-50 border-b border-slate-200">
-                        <h3 className="text-sm font-semibold text-purple-800 mb-4 uppercase tracking-wider">
+                    <form onSubmit={handleAdd} className="p-6 bg-purple-50 border-b border-slate-200 space-y-4">
+                        <h3 className="text-sm font-semibold text-purple-800 uppercase tracking-wider">
                             New Category under "{superCat?.name}"
                         </h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">
-                                    Name <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    value={addName}
-                                    onChange={e => setAddName(e.target.value)}
-                                    placeholder="e.g. Skin Care"
-                                    className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">
-                                    Image URL <span className="text-slate-400">(optional)</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    value={addImage}
-                                    onChange={e => setAddImage(e.target.value)}
-                                    placeholder="https://..."
-                                    className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
-                                />
-                            </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
+                                Name <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                value={addName}
+                                onChange={e => setAddName(e.target.value)}
+                                placeholder="e.g. Skin Care"
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                            />
                         </div>
-                        {addImage && (
-                            <img src={addImage} alt="preview" className="w-14 h-14 rounded-full object-cover border border-slate-200 mt-3" onError={e => e.target.style.display = "none"} />
-                        )}
-                        <div className="mt-4 flex gap-3">
+                        <CloudinaryImagePicker
+                            value={addImage}
+                            onChange={setAddImage}
+                            label="Category Image"
+                            accentColor="purple"
+                        />
+                        <div className="flex gap-3 pt-1">
                             <button
                                 type="submit"
                                 disabled={adding}
@@ -253,21 +325,21 @@ export default function CategoriesOfSuperAdminPage() {
                             <div key={cat.id} className="px-6 py-4 hover:bg-slate-50 transition-colors">
                                 {editingId === cat.id ? (
                                     <div className="space-y-3">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label className="block text-xs font-medium text-slate-600 mb-1">Name</label>
                                             <input
                                                 type="text"
                                                 value={editName}
                                                 onChange={e => setEditName(e.target.value)}
-                                                className="border border-blue-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            />
-                                            <input
-                                                type="text"
-                                                value={editImage}
-                                                onChange={e => setEditImage(e.target.value)}
-                                                placeholder="Image URL"
-                                                className="border border-blue-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                className="w-full border border-blue-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                             />
                                         </div>
+                                        <CloudinaryImagePicker
+                                            value={editImage}
+                                            onChange={setEditImage}
+                                            label="Category Image"
+                                            accentColor="blue"
+                                        />
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => handleSaveEdit(cat.id)}
@@ -319,8 +391,15 @@ export default function CategoriesOfSuperAdminPage() {
                                         {/* Actions */}
                                         <div className="flex items-center gap-1 shrink-0">
                                             <button
-                                                onClick={() => navigate(`/admin/categories/${cat.id}/subcategories`)}
+                                                onClick={() => navigate(`/admin/categories/${cat.id}/products`)}
                                                 className="px-2 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-100"
+                                                title="Manage products"
+                                            >
+                                                Products
+                                            </button>
+                                            <button
+                                                onClick={() => navigate(`/admin/categories/${cat.id}/subcategories`)}
+                                                className="px-2 py-1.5 text-xs font-medium text-purple-600 hover:bg-purple-50 rounded-lg transition-colors border border-purple-100"
                                                 title="Manage subcategories"
                                             >
                                                 Subcategories

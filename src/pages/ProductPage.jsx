@@ -179,6 +179,12 @@ export default function ProductPage() {
                             {product.name}
                         </h1>
 
+                        {product.miniDescription && (
+                            <p className="text-[15px] text-[#555] leading-relaxed mb-6 font-medium">
+                                {product.miniDescription}
+                            </p>
+                        )}
+
 
 
                         {/* Price Area */}
@@ -220,16 +226,29 @@ export default function ProductPage() {
 
 
                         {/* Bottom Action Area */}
-                        <button
-                            onClick={() => {
-                                addToCart(product, 1)
-                                toast.success(`"${product.name}" added to cart!`, { icon: '🛒' })
-                            }}
-                            className="w-full h-[56px] bg-primary text-white font-semibold transition-all hover:opacity-90 rounded-[4px] flex items-center justify-center gap-2"
-                        >
-                            <ShoppingCart className="h-5 w-5" />
-                            Add to Cart
-                        </button>
+                        <div className="flex flex-col gap-3">
+                            <button
+                                onClick={() => {
+                                    addToCart(product, 1)
+                                    toast.success(`"${product.name}" added to cart!`, { icon: '🛒' })
+                                }}
+                                className="w-full h-[56px] border-[1.5px] border-primary text-primary font-bold transition-all hover:bg-neutral-light rounded-[4px] flex items-center justify-center gap-2"
+                            >
+                                <ShoppingCart className="h-5 w-5" />
+                                Add to Cart
+                            </button>
+
+                            <button
+                                onClick={() => {
+                                    addToCart(product, 1)
+                                    navigate("/cart")
+                                }}
+                                className="w-full h-[56px] bg-primary text-white font-bold transition-all hover:opacity-90 rounded-[4px] flex items-center justify-center gap-2"
+                            >
+                                <Rocket className="h-5 w-5" />
+                                Buy Now
+                            </button>
+                        </div>
 
                     </div>
                 </div>

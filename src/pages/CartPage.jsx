@@ -300,24 +300,24 @@ export default function CartPage() {
                     {/* Order Summary Sidebar */}
                     <div className="w-full lg:w-[320px] shrink-0 sticky top-6 space-y-4">
                         {/* Delivery Fee Notice */}
-                        {totalItems >= 3 && (
+                        {totalItems > 0 && totalItems < 3 && (
                             <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3 items-start">
                                 <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                                 <div>
                                     <p className="text-[13px] font-bold text-primary">Delivery Fee Applied</p>
                                     <p className="text-[12px] text-primary/80 mt-0.5">
-                                        Orders with 3 or more items include a LKR 500 delivery charge.
+                                        Orders with less than 3 items include a LKR 500 delivery charge. Add {3 - totalItems} more {3 - totalItems === 1 ? 'item' : 'items'} for free delivery!
                                     </p>
                                 </div>
                             </div>
                         )}
-                        {totalItems < 3 && (
+                        {totalItems >= 3 && (
                             <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-4 flex gap-3 items-start">
                                 <AlertCircle className="h-5 w-5 text-[#16a34a] shrink-0 mt-0.5" />
                                 <div>
                                     <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery!</p>
                                     <p className="text-[12px] text-[#16a34a]/80 mt-0.5">
-                                        Orders under 3 items ship free. 3 or more items adds a LKR 500 delivery fee.
+                                        You've unlocked free delivery for ordering 3 or more items!
                                     </p>
                                 </div>
                             </div>

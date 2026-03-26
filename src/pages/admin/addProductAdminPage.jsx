@@ -13,6 +13,7 @@ export default function AddProductPage() {
     const [price, setPrice] = useState("");
     const [images, setImages] = useState([]);
     const [description, setDescription] = useState("");
+    const [miniDescription, setMiniDescription] = useState("");
 
     const navigate = useNavigate();
 
@@ -34,7 +35,8 @@ export default function AddProductPage() {
             labellPrice: labellPrice,
             price: price,
             images: responses,
-            description: description
+            description: description,
+            miniDescription: miniDescription
         }
 
         const token = localStorage.getItem("token");
@@ -110,6 +112,11 @@ export default function AddProductPage() {
                         const files = Array.from(e.target.files);
                         setImages((prevImages) => [...prevImages, ...files])
                     }} className="w-full border-[2px] h-[40px] rounded-md px-2" />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                    <label className="text-sm font-semibold">Mini Description</label>
+                    <textarea value={miniDescription} onChange={(e) => setMiniDescription(e.target.value)} className="w-full border-[2px] h-[60px] rounded-md px-2 py-1" />
                 </div>
 
                 <div className="flex flex-col gap-1">
