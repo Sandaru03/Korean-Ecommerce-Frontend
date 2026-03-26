@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { FaPlus, FaEdit, FaTrash, FaTh } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaTh, FaImage } from "react-icons/fa";
 import { MdCategory } from "react-icons/md";
 import Loader from "../../components/admin-utils/loader";
+import uploadFile from "../../utils/mediaUpload";
 
 export default function SuperCategoryAdminPage() {
     const [superCategories, setSuperCategories] = useState([]);
@@ -15,12 +16,14 @@ export default function SuperCategoryAdminPage() {
     const [showAddForm, setShowAddForm] = useState(false);
     const [addName, setAddName] = useState("");
     const [addImage, setAddImage] = useState("");
+    const [addFile, setAddFile] = useState(null);
     const [adding, setAdding] = useState(false);
 
     // Edit state
     const [editingId, setEditingId] = useState(null);
     const [editName, setEditName] = useState("");
     const [editImage, setEditImage] = useState("");
+    const [editFile, setEditFile] = useState(null);
     const [saving, setSaving] = useState(false);
 
     const getHeaders = () => {
@@ -55,16 +58,25 @@ export default function SuperCategoryAdminPage() {
         if (!addName.trim()) return toast.error("Name is required.");
         try {
             setAdding(true);
+            
+            let finalImageUrl = addImage.trim() || null;
+            if (addFile) {
+                const toastId = toast.loading("Uploading image...");
+                finalImageUrl = await uploadFile(addFile);
+                toast.dismiss(toastId);
+            }
+
             const slug = addName.trim().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
             const res = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/categories`,
-                { name: addName.trim(), slug, image: addImage.trim() || null, parentId: null },
+                { name: addName.trim(), slug, image: finalImageUrl, parentId: null },
                 { headers: getHeaders() }
             );
             toast.success(`"${addName}" created!`);
             setSuperCategories(prev => [...prev, res.data.category]);
             setAddName("");
             setAddImage("");
+            setAddFile(null);
             setShowAddForm(false);
         } catch (error) {
             toast.error(error?.response?.data?.message || "Failed to add super category.");
@@ -89,15 +101,23 @@ export default function SuperCategoryAdminPage() {
         if (!editName.trim()) return toast.error("Name is required.");
         try {
             setSaving(true);
+
+            let finalImageUrl = editImage.trim() || null;
+            if (editFile) {
+                const toastId = toast.loading("Uploading new image...");
+                finalImageUrl = await uploadFile(editFile);
+                toast.dismiss(toastId);
+            }
+
             const slug = editName.trim().toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
             await axios.put(
                 `${import.meta.env.VITE_BACKEND_URL}/categories/${id}`,
-                { name: editName.trim(), slug, image: editImage.trim() || null },
+                { name: editName.trim(), slug, image: finalImageUrl },
                 { headers: getHeaders() }
             );
             toast.success("Super category updated!");
             setSuperCategories(prev =>
-                prev.map(c => c.id === id ? { ...c, name: editName.trim(), slug, image: editImage.trim() || null } : c)
+                prev.map(c => c.id === id ? { ...c, name: editName.trim(), slug, image: finalImageUrl } : c)
             );
             cancelEdit();
         } catch (error) {
@@ -184,22 +204,46 @@ export default function SuperCategoryAdminPage() {
                                     className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
                                 />
                             </div>
-                            <div>
+                            <div className="flex flex-col gap-2">
                                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                                    Image URL <span className="text-slate-400">(optional)</span>
+                                    Category Image
                                 </label>
-                                <input
-                                    type="text"
-                                    value={addImage}
-                                    onChange={e => setAddImage(e.target.value)}
-                                    placeholder="https://..."
-                                    className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
-                                />
+                                <div className="flex items-center gap-3">
+                                    <div className="relative flex-1">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={e => {
+                                                if (e.target.files[0]) {
+                                                    setAddFile(e.target.files[0]);
+                                                    setAddImage(""); // Clear URL if file selected
+                                                }
+                                            }}
+                                            className="w-full border border-slate-300 rounded-lg h-10 px-3 py-1.5 text-xs text-slate-600 file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 transition-all cursor-pointer"
+                                        />
+                                    </div>
+                                    <span className="text-xs text-slate-400">or</span>
+                                    <input
+                                        type="text"
+                                        value={addImage}
+                                        onChange={e => {
+                                            setAddImage(e.target.value);
+                                            setAddFile(null); // Clear file if URL entered
+                                        }}
+                                        placeholder="Image URL"
+                                        className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+                                    />
+                                </div>
                             </div>
                         </div>
-                        {addImage && (
+                        {(addFile || addImage) && (
                             <div className="mt-3">
-                                <img src={addImage} alt="preview" className="w-16 h-16 rounded-full object-cover border border-slate-200" onError={e => e.target.style.display = "none"} />
+                                <img 
+                                    src={addFile ? URL.createObjectURL(addFile) : addImage} 
+                                    alt="preview" 
+                                    className="w-16 h-16 rounded-full object-cover border border-slate-200" 
+                                    onError={e => e.target.style.display = "none"} 
+                                />
                             </div>
                         )}
                         <div className="mt-4 flex gap-3">
@@ -255,13 +299,39 @@ export default function SuperCategoryAdminPage() {
                                                 onChange={e => setEditName(e.target.value)}
                                                 className="border border-blue-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                             />
-                                            <input
-                                                type="text"
-                                                value={editImage}
-                                                onChange={e => setEditImage(e.target.value)}
-                                                placeholder="Image URL"
-                                                className="border border-blue-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                            />
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex items-center gap-2">
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        onChange={e => {
+                                                            if (e.target.files[0]) {
+                                                                setEditFile(e.target.files[0]);
+                                                                setEditImage("");
+                                                            }
+                                                        }}
+                                                        className="flex-1 border border-blue-200 rounded-lg px-2 py-1 text-[10px] file:py-0.5 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 cursor-pointer"
+                                                    />
+                                                    <span className="text-[10px] text-slate-400">or</span>
+                                                    <input
+                                                        type="text"
+                                                        value={editImage}
+                                                        onChange={e => {
+                                                            setEditImage(e.target.value);
+                                                            setEditFile(null);
+                                                        }}
+                                                        placeholder="Image URL"
+                                                        className="flex-1 border border-blue-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                                    />
+                                                </div>
+                                                {(editFile || editImage) && (
+                                                    <img 
+                                                        src={editFile ? URL.createObjectURL(editFile) : editImage} 
+                                                        className="h-8 w-8 rounded-full object-cover border" 
+                                                        alt="preview"
+                                                    />
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="flex gap-2">
                                             <button

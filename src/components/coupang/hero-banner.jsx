@@ -76,13 +76,13 @@ export function HeroBanner() {
             if (isCenter) {
               positionClass = "left-[50%] -translate-x-1/2 w-[80%] md:w-[32%] h-[100%] z-20 shadow-2xl opacity-100";
             } else if (isNearLeft) {
-              positionClass = "left-[10%] md:left-[20%] -translate-x-1/2 w-[50%] md:w-[27%] h-[85%] md:h-[90%] z-10 opacity-70";
+              positionClass = "left-[10%] md:left-[20%] -translate-x-1/2 w-[50%] md:w-[27%] h-[85%] md:h-[90%] z-10 opacity-100";
             } else if (isNearRight) {
-              positionClass = "left-[90%] md:left-[80%] -translate-x-1/2 w-[50%] md:w-[27%] h-[85%] md:h-[90%] z-10 opacity-70";
+              positionClass = "left-[90%] md:left-[80%] -translate-x-1/2 w-[50%] md:w-[27%] h-[85%] md:h-[90%] z-10 opacity-100";
             } else if (isFarLeft) {
-              positionClass = "left-[-10%] md:left-[5%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-0 opacity-30 grayscale";
+              positionClass = "left-[-10%] md:left-[5%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-0 opacity-100";
             } else if (isFarRight) {
-              positionClass = "left-[110%] md:left-[95%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-0 opacity-30 grayscale";
+              positionClass = "left-[110%] md:left-[95%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-0 opacity-100";
             } else {
               if (offset > 2) {
                 positionClass = "left-[150%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-[-1] opacity-0";
@@ -111,7 +111,7 @@ export function HeroBanner() {
                     if (!isCenter) e.preventDefault();
                   }}
                 >
-                  <div className="absolute inset-0 bg-black/5 group-hover/item:bg-transparent transition-colors duration-300 z-10" />
+                  <div className={`absolute inset-0 transition-colors duration-1000 z-10 ${isCenter ? 'bg-transparent' : 'bg-black/30 group-hover/item:bg-black/10'}`} />
                   <img
                     src={slide.heroImage || slide.image}
                     alt={slide.title}

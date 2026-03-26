@@ -109,18 +109,45 @@ export default function CategoryPage() {
         fetchCategory()
     }, [slug])
 
+    // Store products grouped by subcategory for the root view
+    const [groupedProducts, setGroupedProducts] = useState({})
+
     useEffect(() => {
         if (!categoryData) return
 
         const fetchProducts = async () => {
             try {
                 setLoading(true)
-                let url = `${import.meta.env.VITE_BACKEND_URL}/products?category=${categoryData.name}`
                 if (currentPath.length > 0) {
-                    url += `&subCategory=${currentPath[currentPath.length - 1]}`
+                    // Filtered view: fetch only this specific subcategory
+                    const subName = currentPath[currentPath.length - 1]
+                    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?subCategory=${encodeURIComponent(subName)}`)
+                    setProducts(Array.isArray(res.data) ? res.data : [])
+                    setGroupedProducts({})
+                } else {
+                    // Root view: fetch per subcategory in parallel, keep grouped
+                    const children = categoryData.children || []
+                    if (children.length > 0) {
+                        const requests = children.map(sub =>
+                            axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?subCategory=${encodeURIComponent(sub.name)}`)
+                                .then(r => ({ name: sub.name, products: Array.isArray(r.data) ? r.data : [] }))
+                                .catch(() => ({ name: sub.name, products: [] }))
+                        )
+                        const results = await Promise.all(requests)
+                        const grouped = {}
+                        const allProducts = []
+                        results.forEach(({ name, products }) => {
+                            grouped[name] = products
+                            allProducts.push(...products)
+                        })
+                        setGroupedProducts(grouped)
+                        setProducts(allProducts)
+                    } else {
+                        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?category=${encodeURIComponent(categoryData.name)}`)
+                        setProducts(Array.isArray(res.data) ? res.data : [])
+                        setGroupedProducts({})
+                    }
                 }
-                const res = await axios.get(url)
-                setProducts(res.data)
                 setPage(1)
             } catch (error) {
                 console.error("Error fetching products:", error)
@@ -130,6 +157,7 @@ export default function CategoryPage() {
         }
         fetchProducts()
     }, [categoryData, currentPath])
+
 
     // Helper to find the current node in the subcategory tree
     const getCurrentSubcategories = () => {
@@ -237,16 +265,7 @@ export default function CategoryPage() {
                             ))}
                         </div>
 
-                        <h3 className="text-center text-[26px] font-bold text-[#111] mb-10 tracking-tight">
-                            {currentPath.length > 0 ? currentPath[currentPath.length - 1] : categoryData.name} Best Sellers
-                        </h3>
-
-                        <TopPills 
-                            subcategories={subcategoriesToShow} 
-                            currentPath={currentPath} 
-                            onNavigate={handleNavigateSub} 
-                        />
-
+                        {/* Category Banner */}
                         <CategoryHeroBanner category={categoryData} products={products} />
 
                         <div className="flex items-end justify-between mb-8 pb-3 border-b-2 border-[#111]">
@@ -258,7 +277,32 @@ export default function CategoryPage() {
                             <div className="flex items-center justify-center py-20">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff1268]"></div>
                             </div>
+                        ) : currentPath.length === 0 ? (
+                            /* ── Grouped by Subcategory (Root Level) ── */
+                            <div className="space-y-10 mb-20">
+                                {(categoryData.children || []).map(sub => {
+                                    const subProducts = groupedProducts[sub.name] || [];
+                                    if (subProducts.length === 0) return null;
+                                    return (
+                                        <div key={sub.id}>
+                                            {/* Section Header - Styled like the site theme */}
+                                            <div className="flex items-center mb-8 px-5 py-3 bg-[#ff1268] text-white shadow-sm rounded-r-lg">
+                                                <h4 className="text-[17px] font-black tracking-tight uppercase">
+                                                    {sub.name}
+                                                </h4>
+                                            </div>
+                                            {/* Products Grid */}
+                                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+                                                {subProducts.map(p => (
+                                                    <CommonProductCard key={p.id} product={p} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         ) : paginatedProducts.length > 0 ? (
+                            /* Filtered Subcategory Grid */
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12 mb-16">
                                 {paginatedProducts.map(p => (
                                     <CommonProductCard key={p.id} product={p} />

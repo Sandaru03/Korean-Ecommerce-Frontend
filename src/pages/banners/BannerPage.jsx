@@ -20,18 +20,7 @@ function resolveImage(p) {
     return p.image || "/defult-product.jpg";
 }
 
-function StarRating({ rating, reviews }) {
-    return (
-        <div className="flex items-center gap-1 mt-1">
-            <div className="flex">
-                {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className={`h-3 w-3 ${i < Math.floor(rating || 5) ? "fill-primary text-primary" : "fill-gray-200 text-gray-200"}`} />
-                ))}
-            </div>
-            <span className="text-[11px] text-[#888]">({(reviews || 0).toLocaleString()})</span>
-        </div>
-    )
-}
+
 
 function ProductCard({ p }) {
     const { addToCart } = useCart()

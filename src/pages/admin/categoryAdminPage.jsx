@@ -122,7 +122,7 @@ export default function CategoryAdminPage() {
 
                                     <td className="p-4 text-right">
                                         <div className="flex justify-end gap-2">
-                                            {/* Show 'Manage' for top-level categories only */}
+                                            {/* Manage subcategories — only for top-level */}
                                             {category.depth === 0 && (
                                                 <button
                                                     onClick={() => navigate(`/admin/categories/${category.id}/subcategories`)}
@@ -130,6 +130,16 @@ export default function CategoryAdminPage() {
                                                     title="Manage subcategories"
                                                 >
                                                     <FaLayerGroup className="text-xs" /> Manage
+                                                </button>
+                                            )}
+                                            {/* Manage Products — for subcategories (depth > 0) */}
+                                            {category.depth > 0 && (
+                                                <button
+                                                    onClick={() => navigate(`/admin/categories/${category.id}/subcategories`)}
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg transition-colors"
+                                                    title="Manage products in this subcategory"
+                                                >
+                                                    📦 Products
                                                 </button>
                                             )}
                                             <Link

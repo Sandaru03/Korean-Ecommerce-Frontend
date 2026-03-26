@@ -4,54 +4,10 @@ import axios from "axios"
 import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
 import { ChevronRight, ChevronLeft, Heart } from "lucide-react"
+import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 
 /* eslint-disable react/prop-types */
 
-// ── Single product card ────────────────────────────────────────
-function ListingCard({ product }) {
-    const [wished, setWished] = useState(false)
-    const brandName = product.name?.split(" ")[0] || "Brand"
-
-    let imageUrl = "https://via.placeholder.com/300"
-    let images = product.images || product.image
-    if (typeof images === "string" && (images.startsWith("[") || images.startsWith("{"))) {
-        try { images = JSON.parse(images) } catch { /* keep as string */ }
-    }
-    if (Array.isArray(images) && images.length > 0) imageUrl = images[0]
-    else if (typeof images === "string") imageUrl = images
-
-    return (
-        <Link to={`/product/${product.id}`} className="group relative bg-white block">
-            <div className="relative aspect-square overflow-hidden border border-[#eee] rounded-sm mb-3">
-                <img
-                    src={imageUrl}
-                    alt={product.name}
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                />
-                <button
-                    onClick={(e) => { e.preventDefault(); setWished(w => !w) }}
-                    className="absolute top-2 right-2 z-10 flex items-center justify-center p-1"
-                >
-                    <Heart className={`h-[22px] w-[22px] ${wished ? "fill-[#ff4040] text-[#ff4040]" : "text-[#ccc] hover:text-[#999]"}`} strokeWidth={1.5} />
-                </button>
-            </div>
-            <div className="px-0.5">
-                <p className="text-[12px] font-bold text-[#111] mb-1 leading-none truncate">{brandName}</p>
-                <p className="text-[13px] text-[#555] leading-[1.3] line-clamp-2 min-h-[34px] group-hover:underline decoration-1 underline-offset-2">
-                    {product.name}
-                </p>
-                <div className="mt-2.5 flex flex-col gap-0.5">
-                    <div className="flex items-baseline gap-1.5 leading-none mt-1">
-                        <span className="text-[16px] font-bold text-[#111]">
-                            LKR {Number(product.price).toLocaleString('en-IN')}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </Link>
-    )
-}
 
 // ── Large circle icons for categories ─────────────────────────
 function CategoryCircles({ categories, selectedId, onSelect }) {
@@ -85,29 +41,6 @@ function CategoryCircles({ categories, selectedId, onSelect }) {
     )
 }
 
-// ── Sub-category pill filters ──────────────────────────────────
-function SubCategoryPills({ subcategories, selectedName, onSelect }) {
-    if (!subcategories || subcategories.length === 0) return null
-    return (
-        <div className="flex flex-wrap gap-2 mb-8 justify-center">
-            <button
-                onClick={() => onSelect(null)}
-                className={`px-4 py-1.5 rounded-full text-[13px] font-medium border transition-colors ${!selectedName ? "bg-[#111] text-white border-[#111]" : "bg-white text-[#555] border-[#ddd] hover:border-[#999]"}`}
-            >
-                All
-            </button>
-            {subcategories.map(sub => (
-                <button
-                    key={sub.id}
-                    onClick={() => onSelect(sub.name)}
-                    className={`px-4 py-1.5 rounded-full text-[13px] font-medium border transition-colors ${selectedName === sub.name ? "bg-[#111] text-white border-[#111]" : "bg-white text-[#555] border-[#ddd] hover:border-[#999]"}`}
-                >
-                    {sub.name}
-                </button>
-            ))}
-        </div>
-    )
-}
 
 // ── Main Page Component ────────────────────────────────────────
 export default function SuperCategoryPage() {
@@ -117,6 +50,7 @@ export default function SuperCategoryPage() {
     const [selectedCategory, setSelectedCategory] = useState(null) // depth-1
     const [selectedSubName, setSelectedSubName] = useState(null)   // depth-2 name
     const [products, setProducts] = useState([])
+    const [groupedProducts, setGroupedProducts] = useState({}) // Added for grouped view
     const [loading, setLoading] = useState(true)
     const [productsLoading, setProductsLoading] = useState(false)
     const [page, setPage] = useState(1)
@@ -143,36 +77,66 @@ export default function SuperCategoryPage() {
         fetch()
     }, [slug])
 
+    // Shuffle utility
+    const shuffleArray = (array) => {
+        const shuffled = [...array]
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+        }
+        return shuffled
+    }
+
     // Fetch products whenever selected category / sub changes
     useEffect(() => {
         if (!superCategory) return
         const fetchProducts = async () => {
             try {
                 setProductsLoading(true)
-                let url = `${import.meta.env.VITE_BACKEND_URL}/products`
-                const params = new URLSearchParams()
-
                 if (selectedCategory) {
-                    params.set("category", selectedCategory.name)
-                    if (selectedSubName) {
-                        params.set("subCategory", selectedSubName)
+                    // Category selected — fetch its sub-categories in parallel
+                    const children = selectedCategory.children || []
+                    if (children.length > 0) {
+                        const requests = children.map(sub =>
+                            axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?subCategory=${encodeURIComponent(sub.name)}`)
+                                .then(r => ({ name: sub.name, products: Array.isArray(r.data) ? r.data : [] }))
+                                .catch(() => ({ name: sub.name, products: [] }))
+                        )
+                        const results = await Promise.all(requests)
+                        const grouped = {}
+                        const allProducts = []
+                        results.forEach(({ name, products }) => {
+                            grouped[name] = products
+                            allProducts.push(...products)
+                        })
+                        setGroupedProducts(grouped)
+                        setProducts(allProducts)
+                    } else {
+                        // No sub-categories: fallback to category group
+                        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?category=${encodeURIComponent(selectedCategory.name)}`)
+                        const list = Array.isArray(res.data) ? res.data : (res.data?.products || [])
+                        setProducts(list)
+                        setGroupedProducts({})
                     }
                 } else {
-                    // No specific category selected — fetch all for super category using its name
-                    params.set("category", superCategory.name)
+                    // No specific category selected — fetch ALL products for this super category
+                    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?superCategory=${encodeURIComponent(superCategory.name)}`)
+                    const list = Array.isArray(res.data) ? res.data : (res.data?.products || [])
+                    // SHUFFLE for random look
+                    setProducts(shuffleArray(list))
+                    setGroupedProducts({})
                 }
-                const res = await axios.get(`${url}?${params.toString()}`)
-                setProducts(Array.isArray(res.data) ? res.data : res.data?.products || [])
                 setPage(1)
             } catch (err) {
                 console.error("Error fetching products:", err)
                 setProducts([])
+                setGroupedProducts({})
             } finally {
                 setProductsLoading(false)
             }
         }
         fetchProducts()
-    }, [superCategory, selectedCategory, selectedSubName])
+    }, [superCategory, selectedCategory])
 
     const handleSelectCategory = (cat) => {
         if (selectedCategory?.id === cat.id) {
@@ -305,14 +269,6 @@ export default function SuperCategoryPage() {
 
                     {/* Main area */}
                     <div className="flex-1 min-w-0">
-                        {/* Sub-category pill filters */}
-                        {selectedCategory && subCategories.length > 0 && (
-                            <SubCategoryPills
-                                subcategories={subCategories}
-                                selectedName={selectedSubName}
-                                onSelect={setSelectedSubName}
-                            />
-                        )}
 
                         {/* Section heading */}
                         <div className="flex items-end justify-between mb-8 pb-3 border-b-2 border-[#111]">
@@ -324,15 +280,40 @@ export default function SuperCategoryPage() {
                             </span>
                         </div>
 
-                        {/* Product grid */}
+                        {/* Product area */}
                         {productsLoading ? (
                             <div className="flex items-center justify-center py-20">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff1268]"></div>
                             </div>
+                        ) : selectedCategory && (selectedCategory.children || []).length > 0 ? (
+                            /* ── Grouped by Subcategory (Korean e-commerce style) ── */
+                            <div className="space-y-12 mb-20">
+                                {(selectedCategory.children || []).map(sub => {
+                                    const subProducts = groupedProducts[sub.name] || [];
+                                    if (subProducts.length === 0) return null;
+                                    return (
+                                        <div key={sub.id}>
+                                            {/* Section Header - Styled like the site theme */}
+                                            <div className="flex items-center mb-8 px-5 py-3 bg-[#ff1268] text-white shadow-sm rounded-r-lg">
+                                                <h4 className="text-[17px] font-black tracking-tight uppercase">
+                                                    {sub.name}
+                                                </h4>
+                                            </div>
+                                            {/* Products Grid */}
+                                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12">
+                                                {subProducts.map(p => (
+                                                    <CommonProductCard key={p.id} product={p} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
                         ) : paginatedProducts.length > 0 ? (
+                            /* Standard Grid */
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12 mb-16">
                                 {paginatedProducts.map(p => (
-                                    <ListingCard key={p.id} product={p} />
+                                    <CommonProductCard key={p.id} product={p} />
                                 ))}
                             </div>
                         ) : (

@@ -3,7 +3,7 @@ import { Header } from "@/components/coupang/header"
 import { HeroBanner } from "@/components/coupang/hero-banner"
 import { Footer } from "@/components/coupang/footer"
 import { BannerTopicSection } from "@/components/coupang/BannerTopicSection"
-import { ChevronRight, Heart, ShoppingBag } from "lucide-react"
+import { ChevronLeft, ChevronRight, Heart, ShoppingBag } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { AdBannerSlider } from "@/components/coupang/AdBannerSlider"
@@ -51,10 +51,88 @@ function EmptyTopics() {
     )
 }
 
+// ── Middle Banner Section ─────────────────────────────────────
+function MiddleBannerSection({ banners }) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        if (banners.length <= 1) return;
+        const interval = setInterval(() => {
+            setCurrentIndex(prev => (prev + 1) % banners.length);
+        }, 6000);
+        return () => clearInterval(interval);
+    }, [banners.length]);
+
+    if (!banners || banners.length === 0) return null;
+
+    const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % banners.length);
+    const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
+
+    return (
+        <section className="mb-14 relative group">
+            <div className="overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white">
+                <div 
+                    className="flex transition-transform duration-1000 cubic-bezier(0.4, 0, 0.2, 1)"
+                    style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                >
+                    {banners.map((banner) => (
+                        <div key={banner.id} className="min-w-full shrink-0 relative">
+                            <Link to={banner.link || '#'} className="block w-full h-full group/item">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 opacity-60" />
+                                <img 
+                                    src={banner.image} 
+                                    alt="Promotion" 
+                                    className="w-full h-[300px] md:h-[420px] object-cover transition-transform duration-1000 group-hover/item:scale-110" 
+                                />
+                                <div className="absolute bottom-10 left-10 z-20 transition-all duration-500 transform translate-y-2 group-hover/item:translate-y-0 opacity-0 group-hover/item:opacity-100 hidden md:block">
+                                    <span className="px-6 py-2 bg-white text-black font-bold rounded-full shadow-lg text-sm tracking-uppercase">Explore Collection</span>
+                                </div>
+                            </Link>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {banners.length > 1 && (
+                <>
+                    <button 
+                        onClick={prevSlide}
+                        className="absolute -left-6 top-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-2xl text-slate-900 border border-slate-100 opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white scale-75 group-hover:scale-100 z-30 hidden lg:flex"
+                    >
+                        <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button 
+                        onClick={nextSlide}
+                        className="absolute -right-6 top-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-2xl text-slate-900 border border-slate-100 opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white scale-75 group-hover:scale-100 z-30 hidden lg:flex"
+                    >
+                        <ChevronRight className="w-6 h-6" />
+                    </button>
+                    
+                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+                        {banners.map((_, idx) => (
+                            <button
+                                key={idx}
+                                onClick={() => setCurrentIndex(idx)}
+                                className={`transition-all duration-500 rounded-full ${
+                                    idx === currentIndex 
+                                    ? "bg-black w-10 h-2" 
+                                    : "bg-slate-300 w-2 h-2 hover:bg-slate-400"
+                                }`}
+                                aria-label={`Go to slide ${idx + 1}`}
+                            />
+                        ))}
+                    </div>
+                </>
+            )}
+        </section>
+    );
+}
+
 // ── Main Page ──────────────────────────────────────────────────
 export default function HomePage() {
     const [categories, setCategories] = useState([])
     const [topics, setTopics] = useState([])
+    const [middleBanners, setMiddleBanners] = useState([])
     const [topicsLoading, setTopicsLoading] = useState(true)
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"
 
@@ -69,6 +147,11 @@ export default function HomePage() {
             .then(d => { if (d.success) setTopics(d.topics) })
             .catch(console.error)
             .finally(() => setTopicsLoading(false))
+
+        fetch(`${backendUrl}/middle-banners`)
+            .then(r => r.json())
+            .then(d => { if (d.success) setMiddleBanners(d.banners) })
+            .catch(console.error)
     }, [backendUrl])
 
     const rootCategories = categories.filter(c => c.parentId === null)
@@ -113,12 +196,19 @@ export default function HomePage() {
                         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
                     </div>
                 ) : activeTopicsWithProducts.length > 0 ? (
-                    activeTopicsWithProducts.map(topic => (
-                        topic.bannerImage ? (
-                            <BannerTopicSection key={topic.id} title={topic.title} products={topic.products} bannerImage={topic.bannerImage} />
-                        ) : (
-                            <TopicStrip key={topic.id} title={topic.title} products={topic.products} />
-                        )
+                    activeTopicsWithProducts.map((topic, idx) => (
+                        <div key={topic.id}>
+                            {topic.bannerImage ? (
+                                <BannerTopicSection title={topic.title} products={topic.products} bannerImage={topic.bannerImage} />
+                            ) : (
+                                <TopicStrip title={topic.title} products={topic.products} />
+                            )}
+                            
+                            {/* Insert Middle Banners after the 2nd topic (index 1) */}
+                            {idx === 1 && middleBanners.length > 0 && (
+                                <MiddleBannerSection banners={middleBanners} />
+                            )}
+                        </div>
                     ))
                 ) : (
                     <EmptyTopics />

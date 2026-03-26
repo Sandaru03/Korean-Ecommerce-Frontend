@@ -8,12 +8,19 @@ export function CommonProductCard({ product }) {
     // Robust image handling
     let imageUrl = "https://via.placeholder.com/300"
     let images = product.images || product.image
-    if (typeof images === 'string' && (images.startsWith('[') || images.startsWith('{'))) {
-        try {
-            const parsed = JSON.parse(images)
-            images = Array.isArray(parsed) ? parsed : [parsed]
-        } catch (e) {
-            // Not JSON, use as is
+    if (typeof images === 'string') {
+        const trimmed = images.trim();
+        if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+            try {
+                const parsed = JSON.parse(trimmed)
+                images = Array.isArray(parsed) ? parsed : [parsed]
+            } catch (e) {
+                images = [trimmed]
+            }
+        } else if (trimmed.includes(',')) {
+            images = trimmed.split(',').map(s => s.trim()).filter(Boolean)
+        } else {
+            images = [trimmed]
         }
     }
     

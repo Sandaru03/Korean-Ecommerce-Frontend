@@ -28,6 +28,7 @@ import ManageHomePage from "./admin/manageHomePage";
 import ManageBannerCategories from "./admin/manageBannerCategories";
 import ManageBannersPage from "./admin/ManageBannersPage";
 import ManageAdBannersPage from "./admin/ManageAdBannersPage";
+import ManageMiddleBannersPage from "./admin/ManageMiddleBannersPage";
 import ManageReelsPage from "./admin/ManageReelsPage";
 
 // Sidebar link
@@ -79,6 +80,7 @@ function DashboardHero() {
                     { label: "Manage Topics", to: "/admin/manage-homepage", icon: FaFilePen, color: "bg-rose-500" },
                     { label: "Banners", to: "/admin/banners", icon: FaFilePen, color: "bg-cyan-500" },
                     { label: "Ad Banners", to: "/admin/ad-banners", icon: FaFilePen, color: "bg-blue-400" },
+                    { label: "Middle Banners", to: "/admin/middle-banners", icon: FaFilePen, color: "bg-amber-500" },
                     { label: "Reels", to: "/admin/reels", icon: FaVideo, color: "bg-indigo-500" },
                 ].map((c) => (
                     <NavLink
@@ -189,6 +191,7 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/manage-homepage" icon={FaFilePen} label="Manage Topics" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/banners" icon={FaFilePen} label="Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/ad-banners" icon={FaFilePen} label="Ad Banners" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/middle-banners" icon={FaFilePen} label="Middle Banners" onClick={() => setSidebarOpen(false)} />
                     </nav>
 
                     {/* Sidebar Footer */}
@@ -261,6 +264,7 @@ export default function AdminPage() {
                             <Route path="manage-homepage" element={<ManageHomePage />} />
                             <Route path="banners" element={<ManageBannersPage />} />
                             <Route path="ad-banners" element={<ManageAdBannersPage />} />
+                            <Route path="middle-banners" element={<ManageMiddleBannersPage />} />
                             <Route path="banner-categories" element={<ManageBannerCategories />} />
                             <Route path="reels" element={<ManageReelsPage />} />
                         </Routes>
