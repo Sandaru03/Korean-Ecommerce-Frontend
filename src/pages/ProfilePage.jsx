@@ -120,7 +120,7 @@ export default function ProfilePage() {
                                 </div>
                             </div>
                             <h2 className="text-xl font-bold text-gray-900">{user.firstName} {user.lastName}</h2>
-                            <p className="text-sm text-gray-500 capitalize mb-4">{user.role}</p>
+
                             
                             <button 
                                 onClick={handleLogout}
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                                 <InfoItem label="Last Name" value={user.lastName} />
                                 <InfoItem label="Email Address" value={user.email} />
                                 <InfoItem label="Phone Number" value={user.phone || "Not provided"} />
-                                <InfoItem label="Role" value={user.role} className="capitalize" />
+
                                 <InfoItem label="Member Since" value={joinDate} />
                                 <InfoItem label="Account Status" value={user.isBlock ? "Blocked" : "Active"} 
                                     valueColor={user.isBlock ? "text-red-600" : "text-emerald-600"} 
