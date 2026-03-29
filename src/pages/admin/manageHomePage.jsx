@@ -9,7 +9,7 @@ export default function ManageHomePage() {
   const [topics, setTopics] = useState([]);
   const [newTopicTitle, setNewTopicTitle] = useState("");
   const [loading, setLoading] = useState(false);
-  const [bannerPreviews, setBannerPreviews] = useState({}); // { topicId: { file, url } }
+  const [bannerPreviews, setBannerPreviews] = useState({}); // { topicId: { index: { file, url } } }
   
   // Product search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -77,17 +77,21 @@ export default function ManageHomePage() {
     }
   };
 
-  const handleBannerSelect = (topicId, file) => {
+  const handleBannerSelect = (topicId, index, file) => {
     if (!file) return;
     const previewUrl = URL.createObjectURL(file);
     setBannerPreviews(prev => ({
       ...prev,
-      [topicId]: { file, url: previewUrl }
+      [topicId]: {
+        ...(prev[topicId] || {}),
+        [index]: { file, url: previewUrl }
+      }
     }));
   };
 
-  const handleSaveBanner = async (topicId) => {
-    const preview = bannerPreviews[topicId];
+  const handleSaveBanner = async (topicId, index) => {
+    const topicPreviews = bannerPreviews[topicId];
+    const preview = topicPreviews?.[index];
     if (!preview) return;
 
     const formData = new FormData();
@@ -98,22 +102,36 @@ export default function ManageHomePage() {
       const uploadRes = await axios.post(`${backendUrl}/upload/cloudinary`, formData);
       const imageUrl = uploadRes.data.urls[0];
 
+      const topic = topics.find(t => t.id === topicId);
+      const currentImages = Array.isArray(topic.bannerImages) ? [...topic.bannerImages] : [];
+      // Ensure the array has enough slots
+      while (currentImages.length <= index) {
+        currentImages.push(null);
+      }
+      currentImages[index] = imageUrl;
+
       const { data } = await axios.put(`${backendUrl}/homepage-topics/${topicId}`, {
-        bannerImage: imageUrl
+        bannerImages: currentImages
       });
 
       if (data.success) {
-        setTopics(topics.map(t => t.id === topicId ? { ...t, bannerImage: imageUrl } : t));
+        setTopics(topics.map(t => t.id === topicId ? { ...t, bannerImages: currentImages } : t));
         setBannerPreviews(prev => {
           const next = { ...prev };
-          delete next[topicId];
+          const topicNext = { ...next[topicId] };
+          delete topicNext[index];
+          if (Object.keys(topicNext).length === 0) {
+            delete next[topicId];
+          } else {
+            next[topicId] = topicNext;
+          }
           return next;
         });
-        toast.success("Banner saved to Cloudinary successfully!");
+        toast.success(`Banner slot ${index + 1} saved successfully!`);
       }
     } catch (error) {
       console.error("Error saving banner:", error);
-      toast.error("Failed to save banner to Cloudinary");
+      toast.error("Failed to save banner");
     } finally {
       setLoading(false);
     }
@@ -216,37 +234,43 @@ export default function ManageHomePage() {
               {/* Topic Header */}
               <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-b border-gray-100">
                 <div className="flex items-center gap-6">
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="relative group/banner w-32 h-16 bg-gray-200 rounded overflow-hidden border border-gray-300 flex items-center justify-center shrink-0 shadow-inner">
-                      {bannerPreviews[topic.id] ? (
-                        <img src={bannerPreviews[topic.id].url} alt="Preview" className="w-full h-full object-cover ring-2 ring-primary ring-inset" />
-                      ) : topic.bannerImage ? (
-                        <img src={topic.bannerImage} alt="Banner" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="flex flex-col items-center text-gray-400">
-                          <ImageIcon className="w-5 h-5" />
-                          <span className="text-[10px]">No Banner</span>
+                  <div className="flex gap-3">
+                    {[0, 1, 2].map((idx) => (
+                      <div key={idx} className="flex flex-col items-center gap-2">
+                        <div className="relative group/banner w-24 h-16 bg-gray-200 rounded overflow-hidden border border-gray-300 flex items-center justify-center shrink-0 shadow-inner">
+                          {bannerPreviews[topic.id]?.[idx] ? (
+                            <img src={bannerPreviews[topic.id][idx].url} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover ring-2 ring-primary ring-inset" />
+                          ) : (topic.bannerImages && topic.bannerImages[idx]) ? (
+                            <img src={topic.bannerImages[idx]} alt={`Banner ${idx + 1}`} className="w-full h-full object-cover" />
+                          ) : (idx === 0 && topic.bannerImage) ? (
+                            <img src={topic.bannerImage} alt={`Legacy Banner`} className="w-full h-full object-cover opacity-50" title="Legacy Banner" />
+                          ) : (
+                            <div className="flex flex-col items-center text-gray-400">
+                              <ImageIcon className="w-4 h-4" />
+                              <span className="text-[8px]">Slot {idx + 1}</span>
+                            </div>
+                          )}
+                          <label className="absolute inset-0 bg-black/40 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                            <Upload className="w-4 h-4 text-white" />
+                            <input 
+                              type="file" 
+                              className="hidden" 
+                              accept="image/*"
+                              onChange={(e) => handleBannerSelect(topic.id, idx, e.target.files[0])}
+                            />
+                          </label>
                         </div>
-                      )}
-                      <label className="absolute inset-0 bg-black/40 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                        <Upload className="w-5 h-5 text-white" />
-                        <input 
-                          type="file" 
-                          className="hidden" 
-                          accept="image/*"
-                          onChange={(e) => handleBannerSelect(topic.id, e.target.files[0])}
-                        />
-                      </label>
-                    </div>
-                    {bannerPreviews[topic.id] && (
-                      <button 
-                        onClick={() => handleSaveBanner(topic.id)}
-                        disabled={loading}
-                        className="w-full py-1 bg-primary text-white text-[10px] font-bold rounded hover:opacity-90 disabled:opacity-50 shadow-sm"
-                      >
-                        {loading ? "..." : "SAVE BANNER"}
-                      </button>
-                    )}
+                        {bannerPreviews[topic.id]?.[idx] && (
+                          <button 
+                            onClick={() => handleSaveBanner(topic.id, idx)}
+                            disabled={loading}
+                            className="w-full py-1 bg-primary text-white text-[9px] font-bold rounded hover:opacity-90 disabled:opacity-50 shadow-sm"
+                          >
+                            {loading ? "..." : "SAVE"}
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-gray-900">{topic.title}</h2>
@@ -258,7 +282,7 @@ export default function ManageHomePage() {
                         {topic.active ? 'Active' : 'Hidden'}
                       </button>
                       <span className="text-[11px] text-gray-400 italic">
-                        {bannerPreviews[topic.id] ? "New banner selected" : topic.bannerImage ? "Banner layout active" : "Horizontal strip active"}
+                        {topic.bannerImages?.length > 0 ? "Slider active" : topic.bannerImage ? "Legacy banner active" : "Horizontal strip active"}
                       </span>
                     </div>
                   </div>

@@ -30,6 +30,8 @@ import ManageBannersPage from "./admin/ManageBannersPage";
 import ManageAdBannersPage from "./admin/ManageAdBannersPage";
 import ManageMiddleBannersPage from "./admin/ManageMiddleBannersPage";
 import ManageReelsPage from "./admin/ManageReelsPage";
+import ManageNavbarCategories from "./admin/manageNavbarCategories";
+import ManageGridBanners from "./admin/manageGridBanners";
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -192,6 +194,8 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/banners" icon={FaFilePen} label="Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/ad-banners" icon={FaFilePen} label="Ad Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/middle-banners" icon={FaFilePen} label="Middle Banners" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/grid-banners" icon={FaFilePen} label="Grid Banners" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/navbar-categories" icon={FaFilePen} label="Navbar Categories" onClick={() => setSidebarOpen(false)} />
                     </nav>
 
                     {/* Sidebar Footer */}
@@ -265,7 +269,9 @@ export default function AdminPage() {
                             <Route path="banners" element={<ManageBannersPage />} />
                             <Route path="ad-banners" element={<ManageAdBannersPage />} />
                             <Route path="middle-banners" element={<ManageMiddleBannersPage />} />
+                            <Route path="grid-banners" element={<ManageGridBanners />} />
                             <Route path="banner-categories" element={<ManageBannerCategories />} />
+                            <Route path="navbar-categories" element={<ManageNavbarCategories />} />
                             <Route path="reels" element={<ManageReelsPage />} />
                         </Routes>
                     </div>

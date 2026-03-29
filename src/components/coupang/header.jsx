@@ -4,6 +4,7 @@ import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut, LogIn } from "lu
 import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useCart } from "@/context/CartContext"
+import axios from "axios"
 
 // static NAV_CATEGORIES removed in favor of dynamic fetching
 
@@ -18,6 +19,8 @@ export function Header() {
   const navigate = useNavigate()
   const { totalItems } = useCart()
 
+  const [navbarCategories, setNavbarCategories] = useState([])
+
   // Check login state on mount + whenever storage changes
   useEffect(() => {
     const check = () => setIsLoggedIn(!!localStorage.getItem("token"))
@@ -25,6 +28,21 @@ export function Header() {
     window.addEventListener("storage", check)
     return () => window.removeEventListener("storage", check)
   }, [])
+
+  // Fetch dynamic navbar categories
+  useEffect(() => {
+    const fetchNavbarCats = async () => {
+      try {
+        const { data } = await axios.get(`${backendUrl}/categories`);
+        if (data.categories) {
+          setNavbarCategories(data.categories.filter(c => c.showInNavbar && c.parentId === null));
+        }
+      } catch (error) {
+        console.error("Error fetching navbar categories:", error);
+      }
+    };
+    fetchNavbarCats();
+  }, [backendUrl])
 
   // Close USER dropdown when clicking outside
   useEffect(() => {
@@ -182,12 +200,15 @@ export function Header() {
 
           {/* Header Links */}
           <div className="flex-1 flex gap-8 items-center px-8 text-[15px] font-bold text-[#111]">
-            <Link to="/category/hair-care" className="hover:text-primary transition uppercase">Hair Care</Link>
-            <Link to="/category/body-care" className="hover:text-primary transition uppercase">Body Care</Link>
-            <Link to="/category/health" className="hover:text-primary transition uppercase">Health</Link>
-            <Link to="/category/home-kitchen" className="hover:text-primary transition uppercase">Home & Kitchen</Link>
-            <Link to="/category/sports" className="hover:text-primary transition uppercase">Sports</Link>
-            <Link to="/category/pet-supplies" className="hover:text-primary transition uppercase">Pet Supplies</Link>
+            {navbarCategories.map((cat) => (
+              <Link 
+                key={cat.id} 
+                to={`/category/${cat.slug}`} 
+                className="hover:text-primary transition uppercase"
+              >
+                {cat.name}
+              </Link>
+            ))}
           </div>
         </div>
       </div>

@@ -1,25 +1,67 @@
 import { Link } from "react-router-dom"
 import { ChevronRight, Heart } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 import { CommonProductCard } from "./CommonProductCard"
 
 // Removed local resolveImage and GridCard as they're now shared as CommonProductCard
 
-export function BannerTopicSection({ title, products, bannerImage }) {
+export function BannerTopicSection({ title, products, bannerImage, bannerImages }) {
     // Show only 6 products in a 3x2 grid
     const displayProducts = products.slice(0, 6)
+    
+    // Normalize images: use bannerImages array, or fallback to bannerImage string
+    const images = (Array.isArray(bannerImages) && bannerImages.filter(Boolean).length > 0)
+        ? bannerImages.filter(Boolean)
+        : (bannerImage ? [bannerImage] : [])
+
+    const [currentIndex, setCurrentIndex] = useState(0)
+
+    // Auto-slide every 5 seconds if there's more than 1 image
+    useEffect(() => {
+        if (images.length <= 1) return
+        const timer = setInterval(() => {
+            setCurrentIndex(prev => (prev + 1) % images.length)
+        }, 5000)
+        return () => clearInterval(timer)
+    }, [images.length])
 
     return (
         <section className="mb-12">
             <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm">
-                {/* Left: Banner */}
+                {/* Left: Banner Slider */}
                 <div className="w-full md:w-[32%] relative overflow-hidden bg-accent min-h-[300px]">
-                    <img 
-                        src={bannerImage} 
-                        alt={title} 
-                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                    />
+                    {images.length > 0 ? (
+                        <div className="relative w-full h-full group">
+                            {images.map((img, idx) => (
+                                <img 
+                                    key={idx}
+                                    src={img} 
+                                    alt={`${title} banner ${idx + 1}`} 
+                                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
+                                        idx === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
+                                    }`}
+                                />
+                            ))}
+                            {/* Slide indicators if more than one image */}
+                            {images.length > 1 && (
+                                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                                    {images.map((_, idx) => (
+                                        <div 
+                                            key={idx}
+                                            className={`h-1 rounded-full transition-all duration-300 ${
+                                                idx === currentIndex ? "w-4 bg-white" : "w-1.5 bg-white/50"
+                                            }`}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                            No Banner
+                        </div>
+                    )}
                 </div>
 
                 {/* Right: Product Grid (3x2) */}

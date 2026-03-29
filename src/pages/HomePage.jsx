@@ -8,6 +8,7 @@ import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { AdBannerSlider } from "@/components/coupang/AdBannerSlider"
 import { ReelsSection } from "@/components/coupang/ReelsSection"
+import { GridBannerSection } from "@/components/coupang/GridBannerSection"
 
 function resolveImage(p) {
     let imgs = p.images
@@ -185,6 +186,11 @@ export default function HomePage() {
                 </div>
             )}
 
+            {/* Grid Banners List - New Layout Section */}
+            <div className="mx-auto max-w-[1040px] px-4">
+                <GridBannerSection />
+            </div>
+
             <div className="mx-auto max-w-[1040px] px-4">
                 <AdBannerSlider />
             </div>
@@ -198,8 +204,8 @@ export default function HomePage() {
                 ) : activeTopicsWithProducts.length > 0 ? (
                     activeTopicsWithProducts.map((topic, idx) => (
                         <div key={topic.id}>
-                            {topic.bannerImage ? (
-                                <BannerTopicSection title={topic.title} products={topic.products} bannerImage={topic.bannerImage} />
+                            {topic.bannerImages?.length > 0 || topic.bannerImage ? (
+                                <BannerTopicSection title={topic.title} products={topic.products} bannerImage={topic.bannerImage} bannerImages={topic.bannerImages} />
                             ) : (
                                 <TopicStrip title={topic.title} products={topic.products} />
                             )}
