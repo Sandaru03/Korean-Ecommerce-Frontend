@@ -7,8 +7,6 @@ import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Mail, ChevronRight, Al
 import toast from "react-hot-toast"
 import axios from "axios"
 
-const WHATSAPP_NUMBER = "94771234567" // ← Change this to your WhatsApp number (94 = Sri Lanka code)
-const ORDER_EMAIL = "orders@yourbusiness.com" // ← Change this to your order email
 
 function fmt(num) {
     return new Intl.NumberFormat("en-IN").format(num)
@@ -18,7 +16,11 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
     const [name, setName] = useState("")
     const [phone, setPhone] = useState("")
     const [address, setAddress] = useState("")
+    const [whatsappNumber, setWhatsappNumber] = useState("94771234567")
+    const [orderEmail, setOrderEmail] = useState("orders@yourbusiness.com")
     const [loadingUser, setLoadingUser] = useState(true)
+    const [sendingEmail, setSendingEmail] = useState(false)
+    const [isSavingOrder, setIsSavingOrder] = useState(false)
     const { clearCart } = useCart()
 
     // Auto-fill name and phone from the logged-in user's profile
@@ -36,6 +38,14 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             })
             .catch(() => { /* silently ignore — user can fill manually */ })
             .finally(() => setLoadingUser(false))
+
+        // Fetch config from backend
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/config`)
+            .then(res => {
+                if (res.data.whatsappNumber) setWhatsappNumber(res.data.whatsappNumber)
+                if (res.data.orderEmail) setOrderEmail(res.data.orderEmail)
+            })
+            .catch(err => console.error("Failed to fetch config:", err))
     }, [])
 
 
@@ -56,29 +66,80 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         `${deliveryLine}\n` +
         `*Total: LKR ${fmt(grandTotal)}*`
 
-    function handleWhatsApp() {
+    async function saveOrderToDb() {
+        const token = localStorage.getItem("token")
+        if (!token) {
+            toast.error("Please log in to place an order.")
+            return null
+        }
+
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/orders`, {
+                items: cart.map(item => ({ productId: item.productId, qty: item.qty })),
+                address,
+                phone
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            return res.data
+        } catch (err) {
+            console.error("Order storage failed:", err)
+            if (err.response?.status === 401) {
+                toast.error("Your session has expired. Please log in again.")
+            } else {
+                toast.error("Failed to record order in database. Please try again.")
+            }
+            return null
+        }
+    }
+
+    async function handleWhatsApp() {
         if (!name || !phone || !address) {
             toast.error("Please fill in all fields before ordering.")
             return
         }
+
+        setIsSavingOrder(true)
+        const order = await saveOrderToDb()
+        setIsSavingOrder(false)
+        if (!order) return
+
         const encoded = encodeURIComponent(summaryText)
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, "_blank")
+        window.open(`https://wa.me/${whatsappNumber}?text=${encoded}`, "_blank")
         clearCart()
-        toast.success("Order sent via WhatsApp! 🎉")
+        toast.success("Order recorded and WhatsApp opened! 🎉")
         onClose()
     }
 
-    function handleEmail() {
+    async function handleEmail() {
         if (!name || !phone || !address) {
             toast.error("Please fill in all fields before ordering.")
             return
         }
-        const subject = encodeURIComponent("New Order — Korean Store")
-        const body = encodeURIComponent(summaryText.replace(/\*/g, ""))
-        window.open(`mailto:${ORDER_EMAIL}?subject=${subject}&body=${body}`)
-        clearCart()
-        toast.success("Opening email client to send your order!")
-        onClose()
+        
+        setIsSavingOrder(true)
+        const order = await saveOrderToDb()
+        if (!order) {
+            setIsSavingOrder(false)
+            return
+        }
+        
+        setSendingEmail(true)
+        try {
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/config/send-order-email`, {
+                summary: summaryText,
+                email: orderEmail
+            })
+            clearCart()
+            toast.success("Order saved and email sent! 📧")
+            onClose()
+        } catch (err) {
+            console.error("Email send failed:", err)
+            toast.error("Order saved, but email notification failed. Please try WhatsApp.")
+        } finally {
+            setSendingEmail(false)
+            setIsSavingOrder(false)
+        }
     }
 
     return (
@@ -170,17 +231,27 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                         <p className="font-bold text-[#111] text-[14px]">Place Your Order Via</p>
                         <button
                             onClick={handleWhatsApp}
-                            className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#25D366] hover:bg-[#20BB5A] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-green-200"
+                            disabled={isSavingOrder || sendingEmail}
+                            className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#25D366] hover:bg-[#20BB5A] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-green-200 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            <MessageCircle className="h-5 w-5" />
-                            Order via WhatsApp
+                            {isSavingOrder && !sendingEmail ? (
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                                <MessageCircle className="h-5 w-5" />
+                            )}
+                            {isSavingOrder && !sendingEmail ? "Saving Order..." : "Order via WhatsApp"}
                         </button>
                         <button
                             onClick={handleEmail}
-                            className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#4285F4] hover:bg-[#3367D6] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-blue-200"
+                            disabled={isSavingOrder || sendingEmail}
+                            className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#4285F4] hover:bg-[#3367D6] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-blue-200 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                            <Mail className="h-5 w-5" />
-                            Order via Email
+                            {isSavingOrder || sendingEmail ? (
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                                <Mail className="h-5 w-5" />
+                            )}
+                            {isSavingOrder ? "Saving Order..." : (sendingEmail ? "Sending Email..." : "Order via Email")}
                         </button>
                     </div>
                 </div>
