@@ -30,13 +30,13 @@ export function AdBannerSlider() {
     const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
 
     return (
-        <div className="relative w-full overflow-hidden rounded-xl mb-14 group bg-slate-100 border border-slate-200 shadow-sm min-h-[180px] md:min-h-0 md:aspect-[8/1]">
+        <div className="relative w-full overflow-hidden rounded-xl mb-8 md:mb-14 group aspect-[8/1] shadow-sm">
             <div 
                 className="flex h-full w-full transition-transform duration-500 ease-in-out"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
                 {banners.map((banner) => (
-                    <div key={banner.id} className="w-full h-full flex-none bg-[#f8f8f8]">
+                    <div key={banner.id} className="w-full h-full flex-none bg-transparent">
                         {banner.link ? (
                             <Link to={banner.link} className="block w-full h-full">
                                 <img src={banner.image} alt="Ad Banner" className="w-full h-full object-contain block" />
@@ -65,12 +65,12 @@ export function AdBannerSlider() {
                     </button>
                     
                     {/* Indicators */}
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-2">
                         {banners.map((_, idx) => (
                             <button
                                 key={idx}
                                 onClick={() => setCurrentIndex(idx)}
-                                className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                                className={`w-2 h-2 rounded-full transition-colors ${
                                     idx === currentIndex ? "bg-blue-600 border border-white" : "bg-white/50 border border-slate-300 hover:bg-white/80"
                                 }`}
                             />

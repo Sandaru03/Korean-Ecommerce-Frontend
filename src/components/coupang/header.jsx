@@ -347,7 +347,7 @@ export function Header() {
               value={searchQuery}
               onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Find today's trending picks! 🔥"
+              placeholder="Find today's trending picks!"
               className="h-11 w-full rounded-full border border-gray-200 bg-white px-4 pr-12 text-sm text-[#333] placeholder:text-gray-400 focus:border-primary focus:outline-none shadow-inner"
             />
             <button type="submit" className="absolute right-3 text-[#ff1268]">
