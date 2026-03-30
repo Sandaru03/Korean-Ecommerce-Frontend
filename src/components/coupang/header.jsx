@@ -223,7 +223,7 @@ export function Header() {
         <div className="hidden md:flex mx-auto max-w-[1040px] items-center gap-4 px-4 py-3">
           {/* Logo */}
           <Link to="/" className="shrink-0">
-            <img src="/logo.png" alt="Samee & Sadu" className="h-8 w-auto object-contain" />
+            <img src="/logo.png" alt="Samee and Sandu" className="h-8 w-auto object-contain" />
           </Link>
 
           {/* Search Bar */}

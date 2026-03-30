@@ -73,7 +73,7 @@ function MiddleBannerSection({ banners }) {
         <section className="mb-14 relative group">
             <div className="overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white">
                 <div 
-                    className="flex transition-transform duration-1000 cubic-bezier(0.4, 0, 0.2, 1)"
+                    className="flex transition-transform duration-1000 ease-[cubic-bezier(0.4,0,0.2,1)] transform-gpu"
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
                     {banners.map((banner) => (

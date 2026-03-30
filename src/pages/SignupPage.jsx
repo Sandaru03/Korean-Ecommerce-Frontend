@@ -37,108 +37,122 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="relative min-h-screen w-full overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
-            <div className="absolute inset-0 bg-black/50 md:bg-black/30" />
+        <div className="relative min-h-screen w-full overflow-hidden bg-background">
+            {/* Subtle background circles for a premium feel */}
+            <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl transition-all duration-[3000ms] animate-pulse" />
+            <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-3xl transition-all duration-[3000ms] animate-pulse delay-1000" />
 
-            <div className="relative z-10 flex min-h-screen items-center justify-center p-4">
-                <div className="w-full max-w-lg rounded-2xl border border-white/10 bg-white/10 backdrop-blur-xl shadow-2xl p-8 text-white">
-                    <h1 className="text-3xl font-bold text-center mb-6">Create Account</h1>
+            <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4 py-12">
+                {/* Logo Section */}
+                <Link to="/" className="mb-8 transition-transform hover:scale-105 active:scale-95 duration-300">
+                    <img src="/logo.png" alt="Samee and Sandu" className="h-12 w-auto object-contain" />
+                </Link>
+
+                <div className="w-full max-w-lg rounded-2xl border border-gray-100 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 md:p-10">
+                    <div className="mb-8 text-center">
+                        <h1 className="text-2xl font-black text-[#111] tracking-tight mb-2">Create Account</h1>
+                        <p className="text-sm text-gray-400 font-medium tracking-tight">Join us and start shopping quality products</p>
+                    </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-200">First Name</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[13px] font-bold text-[#111] ml-1">First Name</label>
                                 <input
                                     type="text"
                                     name="firstName"
                                     required
                                     value={formData.firstName}
                                     onChange={handleChange}
-                                    className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
-                                    placeholder="John"
+                                    className="w-full rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-2.5 text-sm text-[#111] placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
+                                    placeholder="Samee"
                                 />
                             </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-200">Last Name</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[13px] font-bold text-[#111] ml-1">Last Name</label>
                                 <input
                                     type="text"
                                     name="lastName"
                                     required
                                     value={formData.lastName}
                                     onChange={handleChange}
-                                    className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
-                                    placeholder="Doe"
+                                    className="w-full rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-2.5 text-sm text-[#111] placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
+                                    placeholder="Sandu"
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-200">Email</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[13px] font-bold text-[#111] ml-1">Email address</label>
                             <input
                                 type="email"
                                 name="email"
                                 required
                                 value={formData.email}
                                 onChange={handleChange}
-                                className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
-                                placeholder="john@example.com"
+                                className="w-full rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-2.5 text-sm text-[#111] placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
+                                placeholder="name@example.com"
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-200">Phone</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[13px] font-bold text-[#111] ml-1">Phone Number</label>
                             <input
                                 type="tel"
                                 name="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
-                                className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
+                                className="w-full rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-2.5 text-sm text-[#111] placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
                                 placeholder="+1 234 567 890"
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-200">Password</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[13px] font-bold text-[#111] ml-1">Password</label>
                             <input
                                 type="password"
                                 name="password"
                                 required
                                 value={formData.password}
                                 onChange={handleChange}
-                                className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
-                                placeholder="••••••••"
+                                className="w-full rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-2.5 text-sm text-[#111] placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
+                                placeholder="Min. 8 characters"
                             />
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-200">Confirm Password</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[13px] font-bold text-[#111] ml-1">Confirm Password</label>
                             <input
                                 type="password"
                                 name="confirmPassword"
                                 required
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
-                                className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-2.5 text-white placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition"
-                                placeholder="••••••••"
+                                className="w-full rounded-xl border border-gray-100 bg-gray-50/50 px-4 py-2.5 text-sm text-[#111] placeholder:text-gray-400 focus:border-primary focus:bg-white focus:ring-4 focus:ring-primary/5 outline-none transition-all duration-300"
+                                placeholder="Repeat your password"
                             />
                         </div>
 
                         <button
                             type="submit"
-                            className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 py-2.5 font-semibold text-white transition-all active:scale-[0.98] mt-2"
+                            className="w-full rounded-xl bg-primary py-3.5 font-bold text-white shadow-lg shadow-primary/20 transition-all active:scale-[0.98] mt-4 flex items-center justify-center gap-2"
                         >
-                            create Account
+                            Create Account
                         </button>
                     </form>
 
-                    <div className="mt-6 text-center text-sm text-gray-400">
-                        <p>
+                    <div className="mt-8 text-center border-t border-gray-50 pt-6">
+                        <p className="text-sm text-gray-500 font-medium">
                             Already have an account?{" "}
-                            <Link to="/login" className="text-blue-400 hover:text-blue-300 font-medium hover:underline">
-                                Sign In
+                            <Link to="/login" className="text-primary hover:text-[#2a55ce] font-bold hover:underline transition-colors decoration-2 underline-offset-4">
+                                Sign In Now
                             </Link>
                         </p>
                     </div>
+                </div>
+
+                <div className="mt-8 text-center text-xs text-gray-400">
+                    <p>© 2024 Samee and Sandu. All rights reserved.</p>
                 </div>
             </div>
         </div>

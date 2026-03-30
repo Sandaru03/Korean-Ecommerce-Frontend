@@ -31,7 +31,7 @@ export function Footer() {
             {/* Company Info */}
             <div className="col-span-2 lg:col-span-1">
               <Link to="/" className="flex items-center gap-1 mb-4">
-                <img src="/logo.png" alt="Samee & Sadu" className="h-7 w-auto object-contain" />
+                <img src="/logo.png" alt="Samee and Sandu" className="h-7 w-auto object-contain" />
               </Link>
               <p className="text-xs text-[#888] leading-relaxed max-w-[200px]">
                 Your premium destination for authentic Korean Beauty and Health products. Delivering quality and happiness to your doorstep.
@@ -104,7 +104,7 @@ export function Footer() {
               </p>
             </div>
             <p className="text-[11px] text-[#aaa]">
-              &copy; {new Date().getFullYear()} Samee & Sadu. All rights reserved.
+              &copy; {new Date().getFullYear()} Samee and Sandu. All rights reserved.
             </p>
           </div>
         </div>

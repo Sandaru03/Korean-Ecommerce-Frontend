@@ -29,6 +29,8 @@ function StarBar({ rating, reviews }) {
     )
 }
 
+import { CommonProductCard } from "@/components/coupang/CommonProductCard"
+
 export default function ProductPage() {
     const { id } = useParams()
     const { addToCart } = useCart()
@@ -36,6 +38,7 @@ export default function ProductPage() {
 
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [suggestedProducts, setSuggestedProducts] = useState([])
 
     // Options selector state
     const [showOptions, setShowOptions] = useState(false)
@@ -44,10 +47,20 @@ export default function ProductPage() {
     const [mainImageIdx, setMainImageIdx] = useState(0)
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`)
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        axios.get(`${backendUrl}/products/${id}`)
             .then(res => {
                 setProduct(res.data)
                 setLoading(false)
+                
+                // Fetch suggested products (generic latest products)
+                axios.get(`${backendUrl}/products?limit=13`)
+                    .then(succ => {
+                        // Filter out the current product
+                        const filtered = succ.data.filter(p => String(p.id) !== String(id)).slice(0, 12);
+                        setSuggestedProducts(filtered);
+                    })
+                    .catch(err => console.error("Error fetching suggested products:", err));
             })
             .catch(err => {
                 console.error(err)
@@ -129,6 +142,28 @@ export default function ProductPage() {
         setSelectedItems(selectedItems.filter(item => item.name !== vol));
     };
 
+    const handleShare = async () => {
+        const shareData = {
+            title: product.name,
+            text: product.miniDescription || `Check out ${product.name} on Samee and Sandu!`,
+            url: window.location.href,
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(window.location.href);
+                toast.success("Product link copied to clipboard!", { icon: '🔗' });
+            }
+        } catch (err) {
+            if (err.name !== 'AbortError') {
+                console.error('Error sharing:', err);
+                toast.error("Could not share product.");
+            }
+        }
+    };
+
     return (
         <div className="min-h-screen bg-white font-sans selection:bg-[#ff1268] selection:text-white">
             <Header />
@@ -144,10 +179,10 @@ export default function ProductPage() {
                 </div>
             </div>
 
-            <div className="mx-auto max-w-[1040px] px-4 py-10 relative">
+            <div className="mx-auto max-w-[1040px] px-4 py-6 md:py-10 relative">
 
                 {/* ── Top section: image (left) + sticky info (right) ── */}
-                <div className="flex flex-col lg:flex-row gap-12 items-start relative">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start relative">
 
                     {/* Left: Image gallery */}
                     <div className="w-full lg:w-[460px] shrink-0">
@@ -167,7 +202,7 @@ export default function ProductPage() {
                                     <button
                                         key={idx}
                                         onClick={() => setMainImageIdx(idx)}
-                                        className={`shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
+                                        className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 transition-colors ${
                                             mainImageIdx === idx ? "border-[#ff1268]" : "border-transparent hover:border-[#ccc]"
                                         }`}
                                     >
@@ -179,25 +214,31 @@ export default function ProductPage() {
                     </div>
 
                     {/* Right: Sticky Product info */}
-                    <div className="flex-1 min-w-0 lg:sticky lg:top-10">
+                    <div className="flex-1 min-w-0 lg:sticky lg:top-10 w-full">
 
                         {/* Header Row: Brand & Actions */}
                         <div className="flex justify-between items-center mb-4">
-                            <Link to="#" className="text-[14px] font-bold text-[#111] hover:underline flex items-center gap-0.5">
+                            <Link to="#" className="text-[13px] md:text-[14px] font-bold text-[#111] hover:underline flex items-center gap-0.5">
                                 {brandName} <ChevronRight className="h-4 w-4" />
                             </Link>
                             <div className="flex gap-3">
-                                <button className="text-[#999] hover:text-[#111] transition-colors"><Share2 className="h-6 w-6" strokeWidth={1.5} /></button>
+                                <button
+                                    onClick={handleShare}
+                                    className="text-[#999] hover:text-[#111] transition-colors"
+                                    aria-label="Share product"
+                                >
+                                    <Share2 className="h-5 w-5 md:h-6 md:w-6" strokeWidth={1.5} />
+                                </button>
                             </div>
                         </div>
 
                         {/* Title */}
-                        <h1 className="text-[26px] font-black text-[#111] leading-[1.3] tracking-tight mb-2">
+                        <h1 className="text-[20px] md:text-[26px] font-black text-[#111] leading-[1.3] tracking-tight mb-2">
                             {product.name}
                         </h1>
 
                         {product.miniDescription && (
-                            <p className="text-[15px] text-[#555] leading-relaxed mb-6 font-medium">
+                            <p className="text-[14px] md:text-[15px] text-[#555] leading-relaxed mb-6 font-medium">
                                 {product.miniDescription}
                             </p>
                         )}
@@ -207,14 +248,14 @@ export default function ProductPage() {
                         {/* Price Area */}
                         <div className="flex flex-col mb-6">
                             {product.labellPrice && product.labellPrice > product.price && (
-                                <span className="text-[14px] text-[#999] line-through font-medium leading-none mb-2">LKR {Number(product.labellPrice).toLocaleString('en-IN')}</span>
+                                <span className="text-[13px] md:text-[14px] text-[#999] line-through font-medium leading-none mb-2">LKR {Number(product.labellPrice).toLocaleString('en-IN')}</span>
                             )}
                             <div className="flex items-baseline gap-2 leading-none">
                                 {discountPct && (
                                     <span className="text-primary font-bold">{discountPct}%</span>
                                 )}
-                                <span className="text-neutral-dark text-2xl font-bold">
-                                    <span className="text-[22px] font-bold mr-0.5">LKR </span>
+                                <span className="text-neutral-dark text-xl md:text-2xl font-bold">
+                                    <span className="text-[18px] md:text-[22px] font-bold mr-0.5">LKR </span>
                                     {Number(product.price).toLocaleString('en-IN')}
                                 </span>
                             </div>
@@ -223,16 +264,16 @@ export default function ProductPage() {
                         {/* Badges */}
                         <div className="flex gap-1.5 mb-6 flex-wrap">
 
-                            <span className="bg-[#f0f0f0] text-[#555] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
+                            <span className="bg-[#f0f0f0] text-[#555] text-[10px] md:text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
                                 BEST
                             </span>
                             {product.freeShipping && (
-                                <span className="bg-[#fff0f0] text-[#e2211c] text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
+                                <span className="bg-[#fff0f0] text-[#e2211c] text-[10px] md:text-[11px] font-bold px-2 py-1 rounded-[4px] tracking-wide">
                                     Free Shipping
                                 </span>
                             )}
                             {product.badge && (
-                                <span className="border border-[#ddd] text-[#777] text-[11px] font-bold px-2 py-[3px] rounded-[4px] tracking-wide">
+                                <span className="border border-[#ddd] text-[#777] text-[10px] md:text-[11px] font-bold px-2 py-[3px] rounded-[4px] tracking-wide">
                                     {product.badge}
                                 </span>
                             )}
@@ -249,7 +290,7 @@ export default function ProductPage() {
                                     addToCart(product, 1)
                                     toast.success(`"${product.name}" added to cart!`, { icon: '🛒' })
                                 }}
-                                className="w-full h-[56px] border-[1.5px] border-primary text-primary font-bold transition-all hover:bg-neutral-light rounded-[4px] flex items-center justify-center gap-2"
+                                className="w-full h-[50px] md:h-[56px] border-[1.5px] border-primary text-primary font-bold transition-all hover:bg-neutral-light rounded-[4px] flex items-center justify-center gap-2 text-sm md:text-base"
                             >
                                 <ShoppingCart className="h-5 w-5" />
                                 Add to Cart
@@ -260,9 +301,8 @@ export default function ProductPage() {
                                     addToCart(product, 1)
                                     navigate("/cart")
                                 }}
-                                className="w-full h-[56px] bg-primary text-white font-bold transition-all hover:opacity-90 rounded-[4px] flex items-center justify-center gap-2"
+                                className="w-full h-[50px] md:h-[56px] bg-primary text-white font-bold transition-all hover:opacity-90 rounded-[4px] flex items-center justify-center gap-2 text-sm md:text-base"
                             >
-                                <Rocket className="h-5 w-5" />
                                 Buy Now
                             </button>
                         </div>
@@ -287,25 +327,26 @@ export default function ProductPage() {
                             <div className="text-[16px] text-[#555] leading-[1.8] whitespace-pre-line">
                                 {product.description}
                             </div>
-                            
-                            {/* Stacked Images for standard Korean e-commerce feel */}
-                            {images.length > 0 && (
-                                <div className="mt-8 flex flex-col items-center gap-0 max-w-full overflow-hidden">
-                                    {images.map((img, idx) => (
-                                        <img 
-                                            key={`desc-img-${idx}`} 
-                                            src={img} 
-                                            alt={`Product detail ${idx + 1}`} 
-                                            className="w-full h-auto object-contain bg-[#f8f8f8] border-b border-[#eee] last:border-b-0"
-                                            loading="lazy"
-                                        />
-                                    ))}
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Suggested Products Section */}
+            {suggestedProducts.length > 0 && (
+                <div className="border-t border-[#eee] bg-gray-50/30 py-16">
+                    <div className="mx-auto max-w-[1040px] px-4">
+                        <h2 className="text-[22px] font-bold text-[#111] mb-8 px-2">Suggested for You</h2>
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                            {suggestedProducts.slice(0, 4).map(p => (
+                                <div key={p.id} className="w-full">
+                                    <CommonProductCard product={p} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <Footer />
         </div>

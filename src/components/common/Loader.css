@@ -57,9 +57,9 @@
   animation: slideInBottom 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-/* Sadu part (Bottom Right) */
-.sadu {
-  clip-path: inset(84% 0 0 60%); /* Isolates "SADU" */
+/* Sandu part (Bottom Right) */
+.sandu {
+  clip-path: inset(84% 0 0 60%); /* Isolates "SANDU" */
   transform: translateX(100%);
   animation: slideInRight 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
 }

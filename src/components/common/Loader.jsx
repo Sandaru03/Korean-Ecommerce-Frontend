@@ -30,8 +30,8 @@ const Loader = ({ onFinished }) => {
         <div className="logo-part and">
           <img src="/logo.png" alt="And" />
         </div>
-        <div className="logo-part sadu">
-          <img src="/logo.png" alt="Sadu" />
+        <div className="logo-part sandu">
+          <img src="/logo.png" alt="Sandu" />
         </div>
       </div>
     </div>

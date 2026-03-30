@@ -1,5 +1,6 @@
 // Product cards now focused on selection and purchase.
 import { Link } from "react-router-dom"
+import { BadgePercent } from "lucide-react"
 
 /* eslint-disable react/prop-types */
 export function CommonProductCard({ product }) {
@@ -36,6 +37,9 @@ export function CommonProductCard({ product }) {
     }
 
     const price = Number(product.price) || 0
+    const labellPrice = Number(product.labellPrice) || 0
+    const hasDiscount = labellPrice > price
+    const discountPct = hasDiscount ? Math.round(((labellPrice - price) / labellPrice) * 100) : 0
 
     return (
         <Link to={`/product/${product.id}`} className="group relative bg-white block">
@@ -49,6 +53,14 @@ export function CommonProductCard({ product }) {
             </div>
 
             <div className="px-0.5 text-left">
+                {hasDiscount && (
+                    <div className="flex items-center gap-1.5 text-[#cb1400] font-black text-[13px] mb-1.5 animate-in fade-in slide-in-from-left-2 duration-500">
+                        <div className="bg-[#cb1400] rounded-full p-0.5 shadow-sm">
+                            <BadgePercent className="h-3 w-3 text-white" strokeWidth={3} />
+                        </div>
+                        <span>Now {discountPct}% off</span>
+                    </div>
+                )}
                 <p className="text-[12px] font-bold text-[#111] mb-1 leading-none truncate">{brandName}</p>
                 <p className="text-[13px] text-[#555] leading-[1.3] line-clamp-2 min-h-[34px] group-hover:underline decoration-1 underline-offset-2">
                     {product.name}
@@ -60,13 +72,12 @@ export function CommonProductCard({ product }) {
                 )}
 
                 <div className="mt-2.5 flex flex-col gap-0.5">
-                    {product.originalPrice && (
-                        <p className="text-[12px] text-[#999] line-through font-medium leading-none">{product.originalPrice}</p>
+                    {hasDiscount && (
+                        <p className="text-[12px] text-[#999] line-through font-medium leading-none">
+                            LKR {labellPrice.toLocaleString('en-US')}
+                        </p>
                     )}
                     <div className="flex items-baseline gap-1.5 leading-none mt-1">
-                        {product.discount && (
-                            <span className="text-[16px] font-bold text-[#ff4040]">{product.discount}</span>
-                        )}
                         <span className="text-[16px] font-bold text-[#111]">
                             LKR {price.toLocaleString('en-US')}
                         </span>

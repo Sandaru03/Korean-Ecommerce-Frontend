@@ -56,7 +56,7 @@ export function HeroBanner() {
   return (
     <div className="relative group w-full bg-[#f8f9fa] py-6 md:py-10 overflow-hidden px-2 md:px-4">
       <div className="max-w-[1400px] mx-auto">
-        <div className="relative w-full h-[380px] sm:h-[450px] md:h-[600px]">
+        <div className="relative w-full h-[380px] sm:h-[450px] md:h-[600px] perspective-1000 transform-style-3d">
           {displayArray.map((slide, i) => {
             const total = displayArray.length;
             let offset = (i - currentSlide) % total;
@@ -94,7 +94,7 @@ export function HeroBanner() {
             return (
               <div
                 key={slide.uniqueId}
-                className={`absolute top-1/2 -translate-y-1/2 transition-all duration-1000 rounded-3xl md:rounded-[2.5rem] overflow-hidden cursor-pointer ${positionClass}`}
+                className={`absolute top-1/2 -translate-y-1/2 transition-all duration-1000 rounded-3xl md:rounded-[2.5rem] overflow-hidden cursor-pointer transform-gpu backface-hidden ${positionClass}`}
                 style={{
                   transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
                 }}
