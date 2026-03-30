@@ -41,6 +41,7 @@ export default function ProductPage() {
     const [showOptions, setShowOptions] = useState(false)
     const [selectedItems, setSelectedItems] = useState([]) // Array of { id, name, qty, price }
     const [isTodayDream, setIsTodayDream] = useState(false)
+    const [mainImageIdx, setMainImageIdx] = useState(0)
 
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/products/${id}`)
@@ -151,14 +152,30 @@ export default function ProductPage() {
                     {/* Left: Image gallery */}
                     <div className="w-full lg:w-[460px] shrink-0">
                         {/* Main image */}
-                        <div className="relative aspect-square w-full bg-[#f8f8f8] mb-4 overflow-hidden border border-[#eee]">
+                        <div className="relative aspect-square w-full bg-[#f8f8f8] mb-4 overflow-hidden border border-[#eee] rounded-xl">
                             <img
-                                src={images[0]}
+                                src={images[mainImageIdx] || images[0]}
                                 alt={product.name}
                                 className="h-full w-full object-cover transition-all duration-300"
                             />
                         </div>
 
+                        {/* Thumbnails */}
+                        {images.length > 1 && (
+                            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                                {images.map((img, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setMainImageIdx(idx)}
+                                        className={`shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 transition-colors ${
+                                            mainImageIdx === idx ? "border-[#ff1268]" : "border-transparent hover:border-[#ccc]"
+                                        }`}
+                                    >
+                                        <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover bg-[#f8f8f8]" />
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Right: Sticky Product info */}
@@ -270,6 +287,21 @@ export default function ProductPage() {
                             <div className="text-[16px] text-[#555] leading-[1.8] whitespace-pre-line">
                                 {product.description}
                             </div>
+                            
+                            {/* Stacked Images for standard Korean e-commerce feel */}
+                            {images.length > 0 && (
+                                <div className="mt-8 flex flex-col items-center gap-0 max-w-full overflow-hidden">
+                                    {images.map((img, idx) => (
+                                        <img 
+                                            key={`desc-img-${idx}`} 
+                                            src={img} 
+                                            alt={`Product detail ${idx + 1}`} 
+                                            className="w-full h-auto object-cover border-b border-[#eee] last:border-b-0"
+                                            loading="lazy"
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

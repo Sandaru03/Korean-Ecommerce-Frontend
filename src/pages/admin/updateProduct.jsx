@@ -109,6 +109,19 @@ export default function UpdateProductPage() {
 
                 <div className="flex flex-col gap-1">
                     <label className="text-sm font-semibold">Images</label>
+                    
+                    {/* Show existing images if any */}
+                    {location.state?.images && location.state.images.length > 0 && images.length === 0 && (
+                        <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
+                            {location.state.images.map((img, idx) => (
+                                <img key={idx} src={img} alt={`Existing ${idx + 1}`} className="w-16 h-16 object-cover rounded-md border border-gray-300" />
+                            ))}
+                        </div>
+                    )}
+                    {location.state?.images && location.state.images.length > 0 && (
+                        <p className="text-xs text-orange-600 mb-1 font-medium">Selecting new images will replace all existing ones ({location.state.images.length} currently uploaded).</p>
+                    )}
+
                     <input multiple type="file" onChange={(e) => {
                         const files = Array.from(e.target.files);
                         setImages((prevImages) => [...prevImages, ...files])
