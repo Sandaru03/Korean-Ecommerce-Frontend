@@ -47,7 +47,7 @@ export function HeroBanner() {
   }, [nextSlide, displayArray.length])
 
   if (displayArray.length === 0) {
-    return <div className="w-full h-[300px] md:h-[600px] bg-slate-100 flex items-center justify-center animate-pulse rounded-2xl md:rounded-[2.5rem] my-6">Loading Banners...</div>;
+    return <div className="w-full h-[300px] md:h-[600px] bg-slate-100 flex items-center justify-center animate-pulse rounded-[2.5rem] my-6">Loading Banners...</div>;
   }
 
   // Calculate the actual current banner indicator out of the original set
@@ -94,7 +94,7 @@ export function HeroBanner() {
             return (
               <div
                 key={slide.uniqueId}
-                className={`absolute bottom-0 transition-all duration-1000 cubic-bezier-[0.22,1,0.36,1] rounded-2xl md:rounded-[2.5rem] overflow-hidden cursor-pointer ${positionClass}`}
+                className={`absolute bottom-0 transition-all duration-1000 cubic-bezier-[0.22,1,0.36,1] rounded-[2.5rem] overflow-hidden cursor-pointer ${positionClass}`}
                 style={{
                   transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
                 }}

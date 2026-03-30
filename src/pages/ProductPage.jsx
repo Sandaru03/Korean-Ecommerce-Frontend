@@ -156,7 +156,7 @@ export default function ProductPage() {
                             <img
                                 src={images[mainImageIdx] || images[0]}
                                 alt={product.name}
-                                className="h-full w-full object-cover transition-all duration-300"
+                                className="h-full w-full object-contain bg-[#f8f8f8] transition-all duration-300"
                             />
                         </div>
 
@@ -171,7 +171,7 @@ export default function ProductPage() {
                                             mainImageIdx === idx ? "border-[#ff1268]" : "border-transparent hover:border-[#ccc]"
                                         }`}
                                     >
-                                        <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover bg-[#f8f8f8]" />
+                                        <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain bg-[#f8f8f8]" />
                                     </button>
                                 ))}
                             </div>
@@ -296,7 +296,7 @@ export default function ProductPage() {
                                             key={`desc-img-${idx}`} 
                                             src={img} 
                                             alt={`Product detail ${idx + 1}`} 
-                                            className="w-full h-auto object-cover border-b border-[#eee] last:border-b-0"
+                                            className="w-full h-auto object-contain bg-[#f8f8f8] border-b border-[#eee] last:border-b-0"
                                             loading="lazy"
                                         />
                                     ))}

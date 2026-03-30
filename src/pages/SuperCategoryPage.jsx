@@ -27,7 +27,7 @@ function CategoryCircles({ categories, selectedId, onSelect }) {
                                 <img
                                     src={cat.image || `https://picsum.photos/seed/${cat.slug}/200`}
                                     alt={cat.name}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    className="w-full h-full object-contain bg-[#f8f8f8] group-hover:scale-110 transition-transform duration-500"
                                 />
                             </div>
                             <span className={`text-[13px] font-medium transition-all ${isActive ? "text-[#ff1268] font-bold" : "text-[#666] group-hover:text-[#ff1268] group-hover:font-bold"}`}>
@@ -191,7 +191,7 @@ export default function SuperCategoryPage() {
                 <div className="mx-auto max-w-[1200px] px-6 flex items-center gap-6">
                     {superCategory.image && (
                         <div className="w-[80px] h-[80px] rounded-full overflow-hidden border-2 border-[#ff1268]/20 shrink-0 hidden sm:block">
-                            <img src={superCategory.image} alt={superCategory.name} className="w-full h-full object-cover" />
+                            <img src={superCategory.image} alt={superCategory.name} className="w-full h-full object-contain bg-[#f8f8f8]" />
                         </div>
                     )}
                     <div>

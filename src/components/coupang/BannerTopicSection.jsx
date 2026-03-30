@@ -30,15 +30,15 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
         <section className="mb-12">
             <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm">
                 {/* Left: Banner Slider */}
-                <div className="w-full md:w-[32%] relative overflow-hidden bg-accent min-h-[300px]">
+                <div className="w-full md:w-[32%] relative overflow-hidden bg-[#f8f8f8] min-h-[200px] md:min-h-[300px]">
                     {images.length > 0 ? (
-                        <div className="relative w-full h-full group">
+                        <div className="absolute inset-0 w-full h-full group">
                             {images.map((img, idx) => (
                                 <img 
                                     key={idx}
                                     src={img} 
                                     alt={`${title} banner ${idx + 1}`} 
-                                    className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ${
+                                    className={`absolute inset-0 w-full h-full object-contain md:object-cover transition-all duration-1000 ${
                                         idx === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
                                     }`}
                                 />
@@ -58,7 +58,7 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
                             )}
                         </div>
                     ) : (
-                        <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
+                        <div className="absolute inset-0 w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
                             No Banner
                         </div>
                     )}

@@ -320,7 +320,7 @@ export default function CartPage() {
                                 {/* Image */}
                                 <div className="w-[90px] h-[90px] shrink-0 rounded-lg overflow-hidden border border-[#eee] bg-[#f8f8f8]">
                                     {item.image ? (
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                        <img src={item.image} alt={item.name} className="w-full h-full object-contain bg-[#f8f8f8]" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-[#ccc]">
                                             <ShoppingBag className="h-8 w-8" />

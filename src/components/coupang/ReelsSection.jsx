@@ -113,7 +113,7 @@ function ProductOverlay({ product, className = "" }) {
                 <img 
                     src={resolveImage(product)} 
                     alt={product.name} 
-                    className="w-full h-full object-cover rounded-xl shadow-lg border border-white/5"
+                    className="w-full h-full object-contain bg-white rounded-xl shadow-lg border border-white/5"
                 />
             </div>
             <div className="flex-1 min-w-0 pr-1">
@@ -157,7 +157,7 @@ function ReelCard({ reel }) {
             <video
                 ref={videoRef}
                 src={reel.videoUrl}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain bg-black"
                 loop
                 playsInline
                 muted

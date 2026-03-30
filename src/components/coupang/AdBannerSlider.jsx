@@ -36,13 +36,13 @@ export function AdBannerSlider() {
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
                 {banners.map((banner) => (
-                    <div key={banner.id} className="min-w-full shrink-0 aspect-[5/1] md:aspect-[12/1]">
+                    <div key={banner.id} className="min-w-full shrink-0 min-h-[140px] md:min-h-0 md:aspect-[12/1] bg-[#f8f8f8]">
                         {banner.link ? (
                             <Link to={banner.link} className="block w-full h-full">
-                                <img src={banner.image} alt="Ad Banner" className="w-full h-full object-cover" />
+                                <img src={banner.image} alt="Ad Banner" className="w-full h-[140px] md:h-full object-contain md:object-cover block" />
                             </Link>
                         ) : (
-                            <img src={banner.image} alt="Ad Banner" className="w-full h-full object-cover" />
+                            <img src={banner.image} alt="Ad Banner" className="w-full h-[140px] md:h-full object-contain md:object-cover block" />
                         )}
                     </div>
                 ))}

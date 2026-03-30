@@ -43,7 +43,7 @@ function CategoryHeroBanner({ category, products }) {
             </div>
             <div className="w-[45%] h-full relative overflow-hidden">
                 <div className={`absolute inset-0 bg-gradient-to-r from-pink-100 to-rose-200 opacity-[0.35] mix-blend-multiply z-10`}></div>
-                <img src={products[0]?.images?.[0] || products[0]?.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Banner" />
+                <img src={products[0]?.images?.[0] || products[0]?.image} className="w-full h-full object-contain bg-[#f8f8f8] group-hover:scale-105 transition-transform duration-700" alt="Banner" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[#f8f6f4] via-[#f8f6f4]/50 to-transparent z-10 w-1/3"></div>
             </div>
             <div className="absolute bottom-5 right-5 z-20 bg-black/40 backdrop-blur-md rounded-full px-4 py-1.5 flex items-center gap-2.5 text-white text-[11px] font-bold tracking-widest transition-colors hover:bg-black/60">
@@ -68,7 +68,7 @@ function TopPills({ subcategories, currentPath, onNavigate }) {
                     >
                         <div className={`w-[96px] h-[96px] rounded-full overflow-hidden border-[3px] transition-all duration-300 border-transparent hover:ring-2 hover:ring-primary hover:ring-offset-2`}>
                             <div className="w-full h-full bg-[#f8f8f8]">
-                                <img src={sub.image || "https://picsum.photos/seed/cat/200/200"} alt={sub.name} className="w-full h-full object-cover flex shrink-0 group-hover:scale-110 transition-transform duration-500" />
+                                <img src={sub.image || "https://picsum.photos/seed/cat/200/200"} alt={sub.name} className="w-full h-full object-contain bg-[#f8f8f8] flex shrink-0 group-hover:scale-110 transition-transform duration-500" />
                             </div>
                         </div>
                         <span className={`text-[13px] text-[#666] font-medium group-hover:text-primary group-hover:font-bold transition-all`}>{sub.name}</span>

@@ -83,7 +83,7 @@ function MiddleBannerSection({ banners }) {
                                 <img 
                                     src={banner.image} 
                                     alt="Promotion" 
-                                    className="w-full h-[300px] md:h-[420px] object-cover transition-transform duration-1000 group-hover/item:scale-110" 
+                                    className="w-full h-[220px] md:h-[420px] object-contain md:object-cover block bg-[#f8f8f8] md:bg-transparent transition-transform duration-1000 group-hover/item:scale-110" 
                                 />
                                 <div className="absolute bottom-10 left-10 z-20 transition-all duration-500 transform translate-y-2 group-hover/item:translate-y-0 opacity-0 group-hover/item:opacity-100 hidden md:block">
                                     <span className="px-6 py-2 bg-white text-black font-bold rounded-full shadow-lg text-sm tracking-uppercase">Explore Collection</span>

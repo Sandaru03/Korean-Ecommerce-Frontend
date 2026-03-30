@@ -30,7 +30,7 @@ function ProductCard({ p }) {
     return (
         <div className="group bg-white border border-[#eee] rounded-xl overflow-hidden hover:shadow-lg transition-shadow shrink-0 w-[220px]">
             <Link to={`/product/${p.id}`} className="block relative aspect-square overflow-hidden bg-[#f8f8f8]">
-                <img src={productImage} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <img src={productImage} alt={p.name} className="w-full h-full object-contain bg-[#f8f8f8] group-hover:scale-105 transition-transform duration-300" />
                 <button
                     onClick={(e) => { e.preventDefault(); setWished(w => !w); }}
                     className="absolute top-2 right-2 h-8 w-8 flex items-center justify-center rounded-full bg-white shadow-md z-10"
@@ -132,7 +132,7 @@ export default function BannerPage() {
             <Header />
             {banner.topBannerImage && (
                 <div className="relative aspect-[2560/660] w-full overflow-hidden bg-slate-100">
-                    <img src={banner.topBannerImage} alt={banner.title} className="absolute inset-0 w-full h-full object-cover" />
+                    <img src={banner.topBannerImage} alt={banner.title} className="absolute inset-0 w-full h-full object-contain bg-[#f8f8f8]" />
                 </div>
             )}
             

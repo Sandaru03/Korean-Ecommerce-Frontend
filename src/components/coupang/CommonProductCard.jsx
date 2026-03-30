@@ -43,7 +43,7 @@ export function CommonProductCard({ product }) {
                 <img
                     src={imageUrl}
                     alt={product.name}
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="h-full w-full object-contain bg-[#f8f8f8] group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                 />
             </div>
