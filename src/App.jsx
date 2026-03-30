@@ -11,6 +11,7 @@ import CategoryPage from "./pages/CategoryPage";
 import SuperCategoryPage from "./pages/SuperCategoryPage";
 import ProductPage from "./pages/ProductPage";
 import BannerPage from "./pages/banners/BannerPage";
+import SearchPage from "./pages/SearchPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Loader from "./components/common/Loader";
 
@@ -34,6 +35,7 @@ export default function App() {
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/banner/:id" element={<BannerPage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route path="/admin-login" element={<AdminLoginPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>

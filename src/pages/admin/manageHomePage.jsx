@@ -248,6 +248,7 @@ export default function ManageHomePage() {
                             <div className="flex flex-col items-center text-gray-400">
                               <ImageIcon className="w-4 h-4" />
                               <span className="text-[8px]">Slot {idx + 1}</span>
+                              <span className="text-[7px] font-bold text-blue-500">1000x1000</span>
                             </div>
                           )}
                           <label className="absolute inset-0 bg-black/40 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">

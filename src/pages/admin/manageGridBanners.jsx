@@ -94,9 +94,9 @@ export default function ManageGridBanners() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {banners.map((banner, index) => (
                     <div key={banner.position} className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 flex flex-col gap-4 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg z-10 flex flex-col items-end">
-                            <span>Position {banner.position} {banner.position <= 2 ? "(Large)" : "(Small)"}</span>
-                            <span>{banner.position <= 2 ? "Rec: 1000x360px" : "Rec: 500x480px"}</span>
+                        <div className="absolute top-0 right-0 bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg z-10 flex flex-col items-end shadow-sm">
+                            <span>Pos {banner.position} {banner.position <= 2 ? "(Large)" : "(Small)"}</span>
+                            <span className="text-yellow-200">{banner.position <= 2 ? "1000 x 360 px" : "500 x 480 px"}</span>
                         </div>
                         
                         {/* Image Preview */}

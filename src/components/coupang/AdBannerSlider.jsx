@@ -30,19 +30,19 @@ export function AdBannerSlider() {
     const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
 
     return (
-        <div className="relative w-full overflow-hidden rounded-xl mb-14 group bg-slate-100 border border-slate-200 shadow-sm">
+        <div className="relative w-full overflow-hidden rounded-xl mb-14 group bg-slate-100 border border-slate-200 shadow-sm min-h-[180px] md:min-h-0 md:aspect-[8/1]">
             <div 
-                className="flex transition-transform duration-500 ease-in-out"
+                className="flex h-full w-full transition-transform duration-500 ease-in-out"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
                 {banners.map((banner) => (
-                    <div key={banner.id} className="min-w-full shrink-0 min-h-[140px] md:min-h-0 md:aspect-[12/1] bg-[#f8f8f8]">
+                    <div key={banner.id} className="w-full h-full flex-none bg-[#f8f8f8]">
                         {banner.link ? (
                             <Link to={banner.link} className="block w-full h-full">
-                                <img src={banner.image} alt="Ad Banner" className="w-full h-[140px] md:h-full object-contain md:object-cover block" />
+                                <img src={banner.image} alt="Ad Banner" className="w-full h-full object-contain block" />
                             </Link>
                         ) : (
-                            <img src={banner.image} alt="Ad Banner" className="w-full h-[140px] md:h-full object-contain md:object-cover block" />
+                            <img src={banner.image} alt="Ad Banner" className="w-full h-full object-contain block" />
                         )}
                     </div>
                 ))}

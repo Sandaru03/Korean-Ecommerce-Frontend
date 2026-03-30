@@ -181,6 +181,9 @@ export default function ManageAdBannersPage() {
                                         </button>
                                     </div>
                                 </div>
+                                <p className="text-[11px] text-blue-600 mt-1 font-medium bg-blue-50 px-2 py-1 rounded inline-block">
+                                    Recommended: 1920 x 240 px (8:1 ratio)
+                                </p>
                                 {formData.image && <img src={formData.image} alt="Preview" className="mt-3 w-full h-32 object-cover rounded-lg border border-slate-200 shadow-sm" />}
                             </div>
                             

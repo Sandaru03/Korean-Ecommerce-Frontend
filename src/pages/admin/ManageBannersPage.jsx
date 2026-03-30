@@ -246,6 +246,9 @@ function BannerEditor({ banner, onBack, onSaveSuccess }) {
                                     </button>
                                 </div>
                             </div>
+                            <p className="text-[11px] text-blue-600 mt-1 font-medium bg-blue-50 px-2 py-1 rounded inline-block">
+                                Recommended: 1000 x 1350 px (3:4 Portrait/Square Slide)
+                            </p>
                             {formData.heroImage && <img src={formData.heroImage} alt="Hero Preview" className="mt-3 h-24 object-cover rounded-lg border border-slate-200" />}
                         </div>
                     </div>
@@ -266,6 +269,9 @@ function BannerEditor({ banner, onBack, onSaveSuccess }) {
                                     </button>
                                 </div>
                             </div>
+                            <p className="text-[11px] text-blue-600 mt-1 font-medium bg-blue-50 px-2 py-1 rounded inline-block">
+                                Recommended: 2560 x 660 px (Top Header Dimension)
+                            </p>
                             {formData.topBannerImage && <img src={formData.topBannerImage} alt="Top Preview" className="mt-3 h-24 object-cover rounded-lg border border-slate-200" />}
                         </div>
                         <div className="col-span-full md:col-span-1">

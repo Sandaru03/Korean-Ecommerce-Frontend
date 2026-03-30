@@ -56,7 +56,7 @@ export function HeroBanner() {
   return (
     <div className="relative group w-full bg-[#f8f9fa] py-6 md:py-10 overflow-hidden px-2 md:px-4">
       <div className="max-w-[1400px] mx-auto">
-        <div className="relative w-full h-[300px] md:h-[600px]">
+        <div className="relative w-full h-[380px] sm:h-[450px] md:h-[600px]">
           {displayArray.map((slide, i) => {
             const total = displayArray.length;
             let offset = (i - currentSlide) % total;
@@ -74,27 +74,27 @@ export function HeroBanner() {
             let positionClass = "";
 
             if (isCenter) {
-              positionClass = "left-[50%] -translate-x-1/2 w-[80%] md:w-[32%] h-[100%] z-20 shadow-2xl opacity-100";
+              positionClass = "left-[50%] -translate-x-1/2 w-[65%] sm:w-[50%] md:w-[35%] aspect-[3/4] z-20 shadow-2xl opacity-100";
             } else if (isNearLeft) {
-              positionClass = "left-[10%] md:left-[20%] -translate-x-1/2 w-[50%] md:w-[27%] h-[85%] md:h-[90%] z-10 opacity-100";
+              positionClass = "left-[25%] md:left-[28%] -translate-x-1/2 w-[55%] sm:w-[40%] md:w-[30%] aspect-[3/4] z-10 opacity-100 scale-90 md:scale-95";
             } else if (isNearRight) {
-              positionClass = "left-[90%] md:left-[80%] -translate-x-1/2 w-[50%] md:w-[27%] h-[85%] md:h-[90%] z-10 opacity-100";
+              positionClass = "left-[75%] md:left-[72%] -translate-x-1/2 w-[55%] sm:w-[40%] md:w-[30%] aspect-[3/4] z-10 opacity-100 scale-90 md:scale-95";
             } else if (isFarLeft) {
-              positionClass = "left-[-10%] md:left-[5%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-0 opacity-100";
+              positionClass = "left-[5%] md:left-[10%] -translate-x-1/2 w-[45%] sm:w-[35%] md:w-[24%] aspect-[3/4] z-0 opacity-100 scale-75 md:scale-80";
             } else if (isFarRight) {
-              positionClass = "left-[110%] md:left-[95%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-0 opacity-100";
+              positionClass = "left-[95%] md:left-[90%] -translate-x-1/2 w-[45%] sm:w-[35%] md:w-[24%] aspect-[3/4] z-0 opacity-100 scale-75 md:scale-80";
             } else {
               if (offset > 2) {
-                positionClass = "left-[150%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-[-1] opacity-0";
+                positionClass = "left-[130%] -translate-x-1/2 w-[45%] sm:w-[35%] md:w-[24%] aspect-[3/4] z-[-1] opacity-0 scale-50";
               } else {
-                positionClass = "left-[-50%] -translate-x-1/2 w-[30%] md:w-[7%] h-[75%] md:h-[80%] z-[-1] opacity-0";
+                positionClass = "left-[-30%] -translate-x-1/2 w-[45%] sm:w-[35%] md:w-[24%] aspect-[3/4] z-[-1] opacity-0 scale-50";
               }
             }
 
             return (
               <div
                 key={slide.uniqueId}
-                className={`absolute bottom-0 transition-all duration-1000 cubic-bezier-[0.22,1,0.36,1] rounded-[2.5rem] overflow-hidden cursor-pointer ${positionClass}`}
+                className={`absolute top-1/2 -translate-y-1/2 transition-all duration-1000 rounded-3xl md:rounded-[2.5rem] overflow-hidden cursor-pointer ${positionClass}`}
                 style={{
                   transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
                 }}

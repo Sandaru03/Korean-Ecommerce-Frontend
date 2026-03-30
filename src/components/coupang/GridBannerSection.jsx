@@ -51,7 +51,7 @@ export function GridBannerSection() {
                 <img 
                     src={banner.image} 
                     alt={`Promotion ${banner.position}`} 
-                    className="w-full h-auto md:h-full object-contain md:object-cover block transform group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-auto md:h-full object-contain block transform group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                 />
                 

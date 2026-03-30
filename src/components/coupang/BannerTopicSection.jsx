@@ -30,15 +30,28 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
         <section className="mb-12">
             <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm">
                 {/* Left: Banner Slider */}
-                <div className="w-full md:w-[32%] relative overflow-hidden bg-[#f8f8f8] min-h-[200px] md:min-h-[300px]">
+                <div className="w-full md:w-[38%] relative overflow-hidden aspect-[4/5] md:aspect-auto bg-[#fafafa]">
                     {images.length > 0 ? (
                         <div className="absolute inset-0 w-full h-full group">
+                            {/* Ambient Blurred Background to Fill Empty Space */}
                             {images.map((img, idx) => (
                                 <img 
-                                    key={idx}
+                                    key={`blur-${idx}`}
+                                    src={img} 
+                                    alt="" 
+                                    className={`absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 transition-all duration-1000 ${
+                                        idx === currentIndex ? "opacity-40 scale-110" : "opacity-0 scale-125"
+                                    }`}
+                                />
+                            ))}
+
+                            {/* Main non-cropped Image */}
+                            {images.map((img, idx) => (
+                                <img 
+                                    key={`main-${idx}`}
                                     src={img} 
                                     alt={`${title} banner ${idx + 1}`} 
-                                    className={`absolute inset-0 w-full h-full object-contain md:object-cover transition-all duration-1000 ${
+                                    className={`absolute inset-0 w-full h-full object-contain z-10 transition-all duration-1000 ${
                                         idx === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
                                     }`}
                                 />

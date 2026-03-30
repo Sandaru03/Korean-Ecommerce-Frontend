@@ -37,7 +37,7 @@ export function ReelsSection() {
             <div className="mx-auto max-w-[1200px] px-6">
                 <div className="flex items-center justify-between mb-8">
                     <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-                        Hot in SNS
+                        Featured Videos
                     </h2>
                     <div className="flex gap-2">
                         <button 

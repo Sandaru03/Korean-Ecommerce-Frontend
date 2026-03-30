@@ -181,6 +181,9 @@ export default function ManageMiddleBannersPage() {
                                         </button>
                                     </div>
                                 </div>
+                                <p className="text-[11px] text-indigo-600 mt-1 font-medium bg-indigo-50 px-2 py-1 rounded inline-block">
+                                    Recommended: 1040 x 420 px (Approx 21:9 ratio)
+                                </p>
                                 {formData.image && <img src={formData.image} alt="Preview" className="mt-3 w-full h-32 object-cover rounded-lg border border-slate-200 shadow-sm" />}
                             </div>
                             

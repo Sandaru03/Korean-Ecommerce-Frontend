@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronRight, Heart } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 
 const recommendations = [
   { id: 1, name: "Wireless Earbuds Pro Max", price: "LKR 29", image: "https://picsum.photos/seed/rec1/300/300", tag: "Popular" },
@@ -43,13 +43,7 @@ export function RecommendationSection() {
                   className="h-full w-full bg-cover bg-center transition-transform group-hover:scale-105"
                   style={{ backgroundImage: `url(${item.image})` }}
                 />
-                <button
-                  className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[#fff]/80 text-[#ccc] hover:text-primary transition-colors"
-                  onClick={(e) => e.preventDefault()}
-                  aria-label={`Like ${item.name}`}
-                >
-                  <Heart className="h-4 w-4" />
-                </button>
+
                 <span className="absolute left-1.5 top-1.5 rounded bg-primary px-1.5 py-0.5 text-[9px] font-bold text-[#fff]">
                   {item.tag}
                 </span>
