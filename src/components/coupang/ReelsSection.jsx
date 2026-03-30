@@ -24,7 +24,9 @@ export function ReelsSection() {
     const scroll = (direction) => {
         if (scrollRef.current) {
             const { scrollLeft, clientWidth } = scrollRef.current;
-            const cardWidth = clientWidth / 4;
+            // On mobile/tablet (< 1024px) we show 3 reels, on desktop 4
+            const cardsToShow = window.innerWidth < 1024 ? 3 : 4;
+            const cardWidth = clientWidth / cardsToShow;
             const scrollTo = direction === 'left' ? scrollLeft - cardWidth : scrollLeft + cardWidth;
             scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
         }
@@ -64,8 +66,7 @@ export function ReelsSection() {
                     {reels.map((reel) => (
                         <div 
                             key={reel.id} 
-                            className="flex-shrink-0 snap-start"
-                            style={{ width: 'calc(25% - 9px)' }}
+                            className="flex-shrink-0 snap-start w-[calc(33.333%-8px)] lg:w-[calc(25%-9px)]"
                             onClick={() => setSelectedReel(reel)}
                         >
                             <ReelCard reel={reel} />
@@ -107,21 +108,21 @@ function ProductOverlay({ product, className = "" }) {
     return (
         <div 
             onClick={handleClick}
-            className={`flex items-center gap-4 p-3 bg-black/70 backdrop-blur-md rounded-2xl border border-white/10 hover:bg-black/80 transition-all group/prod ${className}`}
+            className={`flex items-center gap-2 sm:gap-4 p-1.5 sm:p-3 bg-black/70 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/10 hover:bg-black/80 transition-all group/prod ${className}`}
         >
-            <div className="relative w-16 h-16 flex-shrink-0">
+            <div className="relative w-10 h-10 sm:w-16 sm:h-16 flex-shrink-0">
                 <img 
                     src={resolveImage(product)} 
                     alt={product.name} 
-                    className="w-full h-full object-contain bg-white rounded-xl shadow-lg border border-white/5"
+                    className="w-full h-full object-contain bg-white rounded-lg sm:rounded-xl shadow-lg border border-white/5"
                 />
             </div>
             <div className="flex-1 min-w-0 pr-1">
-                <p className="text-white text-[13px] font-bold truncate leading-tight mb-1.5">
+                <p className="text-white text-[10px] sm:text-[13px] font-bold truncate leading-tight mb-0.5 sm:mb-1.5">
                     {product.name}
                 </p>
-                <div className="flex items-center gap-2.5">
-                    <span className="text-white text-[13px] font-black">
+                <div className="flex items-center gap-1.5 sm:gap-2.5">
+                    <span className="text-white text-[10px] sm:text-[13px] font-black">
                         Rs.{product.price.toLocaleString()}
                     </span>
                 </div>
