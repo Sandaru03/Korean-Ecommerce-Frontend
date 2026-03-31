@@ -32,7 +32,7 @@ export function AdBannerSlider() {
     return (
         <div className="relative w-full overflow-hidden rounded-xl mb-8 md:mb-14 group aspect-[8/1] shadow-sm">
             <div 
-                className="flex h-full w-full transition-transform duration-500 ease-in-out"
+                className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu backface-hidden will-change-transform"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
                 {banners.map((banner) => (

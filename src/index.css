@@ -149,4 +149,22 @@
 
 @utility transform-style-3d {
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+@utility transform-gpu {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+@utility will-change-transform {
+  will-change: transform;
+}
+
+@utility ios-clipping-fix {
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+@utility isolation-isolate {
+  isolation: isolate;
 }

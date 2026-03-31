@@ -104,9 +104,9 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         setIsSavingOrder(false)
         if (!order) return
 
-        const encoded = encodeURIComponent(summaryText)
         window.open(`https://wa.me/${whatsappNumber}?text=${encoded}`, "_blank")
         clearCart()
+        window.scrollTo({ top: 0, behavior: "instant" })
         toast.success("Order recorded and WhatsApp opened! 🎉")
         onClose()
     }
@@ -131,6 +131,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                 email: orderEmail
             })
             clearCart()
+            window.scrollTo({ top: 0, behavior: "instant" })
             toast.success("Order saved and email sent! 📧")
             onClose()
         } catch (err) {

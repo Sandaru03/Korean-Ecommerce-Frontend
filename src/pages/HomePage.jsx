@@ -73,7 +73,7 @@ function MiddleBannerSection({ banners }) {
         <section className="mb-14 relative group">
             <div className="overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white">
                 <div 
-                    className="flex transition-transform duration-1000 ease-[cubic-bezier(0.4,0,0.2,1)] transform-gpu"
+                    className="flex transition-transform duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu backface-hidden will-change-transform"
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
                 >
                     {banners.map((banner) => (
@@ -170,9 +170,9 @@ export default function HomePage() {
             {/* Round Icon Categories */}
             {rootCategories.length > 0 && (
                 <div className="mx-auto max-w-[1040px] px-4 mb-16">
-                    <div className="flex flex-wrap md:grid md:grid-cols-10 gap-y-8 gap-x-2">
+                    <div className="grid grid-cols-4 md:grid-cols-10 gap-y-8 gap-x-2">
                         {rootCategories.map((cat, idx) => (
-                            <Link key={cat.id || idx} to={`/super-category/${cat.slug}`} className="flex flex-col items-center gap-3 group w-[20%] md:w-auto">
+                            <Link key={cat.id || idx} to={`/super-category/${cat.slug}`} className="flex flex-col items-center gap-3 group">
                                 <div className="w-[64px] h-[64px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-[#eaeaea] bg-[#f8f8f8] shrink-0">
                                     {cat.image
                                         ? <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />

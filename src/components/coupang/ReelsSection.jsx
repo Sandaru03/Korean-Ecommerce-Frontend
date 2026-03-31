@@ -60,7 +60,7 @@ export function ReelsSection() {
                 {/* Horizontal Scroll Container — shows exactly 4 reels at once */}
                 <div 
                     ref={scrollRef}
-                    className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4"
+                    className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -webkit-overflow-scrolling-touch"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                 >
                     {reels.map((reel) => (
@@ -151,7 +151,7 @@ function ReelCard({ reel }) {
 
     return (
         <div 
-            className="group relative aspect-[9/16] rounded-2xl overflow-hidden bg-black shadow-lg transition-transform duration-300 hover:scale-[1.02] cursor-pointer"
+            className="group relative aspect-[9/16] rounded-2xl overflow-hidden bg-black shadow-lg transition-transform duration-300 hover:scale-[1.02] cursor-pointer transform-gpu backface-hidden will-change-transform"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >

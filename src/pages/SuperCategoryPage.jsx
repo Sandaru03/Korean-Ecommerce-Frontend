@@ -13,8 +13,8 @@ import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 function CategoryCircles({ categories, selectedId, onSelect }) {
     if (!categories || categories.length === 0) return null
     return (
-        <div className="w-full overflow-x-auto pb-2">
-            <div className="flex justify-center gap-6 mb-2 flex-wrap min-w-max mx-auto px-4">
+        <div className="w-full overflow-x-auto py-2">
+            <div className="flex justify-center gap-6 flex-wrap min-w-max mx-auto px-4">
                 {categories.map(cat => {
                     const isActive = selectedId === cat.id
                     return (
@@ -23,7 +23,7 @@ function CategoryCircles({ categories, selectedId, onSelect }) {
                             onClick={() => onSelect(cat)}
                             className="flex flex-col items-center gap-2.5 group shrink-0"
                         >
-                            <div className={`w-[88px] h-[88px] rounded-full overflow-hidden border-[3px] transition-all duration-300 ${isActive ? "border-[#ff1268] scale-105" : "border-transparent group-hover:border-[#ff1268]"}`}>
+                            <div className={`w-[88px] h-[88px] rounded-full overflow-hidden border-[3px] p-[1px] transition-all duration-300 ${isActive ? "border-[#ff1268] scale-105" : "border-transparent group-hover:border-[#ff1268]"}`}>
                                 <img
                                     src={cat.image || `https://picsum.photos/seed/${cat.slug}/200`}
                                     alt={cat.name}
