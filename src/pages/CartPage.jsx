@@ -99,12 +99,29 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             return
         }
 
+        // Clean number for wa.me (numbers only)
+        const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '')
+        const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(summaryText)}`
+
+        // Open window synchronously to bypass popup blockers (esp Safari/mobile)
+        const waWindow = window.open('about:blank', '_blank')
+
         setIsSavingOrder(true)
         const order = await saveOrderToDb()
         setIsSavingOrder(false)
-        if (!order) return
+        
+        if (!order) {
+            if (waWindow) waWindow.close()
+            return
+        }
 
-        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(summaryText)}`, "_blank")
+        if (waWindow) {
+            waWindow.location.href = url
+        } else {
+            // Fallback if synchronously blocked anyway
+            window.location.href = url
+        }
+
         clearCart()
         window.scrollTo({ top: 0, behavior: "instant" })
         toast.success("Order recorded and WhatsApp opened! 🎉")

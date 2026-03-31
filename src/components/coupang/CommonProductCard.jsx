@@ -95,9 +95,16 @@ export function CommonProductCard({ product }) {
                             LKR {labellPrice.toLocaleString()}
                         </p>
                     )}
-                    <p className="text-[16px] font-black text-[#ff1268] leading-none mt-1">
-                        LKR {price.toLocaleString()}
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                        {hasDiscount && (
+                            <span className="text-[16px] font-black text-[#ff1268]">
+                                {Math.round(((labellPrice - price) / labellPrice) * 100)}%
+                            </span>
+                        )}
+                        <p className="text-[16px] font-black text-[#111] leading-none">
+                            LKR {price.toLocaleString()}
+                        </p>
+                    </div>
                 </div>
             </div>
         </Link>

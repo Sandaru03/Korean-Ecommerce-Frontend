@@ -157,7 +157,7 @@ function ReelCard({ reel }) {
         >
             <video
                 ref={videoRef}
-                src={reel.videoUrl}
+                src={`${reel.videoUrl}#t=0.001`}
                 className="w-full h-full object-contain bg-black"
                 loop
                 playsInline
@@ -191,7 +191,7 @@ function ReelCard({ reel }) {
 
 function ReelModal({ reel, onClose }) {
     const videoRef = useRef(null);
-    const [isMuted, setIsMuted] = useState(false);
+    const [isMuted, setIsMuted] = useState(true);
 
     useEffect(() => {
         // Prevent body scroll when modal is open
@@ -221,7 +221,7 @@ function ReelModal({ reel, onClose }) {
             >
                 <video
                     ref={videoRef}
-                    src={reel.videoUrl}
+                    src={`${reel.videoUrl}#t=0.001`}
                     className="w-full h-full object-contain"
                     autoPlay
                     loop

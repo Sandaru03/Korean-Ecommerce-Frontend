@@ -10,11 +10,11 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 // This eliminates the iOS "jump" bug: WebKit was recalculating -translate-x-1/2
 // against a changing width mid-transition, causing wrong intermediate positions.
 function getCardStyle(offset, isMd) {
-  const w = isMd ? 0.35 : 0.65; // card width as fraction of container
+  const w = isMd ? 0.35 : 0.85; // card width as fraction of container
 
   const targets = isMd
     ? { 0: 0.50, '-1': 0.28, 1: 0.72, '-2': 0.10, 2: 0.90 }
-    : { 0: 0.50, '-1': 0.25, 1: 0.75, '-2': 0.05, 2: 0.95 };
+    : { 0: 0.50, '-1': -0.30, 1: 1.30, '-2': -0.90, 2: 1.90 };
 
   const key = String(offset);
   let tx, scale, opacity, zIndex;
@@ -103,7 +103,7 @@ export function HeroBanner() {
     >
       <div className="max-w-[1400px] mx-auto">
         <div
-          className="relative w-full h-[380px] sm:h-[450px] md:h-[600px]"
+          className="relative w-full h-[450px] sm:h-[500px] md:h-[600px]"
           style={{ perspective: '1000px' }}
         >
           {displayArray.map((slide, i) => {
@@ -120,20 +120,22 @@ export function HeroBanner() {
               // This prevents iOS from recalculating translate-x-1/2 against a stale width.
               <div
                 key={slide.uniqueId}
-                className="absolute top-1/2 left-1/2 w-[65%] md:w-[35%] aspect-[3/4] cursor-pointer"
+                className="absolute top-1/2 left-1/2 w-[85%] md:w-[35%] aspect-[4/5] md:aspect-[3/4] cursor-pointer"
                 style={cardStyle}
                 onClick={() => { if (!isCenter) setCurrentSlide(i); }}
               >
                 {/* INNER: static clipping wrapper — never moves.
                     Separates overflow+border-radius from the animated element
                     to prevent WebKit from forcing CPU rendering. */}
-                <div className="w-full h-full rounded-3xl md:rounded-[2.5rem] overflow-hidden">
+                <div className="w-full h-full rounded-[2rem] md:rounded-[2.5rem] overflow-hidden bg-gray-100">
                   <Link
                     to={`/banner/${slide.id}`}
                     className="block w-full h-full group/item relative"
                     onClick={e => { if (!isCenter) e.preventDefault(); }}
                   >
                     <div className={`absolute inset-0 z-10 transition-colors duration-700 ${isCenter ? 'bg-transparent' : 'bg-black/30 group-hover/item:bg-black/10'}`} />
+
+
                     <img
                       src={slide.heroImage || slide.image}
                       alt={slide.title}
@@ -164,7 +166,7 @@ export function HeroBanner() {
       </button>
 
       {/* Indicators */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 hidden md:flex gap-2">
         {originalBanners.map((_, i) => (
           <button
             key={i}
