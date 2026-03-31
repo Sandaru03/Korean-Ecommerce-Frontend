@@ -104,7 +104,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         setIsSavingOrder(false)
         if (!order) return
 
-        window.open(`https://wa.me/${whatsappNumber}?text=${encoded}`, "_blank")
+        window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(summaryText)}`, "_blank")
         clearCart()
         window.scrollTo({ top: 0, behavior: "instant" })
         toast.success("Order recorded and WhatsApp opened! 🎉")

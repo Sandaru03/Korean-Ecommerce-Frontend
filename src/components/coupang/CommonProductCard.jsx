@@ -1,9 +1,12 @@
-// Product cards now focused on selection and purchase.
+// CommonProductCard updated to Olive Young premium style
 import { Link } from "react-router-dom"
-import { BadgePercent } from "lucide-react"
+import { ShoppingBag } from "lucide-react"
+import { useCart } from "@/context/CartContext"
+import toast from "react-hot-toast"
 
 /* eslint-disable react/prop-types */
 export function CommonProductCard({ product }) {
+    const { addToCart } = useCart()
     const brandName = product.name ? product.name.split(" ")[0] : "Brand"
 
     // Robust image handling
@@ -31,7 +34,6 @@ export function CommonProductCard({ product }) {
         imageUrl = images.trim()
     }
     
-    // Final safety check
     if (!imageUrl || imageUrl === "undefined" || imageUrl === "null") {
         imageUrl = "https://via.placeholder.com/300"
     }
@@ -39,57 +41,63 @@ export function CommonProductCard({ product }) {
     const price = Number(product.price) || 0
     const labellPrice = Number(product.labellPrice) || 0
     const hasDiscount = labellPrice > price
-    const discountPct = hasDiscount ? Math.round(((labellPrice - price) / labellPrice) * 100) : 0
+
+    const handleQuickAdd = (e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        addToCart(product, 1)
+        toast.success(`"${product.name}" added to cart!`, { icon: '🛒' })
+    }
 
     return (
-        <Link to={`/product/${product.id}`} className="group relative bg-white block">
-            <div className="relative aspect-square overflow-hidden border border-[#eee] rounded-sm mb-3">
+        <Link to={`/product/${product.id}`} className="group block w-full">
+            {/* Image Section */}
+            <div className="relative aspect-square overflow-hidden rounded-md bg-[#f5f5f5] mb-3 transition-colors border border-[#eee] group-hover:border-[#ddd]">
                 <img
                     src={imageUrl}
                     alt={product.name}
-                    className="h-full w-full object-contain bg-[#f8f8f8] group-hover:scale-105 transition-transform duration-500"
+                    className="h-full w-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
                 />
             </div>
 
-            <div className="px-0.5 text-left">
-                {hasDiscount && (
-                    <div className="flex items-center gap-1.5 text-[#cb1400] font-black text-[13px] mb-1.5 animate-in fade-in slide-in-from-left-2 duration-500">
-                        <div className="bg-[#cb1400] rounded-full p-0.5 shadow-sm">
-                            <BadgePercent className="h-3 w-3 text-white" strokeWidth={3} />
-                        </div>
-                        <span>Now {discountPct}% off</span>
-                    </div>
-                )}
-                <p className="text-[12px] font-bold text-[#111] mb-1 leading-none truncate">{brandName}</p>
-                <p className="text-[13px] text-[#555] leading-[1.3] line-clamp-2 min-h-[34px] group-hover:underline decoration-1 underline-offset-2">
+            {/* Info Section */}
+            <div className="px-0.5 space-y-1">
+                {/* Brand Row */}
+                <div className="flex items-start justify-between gap-2">
+                    <p className="text-[14px] font-black text-[#111] leading-tight truncate flex-1 uppercase tracking-tight">
+                        {brandName}
+                    </p>
+                    <button 
+                        onClick={handleQuickAdd}
+                        className="p-1 px-1.5 -mt-0.5 text-[#999] hover:text-[#ff1268] transition-colors rounded-full hover:bg-red-50"
+                        title="Add to cart"
+                    >
+                        <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.5} />
+                    </button>
+                </div>
+
+                {/* Product Name */}
+                <p className="text-[13px] text-[#333] leading-[1.4] line-clamp-2 min-h-[36px] font-medium">
                     {product.name}
                 </p>
+
                 {product.miniDescription && (
-                    <p className="text-[11px] text-[#888] line-clamp-1 mt-1 font-medium">
+                    <p className="text-[11px] text-[#888] line-clamp-1 mt-1 font-medium italic">
                         {product.miniDescription}
                     </p>
                 )}
 
-                <div className="mt-2.5 flex flex-col gap-0.5">
+                {/* Price Section */}
+                <div className="flex flex-col pt-1">
                     {hasDiscount && (
-                        <p className="text-[12px] text-[#999] line-through font-medium leading-none">
-                            LKR {labellPrice.toLocaleString('en-US')}
+                        <p className="text-[12px] text-[#999] line-through font-medium leading-none decoration-[#999]">
+                            LKR {labellPrice.toLocaleString()}
                         </p>
                     )}
-                    <div className="flex items-baseline gap-1.5 leading-none mt-1">
-                        <span className="text-[16px] font-bold text-[#111]">
-                            LKR {price.toLocaleString('en-US')}
-                        </span>
-                    </div>
-                </div>
-
-                <div className="flex gap-1.5 mt-3 flex-wrap">
-                    {product.badge && (
-                        <span className="bg-[#e8f5e9] text-[#2e7d32] text-[10px] font-semibold px-1.5 py-[2px] rounded-[3px]">
-                            {product.badge}
-                        </span>
-                    )}
+                    <p className="text-[16px] font-black text-[#ff1268] leading-none mt-1">
+                        LKR {price.toLocaleString()}
+                    </p>
                 </div>
             </div>
         </Link>

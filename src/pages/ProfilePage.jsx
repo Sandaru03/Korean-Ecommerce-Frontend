@@ -13,6 +13,9 @@ export default function ProfilePage() {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("profile");
+    const [orders, setOrders] = useState([]);
+    const [ordersLoading, setOrdersLoading] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editForm, setEditForm] = useState({
         firstName: "",
@@ -23,7 +26,28 @@ export default function ProfilePage() {
 
     useEffect(() => {
         fetchProfile();
-    }, [navigate]);
+        if (activeTab === "orders") {
+            fetchOrders();
+        }
+    }, [navigate, activeTab]);
+
+    const fetchOrders = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        setOrdersLoading(true);
+        try {
+            const res = await axios.get(
+                `${import.meta.env.VITE_BACKEND_URL}/orders`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            setOrders(res.data.orders || []);
+        } catch (err) {
+            toast.error("Failed to load orders");
+        } finally {
+            setOrdersLoading(false);
+        }
+    };
 
     const fetchProfile = () => {
         const token = localStorage.getItem("token");
@@ -133,55 +157,58 @@ export default function ProfilePage() {
 
                         {/* Navigation Menu */}
                         <nav className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                            <MenuLink icon={<User className="h-4 w-4" />} label="Account Information" active />
-                            <MenuLink icon={<Package className="h-4 w-4" />} label="My Orders" />
+                            <MenuLink 
+                                icon={<User className="h-4 w-4" />} 
+                                label="Account Information" 
+                                active={activeTab === "profile"} 
+                                onClick={() => setActiveTab("profile")}
+                            />
+                            <MenuLink 
+                                icon={<Package className="h-4 w-4" />} 
+                                label="My Orders" 
+                                active={activeTab === "orders"}
+                                onClick={() => setActiveTab("orders")}
+                            />
                         </nav>
                     </div>
 
                     {/* Main Content Area */}
                     <div className="flex-1 space-y-6">
-                        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-                            <div className="p-6 border-b border-gray-100">
-                                <h1 className="text-xl font-bold text-gray-900">Account Details</h1>
-                                <p className="text-sm text-gray-500">Manage your personal information and account settings.</p>
-                            </div>
-                            
-                            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                                <InfoItem label="First Name" value={user.firstName} />
-                                <InfoItem label="Last Name" value={user.lastName} />
-                                <InfoItem label="Email Address" value={user.email} />
-                                <InfoItem label="Phone Number" value={user.phone || "Not provided"} />
+                        {activeTab === "profile" ? (
+                            <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+                                <div className="p-6 border-b border-gray-100">
+                                    <h1 className="text-xl font-bold text-gray-900">Account Details</h1>
+                                    <p className="text-sm text-gray-500">Manage your personal information and account settings.</p>
+                                </div>
+                                
+                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                    <InfoItem label="First Name" value={user.firstName} />
+                                    <InfoItem label="Last Name" value={user.lastName} />
+                                    <InfoItem label="Email Address" value={user.email} />
+                                    <InfoItem label="Phone Number" value={user.phone || "Not provided"} />
 
-                                <InfoItem label="Member Since" value={joinDate} />
-                                <InfoItem label="Account Status" value={user.isBlock ? "Blocked" : "Active"} 
-                                    valueColor={user.isBlock ? "text-red-600" : "text-emerald-600"} 
-                                />
-                            </div>
+                                    <InfoItem label="Member Since" value={joinDate} />
+                                    <InfoItem label="Account Status" value={user.isBlock ? "Blocked" : "Active"} 
+                                        valueColor={user.isBlock ? "text-red-600" : "text-emerald-600"} 
+                                    />
+                                </div>
 
-                            <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end rounded-b-lg">
-                                <button 
-                                    onClick={() => setIsEditModalOpen(true)}
-                                    className="px-5 py-2 bg-primary text-white text-sm font-bold rounded-md hover:bg-blue-700 transition-colors"
-                                >
-                                    Edit Profile
-                                </button>
+                                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end rounded-b-lg">
+                                    <button 
+                                        onClick={() => setIsEditModalOpen(true)}
+                                        className="px-5 py-2 bg-primary text-white text-sm font-bold rounded-md hover:bg-blue-700 transition-colors"
+                                    >
+                                        Edit Profile
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-
-                        {/* Placeholder for recent orders */}
-                        <div className="bg-white border border-gray-200 rounded-lg p-8 text-center shadow-sm">
-                            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Package className="h-8 w-8 text-gray-300" />
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-1">No Orders Yet</h3>
-                            <p className="text-sm text-gray-500 mb-6">You haven't placed any orders yet. Start shopping to see your orders here!</p>
-                            <button 
-                                onClick={() => navigate("/")}
-                                className="inline-flex items-center gap-2 text-primary font-bold hover:underline"
-                            >
-                                Browse Products <ChevronRight className="h-4 w-4" />
-                            </button>
-                        </div>
+                        ) : (
+                            <OrdersListView 
+                                orders={orders} 
+                                loading={ordersLoading} 
+                                onBrowse={() => navigate("/")} 
+                            />
+                        )}
                     </div>
 
                 </div>
@@ -263,12 +290,132 @@ export default function ProfilePage() {
     );
 }
 
-function MenuLink({ icon, label, active = false }) {
+function MenuLink({ icon, label, active = false, onClick }) {
     return (
-        <button className={`w-full flex items-center gap-3 px-6 py-4 text-sm font-medium transition-colors border-l-4 ${active ? "bg-primary/5 text-primary border-primary" : "text-gray-600 border-transparent hover:bg-gray-50"}`}>
+        <button 
+            onClick={onClick}
+            className={`w-full flex items-center gap-3 px-6 py-4 text-sm font-medium transition-colors border-l-4 ${active ? "bg-primary/5 text-primary border-primary font-bold" : "text-gray-600 border-transparent hover:bg-gray-50 font-normal"}`}
+        >
             {icon}
             {label}
         </button>
+    );
+}
+
+function OrdersListView({ orders, loading, onBrowse }) {
+    if (loading) {
+        return (
+            <div className="bg-white border border-gray-200 rounded-lg p-12 text-center shadow-sm">
+                <div className="w-10 h-10 border-4 border-gray-100 border-t-primary rounded-full animate-spin mx-auto" />
+                <p className="mt-4 text-sm text-gray-500">Loading your orders...</p>
+            </div>
+        );
+    }
+
+    if (!orders || orders.length === 0) {
+        return (
+            <div className="bg-white border border-gray-200 rounded-lg p-12 text-center shadow-sm animate-in fade-in duration-500">
+                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Package className="h-10 w-10 text-gray-200" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No Orders Yet</h3>
+                <p className="text-gray-500 max-w-sm mx-auto mb-8">You haven't placed any orders with us yet. Start exploring our collection!</p>
+                <button 
+                    onClick={onBrowse}
+                    className="px-8 py-3 bg-primary text-white font-bold rounded-lg hover:bg-blue-700 transition-all shadow-md active:scale-95"
+                >
+                    Start Shopping
+                </button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="text-xl font-bold text-gray-900 px-1">Order History ({orders.length})</h2>
+            {orders.map((order) => (
+                <div key={order.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:border-gray-300 transition-colors">
+                    <div className="p-5 border-b border-gray-50 flex flex-wrap items-center justify-between gap-4 bg-gray-50/30">
+                        <div className="space-y-1">
+                            <p className="text-xs font-black text-gray-400 tracking-wider uppercase">Order ID</p>
+                            <p className="text-sm font-bold text-gray-900">#{order.orderId}</p>
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-xs font-black text-gray-400 tracking-wider uppercase">Date Placed</p>
+                            <p className="text-sm font-medium text-gray-700">
+                                {new Date(order.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </p>
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-xs font-black text-gray-400 tracking-wider uppercase">Total Amount</p>
+                            <p className="text-sm font-black text-primary">LKR {Number(order.total).toLocaleString()}</p>
+                        </div>
+                        <StatusBadge status={order.status} />
+                    </div>
+                    <div className="p-5">
+                        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                            {(() => {
+                                let items = order.items;
+                                if (typeof items === "string") {
+                                    try { items = JSON.parse(items); } catch { items = []; }
+                                }
+                                if (!Array.isArray(items)) items = [];
+                                
+                                return items.map((item, idx) => (
+                                    <div key={idx} className="shrink-0 flex items-center gap-3 bg-gray-50 rounded-lg p-2 border border-gray-100">
+                                        <div className="w-14 h-14 rounded-md bg-white border border-gray-200 overflow-hidden flex-shrink-0">
+                                            <img src={item.image} alt={item.productName} className="w-full h-full object-contain" />
+                                        </div>
+                                        <div className="min-w-[120px] max-w-[200px]">
+                                            <p className="text-[12px] font-bold text-gray-800 line-clamp-1">{item.productName}</p>
+                                            <p className="text-[11px] text-gray-500">Qty: {item.qty} × LKR {Number(item.price).toLocaleString()}</p>
+                                        </div>
+                                    </div>
+                                ));
+                            })()}
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function StatusBadge({ status }) {
+    const configs = {
+        pending: {
+            bg: "bg-amber-50",
+            text: "text-amber-700",
+            border: "border-amber-200",
+            icon: <Clock className="h-3 w-3" />
+        },
+        shipped: {
+            bg: "bg-blue-50",
+            text: "text-blue-700",
+            border: "border-blue-200",
+            icon: <Package className="h-3 w-3" />
+        },
+        delivered: {
+            bg: "bg-emerald-50",
+            text: "text-emerald-700",
+            border: "border-emerald-200",
+            icon: <ShieldCheck className="h-3 w-3" />
+        },
+        cancelled: {
+            bg: "bg-red-50",
+            text: "text-red-700",
+            border: "border-red-200",
+            icon: <ShieldOff className="h-3 w-3" />
+        }
+    };
+
+    const config = configs[status.toLowerCase()] || configs.pending;
+
+    return (
+        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${config.bg} ${config.text} ${config.border} text-[11px] font-black uppercase tracking-tight`}>
+            {config.icon}
+            {status}
+        </div>
     );
 }
 

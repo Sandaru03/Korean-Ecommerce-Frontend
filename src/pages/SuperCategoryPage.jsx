@@ -10,32 +10,46 @@ import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 
 
 // ── Large circle icons for categories ─────────────────────────
-function CategoryCircles({ categories, selectedId, onSelect }) {
+function CategoryCircles({ categories, selectedId, onSelect, title }) {
     if (!categories || categories.length === 0) return null
+    
+    // Subtle pastel backgrounds matching Olive Young style
+    const pastels = ['bg-[#eef2f5]', 'bg-[#fff1f1]', 'bg-[#f0f5ff]', 'bg-[#fff8ea]', 'bg-[#fcf0f5]']
+
     return (
-        <div className="w-full overflow-x-auto py-2">
-            <div className="flex justify-center gap-6 flex-wrap min-w-max mx-auto px-4">
-                {categories.map(cat => {
-                    const isActive = selectedId === cat.id
-                    return (
-                        <button
-                            key={cat.id}
-                            onClick={() => onSelect(cat)}
-                            className="flex flex-col items-center gap-2.5 group shrink-0"
-                        >
-                            <div className={`w-[88px] h-[88px] rounded-full overflow-hidden border-[3px] p-[1px] transition-all duration-300 ${isActive ? "border-[#ff1268] scale-105" : "border-transparent group-hover:border-[#ff1268]"}`}>
-                                <img
-                                    src={cat.image || `https://picsum.photos/seed/${cat.slug}/200`}
-                                    alt={cat.name}
-                                    className="w-full h-full object-contain bg-[#f8f8f8] group-hover:scale-110 transition-transform duration-500"
-                                />
-                            </div>
-                            <span className={`text-[13px] font-medium transition-all ${isActive ? "text-[#ff1268] font-bold" : "text-[#666] group-hover:text-[#ff1268] group-hover:font-bold"}`}>
-                                {cat.name}
-                            </span>
-                        </button>
-                    )
-                })}
+        <div className="w-full pt-2">
+            <div className="text-center mb-4">
+                <h2 className="text-[18px] md:text-[22px] font-black text-[#111] tracking-tight">{title}</h2>
+            </div>
+            
+            <div className="w-full overflow-x-auto scrollbar-hide">
+                <div className="flex justify-center gap-4 md:gap-8 min-w-max mx-auto px-4 pb-2">
+                    {categories.map((cat, idx) => {
+                        const isActive = selectedId === cat.id
+                        const bgColor = pastels[idx % pastels.length]
+                        
+                        return (
+                            <button
+                                key={cat.id}
+                                onClick={() => onSelect(cat)}
+                                className="flex flex-col items-center gap-2 group shrink-0 w-[90px] md:w-[110px]"
+                            >
+                                <div className={`w-[85px] h-[85px] md:w-[105px] md:h-[105px] rounded-full flex items-center justify-center transition-all duration-300 ${isActive ? "border-[3px] border-[#ff1268] p-1 shadow-md scale-[1.03]" : "border-[2px] border-transparent p-1 group-hover:border-gray-200 group-hover:shadow-sm group-hover:scale-[1.03]"}`}>
+                                    <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden ${bgColor}`}>
+                                        <img
+                                            src={cat.image || `https://picsum.photos/seed/${cat.slug}/200`}
+                                            alt={cat.name}
+                                            className="w-[85%] h-[85%] object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                    </div>
+                                </div>
+                                <span className={`text-[12px] md:text-[14px] text-center leading-tight transition-all font-medium mt-1 ${isActive ? "text-[#ff1268] font-black" : "text-[#555] group-hover:text-[#111] font-bold"}`}>
+                                    {cat.name}
+                                </span>
+                            </button>
+                        )
+                    })}
+                </div>
             </div>
         </div>
     )
@@ -187,31 +201,29 @@ export default function SuperCategoryPage() {
             <Header />
 
             {/* ── Hero banner for the super category ── */}
-            <div className="w-full bg-gradient-to-r from-[#fff0f4] via-[#fff5f7] to-[#fff0f4] border-b border-[#eee] py-10">
-                <div className="mx-auto max-w-[1200px] px-6 flex items-center gap-6">
-                    {superCategory.image && (
-                        <div className="w-[80px] h-[80px] rounded-full overflow-hidden border-2 border-[#ff1268]/20 shrink-0 hidden sm:block">
-                            <img src={superCategory.image} alt={superCategory.name} className="w-full h-full object-contain bg-[#f8f8f8]" />
-                        </div>
-                    )}
-                    <div>
-                        <p className="text-[11px] uppercase tracking-[0.2em] font-bold text-[#ff1268] mb-1">Collection</p>
-                        <h1 className="text-[32px] font-black text-[#111] tracking-tight leading-none">{superCategory.name}</h1>
-                        <p className="text-[14px] text-[#777] mt-2">
-                            {categories.length} categories · {products.length} products
-                        </p>
+            <div className="w-full bg-white pt-6 pb-0">
+                <div className="mx-auto max-w-[1200px] px-6">
+                    <h1 className="text-[28px] md:text-[34px] font-black text-[#111] tracking-tight leading-none uppercase">{superCategory.name}</h1>
+                    <div className="flex items-center gap-3 mt-2">
+                        <span className="bg-[#f0f0f0] text-[#555] text-[10px] md:text-[11px] font-bold px-2 py-0.5 rounded-[4px] uppercase tracking-wider">
+                            Collection
+                        </span>
+                        <span className="text-[12px] md:text-[13px] text-[#777] font-medium">
+                            {categories.length} categories &nbsp;·&nbsp; {products.length} products
+                        </span>
                     </div>
                 </div>
             </div>
 
-            {/* ── Category circles — STICKY at top of viewport ── */}
-            <div style={{ position: "sticky", top: 0, zIndex: 20 }} className="bg-white border-b border-[#eee] py-6 shadow-sm">
+            {/* ── Category circles ── */}
+            <div className="bg-white pb-6 border-b border-[#eee] mt-2">
                 <div className="mx-auto max-w-[1200px] px-6">
                     {categories.length > 0 ? (
                         <CategoryCircles
                             categories={categories}
                             selectedId={selectedCategory?.id}
                             onSelect={handleSelectCategory}
+                            title={`Trending ${superCategory.name} BEST`}
                         />
                     ) : (
                         <p className="text-center text-[#aaa] text-sm">No categories yet.</p>
