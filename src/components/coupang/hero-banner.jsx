@@ -90,6 +90,26 @@ export function HeroBanner() {
     return () => clearInterval(interval);
   }, [nextSlide, displayArray.length]);
 
+  const [touchStartX, setTouchStartX] = useState(0);
+
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+
+    // Threshold of 50px for a valid swipe
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+  };
+
   if (displayArray.length === 0) {
     return <div className="w-full h-[300px] md:h-[600px] bg-slate-100 flex items-center justify-center animate-pulse rounded-[2.5rem] my-6">Loading Banners...</div>;
   }
@@ -98,8 +118,10 @@ export function HeroBanner() {
 
   return (
     <div
-      className="relative group w-full bg-[#f8f9fa] py-6 md:py-10 overflow-hidden px-2 md:px-4"
+      className="relative group w-full bg-[#FFFFFF] py-6 md:py-10 overflow-hidden px-2 md:px-4"
       style={{ touchAction: 'pan-y' }}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div className="max-w-[1400px] mx-auto">
         <div

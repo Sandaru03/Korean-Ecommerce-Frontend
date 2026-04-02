@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&display=swap');
+
 .loader-container {
   position: fixed;
   top: 0;
@@ -14,90 +16,121 @@
 }
 
 .loader-content {
-  position: relative;
-  width: 400px;
-  height: 400px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  gap: 8px;
 }
 
+/* ---------- Icon wrapper: clips out the "SAMEE AND SANDU" text baked into logo.png ---------- */
+/* logo.png is a square image: ~82% is the S-icon, ~18% is the text at the bottom.
+   We set the container to 82% of its width so the text is hidden below the overflow boundary. */
 .logo-part {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 340px;
+  height: 278px;   /* 340 × 0.82 ≈ 278 — exposes icon only */
   overflow: hidden;
-  transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+  animation: slideInTop 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+  transform: translateY(-100%);
 }
 
 .logo-part img {
   width: 100%;
-  height: 100%;
+  height: 122%;   /* taller than container so bottom text stays below fold */
   object-fit: contain;
+  object-position: top center;
+  display: block;
 }
 
-/* Icon part (Top) */
-.icon {
-  clip-path: inset(0 0 16% 0); /* Keeps the top part */
-  transform: translateY(-100%);
-  animation: slideInTop 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+/* ---------- Text row ---------- */
+/* We use a clip wrapper per word so each slides independently without
+   the parent overflow clipping cutting off mid-animation. */
+.logo-text-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
 }
 
-/* Samee part (Bottom Left) */
-.samee {
-  clip-path: inset(84% 63% 0 0); /* Isolates "SAMEE" */
-  transform: translateX(-100%);
-  animation: slideInLeft 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+/* Each word gets its own clip container */
+.logo-text-clip {
+  overflow: visible;
 }
 
-/* And part (Bottom Middle) */
-.and {
-  clip-path: inset(84% 40% 0 37%); /* Isolates "AND" */
-  transform: translateY(100%);
-  animation: slideInBottom 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+.logo-text-part {
+  font-family: 'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 3.4rem;
+  color: #c8102e;
+  letter-spacing: 0.01em;
+  line-height: 1.2;      /* Increased to prevent cropping of font edges */
+  display: block;
+  opacity: 0;            /* Start invisible */
 }
 
-/* Sandu part (Bottom Right) */
-.sandu {
-  clip-path: inset(84% 0 0 60%); /* Isolates "SANDU" */
-  transform: translateX(100%);
-  animation: slideInRight 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
+/* "Samee" slides in from Top-Left corner */
+.samee-text {
+  animation: slideInTopLeft 1.6s forwards cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* "And" slides up from Bottom center */
+.and-text {
+  font-size: 3.4rem;
+  font-weight: 800;
+  margin: 0 6px;
+  animation: slideInBottom 1.6s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* "Sandu" slides in from Top-Right corner */
+.sandu-text {
+  animation: slideInTopRight 1.6s forwards cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- Keyframes ---------- */
 @keyframes slideInTop {
-  from {
-    transform: translateY(-100%);
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInTopLeft {
+  from { 
+    transform: translate(-100vw, -100vh); 
+    opacity: 0; 
   }
-  to {
-    transform: translateY(0);
+  to { 
+    transform: translate(0, 0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes slideInTopRight {
+  from { 
+    transform: translate(100vw, -100vh); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translate(0, 0); 
+    opacity: 1; 
   }
 }
 
 @keyframes slideInBottom {
-  from {
-    transform: translateY(100%);
+  from { 
+    transform: translateY(100vh); 
+    opacity: 0; 
   }
-  to {
-    transform: translateY(0);
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
   }
 }
 
 @keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+  from { transform: translateX(-200%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+  from { transform: translateX(200%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
 
 .loader-container.fade-out {

@@ -26,11 +26,35 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
         return () => clearInterval(timer)
     }, [images.length])
 
+    const [touchStartX, setTouchStartX] = useState(0);
+
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+                setCurrentIndex(prev => (prev + 1) % images.length);
+            } else {
+                setCurrentIndex(prev => (prev - 1 + images.length) % images.length);
+            }
+        }
+    };
+
     return (
         <section className="mb-12">
             <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm">
                 {/* Left: Banner Slider */}
-                <div className="w-full md:w-[38%] relative overflow-hidden aspect-[4/5] md:aspect-auto bg-[#fafafa]">
+                <div 
+                    className="w-full md:w-[38%] relative overflow-hidden aspect-[4/5] md:aspect-auto bg-[#fafafa]"
+                    style={{ touchAction: 'pan-y' }}
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={handleTouchEnd}
+                >
                     {images.length > 0 ? (
                         <div className="absolute inset-0 w-full h-full group">
                             {/* Ambient Blurred Background to Fill Empty Space */}

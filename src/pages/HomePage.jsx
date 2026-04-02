@@ -56,6 +56,9 @@ function EmptyTopics() {
 function MiddleBannerSection({ banners }) {
     const [currentIndex, setCurrentIndex] = useState(0);
 
+    const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % banners.length);
+    const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
+
     useEffect(() => {
         if (banners.length <= 1) return;
         const interval = setInterval(() => {
@@ -64,13 +67,34 @@ function MiddleBannerSection({ banners }) {
         return () => clearInterval(interval);
     }, [banners.length]);
 
+    const [touchStartX, setTouchStartX] = useState(0);
+
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+    };
+
     if (!banners || banners.length === 0) return null;
 
-    const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % banners.length);
-    const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
-
     return (
-        <section className="mb-14 relative group">
+        <section 
+            className="mb-14 relative group"
+            style={{ touchAction: 'pan-y' }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+        >
             <div className="overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white">
                 <div 
                     className="flex transition-transform duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu backface-hidden will-change-transform"

@@ -24,13 +24,37 @@ export function AdBannerSlider() {
         return () => clearInterval(interval);
     }, [banners.length]);
 
-    if (banners.length === 0) return null;
-
     const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % banners.length);
     const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
 
+    const [touchStartX, setTouchStartX] = useState(0);
+
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const diff = touchStartX - touchEndX;
+
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        }
+    };
+
+    if (banners.length === 0) return null;
+
     return (
-        <div className="relative w-full overflow-hidden rounded-xl mb-8 md:mb-14 group aspect-[8/1] shadow-sm">
+        <div 
+            className="relative w-full overflow-hidden rounded-xl mb-8 md:mb-14 group aspect-[8/1] shadow-sm bg-white"
+            style={{ touchAction: 'pan-y' }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+        >
             <div 
                 className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu backface-hidden will-change-transform"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}

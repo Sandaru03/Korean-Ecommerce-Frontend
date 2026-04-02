@@ -21,17 +21,19 @@ const Loader = ({ onFinished }) => {
   return (
     <div className="loader-container">
       <div className="loader-content">
-        <div className="logo-part icon">
+        <div className="logo-part">
           <img src="/logo.png" alt="Logo Icon" />
         </div>
-        <div className="logo-part samee">
-          <img src="/logo.png" alt="Samee" />
-        </div>
-        <div className="logo-part and">
-          <img src="/logo.png" alt="And" />
-        </div>
-        <div className="logo-part sandu">
-          <img src="/logo.png" alt="Sandu" />
+        <div className="logo-text-row">
+          <div className="logo-text-clip">
+            <span className="logo-text-part samee-text">Samee</span>
+          </div>
+          <div className="logo-text-clip">
+            <span className="logo-text-part and-text">And</span>
+          </div>
+          <div className="logo-text-clip">
+            <span className="logo-text-part sandu-text">Sandu</span>
+          </div>
         </div>
       </div>
     </div>

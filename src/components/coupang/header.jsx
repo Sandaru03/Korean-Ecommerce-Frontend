@@ -234,7 +234,7 @@ export function Header() {
                 value={searchQuery}
                 onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search for products"
+                placeholder="Search for products 🔥"
                 className="h-10 w-full rounded-l-md border border-[#e5e5e5] bg-white px-4 text-sm text-[#333] placeholder:text-[#999] focus:border-primary focus:outline-none"
               />
               <button type="submit" className="flex h-10 items-center justify-center rounded-r-md bg-primary px-4 text-white hover:bg-red-800 transition-colors">
@@ -347,7 +347,7 @@ export function Header() {
               value={searchQuery}
               onFocus={() => searchQuery.trim() && setShowSuggestions(true)}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Find today's trending picks!"
+              placeholder="Find today's trending picks! 🔥"
               className="h-11 w-full rounded-full border border-gray-200 bg-white px-4 pr-12 text-sm text-[#333] placeholder:text-gray-400 focus:border-primary focus:outline-none shadow-inner"
             />
             <button type="submit" className="absolute right-3 text-[#ff1268]">
