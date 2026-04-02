@@ -95,7 +95,7 @@ function MiddleBannerSection({ banners }) {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
-            <div className="overflow-hidden rounded-[2.5rem] shadow-2xl border-4 border-white">
+            <div className="overflow-hidden">
                 <div 
                     className="flex transition-transform duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu backface-hidden will-change-transform"
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
@@ -183,7 +183,7 @@ export default function HomePage() {
     const activeTopicsWithProducts = topics.filter(t => t.active && (t.products?.length > 0 || t.bannerImage))
 
     return (
-        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white pb-20">
+        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white pb-20 overflow-x-hidden">
             <Header />
 
             {/* Hero Banner */}
@@ -215,7 +215,7 @@ export default function HomePage() {
                 <GridBannerSection />
             </div>
 
-            <div className="mx-auto max-w-[1040px] px-4">
+            <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-14">
                 <AdBannerSlider />
             </div>
 
