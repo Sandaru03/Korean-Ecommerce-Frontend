@@ -163,6 +163,14 @@ export function HeroBanner() {
                       alt={slide.title}
                       className="w-full h-full object-cover"
                     />
+
+                    {/* Shop Now Button - optimized with CSS transitions instead of mount/unmount */}
+                    <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-full px-4 flex justify-center transition-all duration-[900ms] cubic-bezier(0.22,1,0.36,1) ${isCenter ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
+                      <div className="px-6 py-2.5 md:px-10 md:py-4 bg-white text-black font-black rounded-full shadow-[0_15px_35px_-5px_rgba(0,0,0,0.4)] hover:shadow-[0_20px_45px_-10px_rgba(0,0,0,0.5)] transition-all hover:scale-105 active:scale-95 flex items-center gap-3 text-xs md:text-sm tracking-[0.2em] uppercase border border-white/20">
+                          Shop Now
+                          <ChevronRight className="h-4 w-4 md:h-5 md:w-5" strokeWidth={3} />
+                      </div>
+                    </div>
                   </Link>
                 </div>
               </div>
