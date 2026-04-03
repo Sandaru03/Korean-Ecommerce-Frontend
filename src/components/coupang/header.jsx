@@ -355,6 +355,21 @@ export function Header() {
             </button>
             {renderSearchSuggestions()}
           </form>
+
+          {/* Swippable Categories */}
+          {navbarCategories.length > 0 && (
+            <div className="flex overflow-x-auto gap-2 no-scrollbar pb-1 pt-0.5">
+              {navbarCategories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  to={cat.parentId === null ? `/super-category/${cat.slug}` : `/category/${cat.slug}`}
+                  className="whitespace-nowrap px-4 py-2 bg-gray-50 rounded-full text-[13px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors border border-gray-100"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 

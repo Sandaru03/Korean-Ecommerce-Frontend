@@ -168,3 +168,11 @@
 @utility isolation-isolate {
   isolation: isolate;
 }
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
