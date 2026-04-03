@@ -332,7 +332,7 @@ export function Header() {
             <Link to="/">
               <img src="/logo.png" alt="Logo" className="h-7 w-auto object-contain" />
             </Link>
-            <button onClick={handleCartClick} className="relative text-gray-800">
+            <button onClick={handleCartClick} className="relative text-black">
               <ShoppingCart className="h-6 w-6 stroke-[1.5]" />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-2 bg-[#ff1268] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
@@ -379,12 +379,12 @@ export function Header() {
       <div className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 z-[9999] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <div className="flex justify-between items-center px-6 h-[72px] relative">
           
-          <button onClick={() => setShowMobileCategories(true)} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors">
+          <button onClick={() => setShowMobileCategories(true)} className="flex flex-col items-center gap-1 text-black hover:text-primary transition-colors">
             <Menu className="h-6 w-6 stroke-[1.5]" />
             <span className="text-[10px] font-medium tracking-tight">Menu</span>
           </button>
           
-          <button onClick={() => window.scrollTo({top:0, behavior: 'smooth'})} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors">
+          <button onClick={() => window.scrollTo({top:0, behavior: 'smooth'})} className="flex flex-col items-center gap-1 text-black hover:text-primary transition-colors">
             <Search className="h-6 w-6 stroke-[1.5]" />
             <span className="text-[10px] font-medium tracking-tight">Search</span>
           </button>
@@ -402,7 +402,7 @@ export function Header() {
             </Link>
           </div>
 
-          <button onClick={handleCartClick} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors relative">
+          <button onClick={handleCartClick} className="flex flex-col items-center gap-1 text-black hover:text-primary transition-colors relative">
             <div className="relative">
               <ShoppingCart className="h-6 w-6 stroke-[1.5]" />
               {totalItems > 0 && (
@@ -414,7 +414,7 @@ export function Header() {
             <span className="text-[10px] font-medium tracking-tight">Cart</span>
           </button>
 
-          <button onClick={() => navigate(isLoggedIn ? "/profile" : "/login")} className="flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors">
+          <button onClick={() => navigate(isLoggedIn ? "/profile" : "/login")} className="flex flex-col items-center gap-1 text-black hover:text-primary transition-colors">
             <User className="h-6 w-6 stroke-[1.5]" />
             <span className="text-[10px] font-medium tracking-tight">{isLoggedIn ? "Account" : "Login"}</span>
           </button>

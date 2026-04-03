@@ -32,7 +32,10 @@ export default function SignupPage() {
             toast.success(res.data.message || "Account created successfully!");
             navigate("/login"); // go to login so they can sign in
         } catch (error) {
-            toast.error(error.response?.data?.message || "Signup failed");
+            toast.error(
+                error.response?.data?.message || 
+                "We couldn't create your account right now. Please check your details and try again!"
+            );
         }
     };
 
