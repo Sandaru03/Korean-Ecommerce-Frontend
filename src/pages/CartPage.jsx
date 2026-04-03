@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
 import { useCart } from "@/context/CartContext"
-import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Mail, ChevronRight, AlertCircle, Loader2 } from "lucide-react"
+import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Mail, ChevronRight, AlertCircle, Loader2, ImagePlus, X } from "lucide-react"
 import toast from "react-hot-toast"
 import axios from "axios"
 
@@ -21,6 +21,10 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
     const [loadingUser, setLoadingUser] = useState(true)
     const [sendingEmail, setSendingEmail] = useState(false)
     const [isSavingOrder, setIsSavingOrder] = useState(false)
+    const [slipFile, setSlipFile] = useState(null)
+    const [slipPreview, setSlipPreview] = useState(null)
+    const [slipUrl, setSlipUrl] = useState(null)
+    const [uploadingSlip, setUploadingSlip] = useState(false)
     const { clearCart } = useCart()
 
     // Auto-fill name and phone from the logged-in user's profile
@@ -57,6 +61,8 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         ? `\nDelivery Fee: LKR ${fmt(deliveryFee)} (${totalItems} items)`
         : "\nDelivery: Free"
 
+    const slipLine = slipUrl ? `\n\n📎 *Payment Slip:* ${slipUrl}` : ""
+
     const summaryText =
         `🛒 *New Order*\n\n` +
         `*Name:* ${name || "—"}\n` +
@@ -64,7 +70,8 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         `*Address:* ${address || "—"}\n\n` +
         `*Items:*\n${orderLines}\n` +
         `${deliveryLine}\n` +
-        `*Total: LKR ${fmt(grandTotal)}*`
+        `*Total: LKR ${fmt(grandTotal)}*` +
+        slipLine
 
     async function saveOrderToDb() {
         const token = localStorage.getItem("token")
@@ -93,15 +100,76 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         }
     }
 
+    async function uploadSlipToCloudinary() {
+        if (!slipFile) return null
+        setUploadingSlip(true)
+        try {
+            const formData = new FormData()
+            formData.append("images", slipFile)
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/upload/cloudinary`, formData)
+            const url = res.data.urls?.[0]
+            if (url) setSlipUrl(url)
+            return url
+        } catch (err) {
+            console.error("Slip upload failed:", err)
+            toast.error("Failed to upload payment slip. Please try again.")
+            return null
+        } finally {
+            setUploadingSlip(false)
+        }
+    }
+
+    function handleSlipSelect(e) {
+        const file = e.target.files?.[0]
+        if (!file) return
+        if (!file.type.startsWith("image/")) {
+            toast.error("Please select an image file.")
+            return
+        }
+        if (file.size > 10 * 1024 * 1024) {
+            toast.error("Image must be under 10 MB.")
+            return
+        }
+        setSlipFile(file)
+        setSlipPreview(URL.createObjectURL(file))
+        setSlipUrl(null)
+    }
+
+    function removeSlip() {
+        setSlipFile(null)
+        if (slipPreview) URL.revokeObjectURL(slipPreview)
+        setSlipPreview(null)
+        setSlipUrl(null)
+    }
+
     async function handleWhatsApp() {
         if (!name || !phone || !address) {
             toast.error("Please fill in all fields before ordering.")
             return
         }
 
+        // Upload slip first if selected but not yet uploaded
+        let finalSlipUrl = slipUrl
+        if (slipFile && !slipUrl) {
+            finalSlipUrl = await uploadSlipToCloudinary()
+            if (slipFile && !finalSlipUrl) return // upload failed
+        }
+
+        // Rebuild summary with final slip URL
+        const finalSlipLine = finalSlipUrl ? `\n\n📎 *Payment Slip:* ${finalSlipUrl}` : ""
+        const finalSummary =
+            `🛒 *New Order*\n\n` +
+            `*Name:* ${name || "—"}\n` +
+            `*Phone:* ${phone || "—"}\n` +
+            `*Address:* ${address || "—"}\n\n` +
+            `*Items:*\n${orderLines}\n` +
+            `${deliveryLine}\n` +
+            `*Total: LKR ${fmt(grandTotal)}*` +
+            finalSlipLine
+
         // Clean number for wa.me (numbers only)
         const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '')
-        const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(summaryText)}`
+        const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(finalSummary)}`
 
         // Open window synchronously to bypass popup blockers (esp Safari/mobile)
         const waWindow = window.open('about:blank', '_blank')
@@ -133,6 +201,13 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             toast.error("Please fill in all fields before ordering.")
             return
         }
+
+        // Upload slip first if selected but not yet uploaded
+        let finalSlipUrl = slipUrl
+        if (slipFile && !slipUrl) {
+            finalSlipUrl = await uploadSlipToCloudinary()
+            if (slipFile && !finalSlipUrl) return // upload failed
+        }
         
         setIsSavingOrder(true)
         const order = await saveOrderToDb()
@@ -145,7 +220,8 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         try {
             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/config/send-order-email`, {
                 summary: summaryText,
-                email: orderEmail
+                email: orderEmail,
+                slipImageUrl: finalSlipUrl || null
             })
             clearCart()
             window.scrollTo({ top: 0, behavior: "instant" })
@@ -242,6 +318,34 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                             rows={3}
                             className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-primary outline-none resize-none"
                         />
+                    </div>
+
+                    {/* Payment Slip Upload */}
+                    <div className="space-y-2">
+                        <p className="font-bold text-[#111] text-[14px]">Payment Slip <span className="text-[12px] font-normal text-[#999]">(optional)</span></p>
+                        {!slipPreview ? (
+                            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-[#ddd] rounded-xl py-6 cursor-pointer hover:border-primary hover:bg-red-50/30 transition-all group">
+                                <ImagePlus className="h-8 w-8 text-[#bbb] group-hover:text-primary transition-colors" strokeWidth={1.5} />
+                                <span className="text-[13px] text-[#999] group-hover:text-primary transition-colors font-medium">Tap to upload payment slip</span>
+                                <span className="text-[11px] text-[#ccc]">JPG, PNG — Max 10 MB</span>
+                                <input type="file" accept="image/*" onChange={handleSlipSelect} className="hidden" />
+                            </label>
+                        ) : (
+                            <div className="relative border border-[#eee] rounded-xl overflow-hidden bg-[#f8f8f8]">
+                                <img src={slipPreview} alt="Payment slip" className="w-full max-h-[200px] object-contain" />
+                                <button
+                                    onClick={removeSlip}
+                                    className="absolute top-2 right-2 bg-white/90 hover:bg-red-50 border border-[#eee] rounded-full p-1.5 shadow-sm transition-colors"
+                                >
+                                    <X className="h-4 w-4 text-[#555] hover:text-primary" />
+                                </button>
+                                {uploadingSlip && (
+                                    <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+                                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
 
                     {/* Order Options */}
@@ -380,41 +484,44 @@ export default function CartPage() {
                                     )}
                                 </div>
 
-                                {/* Info */}
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-bold text-[#111] text-[15px] leading-snug mb-1 line-clamp-2">{item.name}</p>
-                                    <p className="text-primary font-black text-[18px] mb-3">LKR {fmt(item.price)}</p>
-
-                                    {/* Qty Controls */}
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex items-center border border-[#ddd] rounded-lg overflow-hidden">
+                                {/* Info and Price Column */}
+                                <div className="flex-1 min-w-0 flex flex-col md:flex-row gap-4">
+                                    {/* Info */}
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-bold text-[#111] text-[15px] leading-snug mb-1">{item.name}</p>
+                                        <p className="text-primary font-black text-[18px] mb-3">LKR {fmt(item.price)}</p>
+                                        
+                                        {/* Qty Controls */}
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center border border-[#ddd] rounded-lg overflow-hidden">
+                                                <button
+                                                    onClick={() => updateQty(item.id, item.qty - 1)}
+                                                    className="w-9 h-9 flex items-center justify-center text-[#555] hover:bg-[#f5f5f5] transition"
+                                                >
+                                                    <Minus className="h-4 w-4" />
+                                                </button>
+                                                <span className="w-10 text-center text-[14px] font-bold text-[#111]">{item.qty}</span>
+                                                <button
+                                                    onClick={() => updateQty(item.id, item.qty + 1)}
+                                                    className="w-9 h-9 flex items-center justify-center text-[#555] hover:bg-[#f5f5f5] transition"
+                                                >
+                                                    <Plus className="h-4 w-4" />
+                                                </button>
+                                            </div>
                                             <button
-                                                onClick={() => updateQty(item.id, item.qty - 1)}
-                                                className="w-9 h-9 flex items-center justify-center text-[#555] hover:bg-[#f5f5f5] transition"
+                                                onClick={() => { removeFromCart(item.id); toast.success("Item removed") }}
+                                                className="flex items-center gap-1 text-[13px] text-primary hover:underline"
                                             >
-                                                <Minus className="h-4 w-4" />
-                                            </button>
-                                            <span className="w-10 text-center text-[14px] font-bold text-[#111]">{item.qty}</span>
-                                            <button
-                                                onClick={() => updateQty(item.id, item.qty + 1)}
-                                                className="w-9 h-9 flex items-center justify-center text-[#555] hover:bg-[#f5f5f5] transition"
-                                            >
-                                                <Plus className="h-4 w-4" />
+                                                <Trash2 className="h-4 w-4" /> Remove
                                             </button>
                                         </div>
-                                        <button
-                                            onClick={() => { removeFromCart(item.id); toast.success("Item removed") }}
-                                            className="flex items-center gap-1 text-[13px] text-primary hover:underline"
-                                        >
-                                            <Trash2 className="h-4 w-4" /> Remove
-                                        </button>
                                     </div>
-                                </div>
 
-                                {/* Line Total */}
-                                <div className="shrink-0 text-right">
-                                    <p className="text-[12px] text-[#999]">Item Total</p>
-                                    <p className="font-black text-[18px] text-[#111]">LKR {fmt(item.price * item.qty)}</p>
+                                    {/* Line Total */}
+                                    <div className="shrink-0 md:text-right border-t md:border-t-0 border-[#eee] pt-3 md:pt-0">
+                                        <p className="text-[12px] text-[#999]">Item Total</p>
+                                        <p className="font-black text-[20px] text-[#111]">LKR {fmt(item.price * item.qty)}</p>
+                                    </div>
                                 </div>
                             </div>
                         ))}

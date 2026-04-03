@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaUser, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaExclamationCircle, FaCheckCircle, FaTimesCircle, FaEye, FaEdit, FaSave, FaTimes } from "react-icons/fa";
+import { FaUser, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaExclamationCircle, FaCheckCircle, FaTimesCircle, FaEye, FaEdit, FaSave, FaTimes, FaSearch } from "react-icons/fa";
 import { FaBoxArchive } from "react-icons/fa6";
 import Paginator from "../../components/admin-utils/paginator";
 import Loader from "../../components/admin-utils/loader";
@@ -18,6 +18,7 @@ export default function OrdersPageAdmin() {
     const [orderStatus, setOrderStatus] = useState("pending");
     const [ordernotes, setOrderNotes] = useState("");
     const [saving, setSaving] = useState(false);
+    const [search, setSearch] = useState("");
 
     const token = localStorage.getItem("token");
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -25,8 +26,9 @@ export default function OrdersPageAdmin() {
     const fetchOrders = async () => {
         setLoading(true);
         try {
+            const searchParam = search ? `?search=${search}` : "";
             const res = await axios.get(
-                `${backendUrl}/orders/${page}/${limit}`,
+                `${backendUrl}/orders/${page}/${limit}${searchParam}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setOrders(res.data.orders);
@@ -44,8 +46,14 @@ export default function OrdersPageAdmin() {
             toast.error("Not authenticated");
             return;
         }
-        fetchOrders();
-    }, [page, limit]);
+        
+        // Debounce search to avoid too many API calls
+        const timeout = setTimeout(() => {
+            fetchOrders();
+        }, search ? 500 : 0);
+
+        return () => clearTimeout(timeout);
+    }, [page, limit, search]);
 
     const handleUpdateOrder = async () => {
         if (!clickOrder) return;
@@ -115,8 +123,23 @@ export default function OrdersPageAdmin() {
                 <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
                     <FaBoxArchive className="text-indigo-500" /> Manage Orders
                 </h1>
-                <div className="text-sm text-gray-500 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 font-medium">
-                    Total Orders Found: {orders.length} (Page {page} of {totalPages || 1})
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <div className="relative w-full sm:w-64">
+                        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm" />
+                        <input
+                            type="text"
+                            placeholder="Search Order ID..."
+                            value={search}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                                setPage(1); // Reset to page 1 on search
+                            }}
+                            className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm"
+                        />
+                    </div>
+                    <div className="text-sm text-gray-500 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 font-medium whitespace-nowrap">
+                        Total Orders Found: {orders.length} (Page {page} of {totalPages || 1})
+                    </div>
                 </div>
             </div>
 
