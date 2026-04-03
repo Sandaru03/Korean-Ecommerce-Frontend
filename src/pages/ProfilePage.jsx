@@ -4,10 +4,13 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import {
     User, Mail, Phone, ShieldCheck, ShieldOff,
-    LogOut, ChevronRight, Clock, Package, X, Save
+    LogOut, ChevronRight, Clock, Package, X, Save,
+    MapPin, CreditCard, ShoppingBag, Truck,
+    CheckCircle2, RefreshCcw
 } from "lucide-react";
 import { Header } from "@/components/coupang/header";
 import { Footer } from "@/components/coupang/footer";
+import { OrderProgressTracker } from "@/components/coupang/OrderProgressTracker";
 
 export default function ProfilePage() {
     const navigate = useNavigate();
@@ -23,6 +26,8 @@ export default function ProfilePage() {
         phone: ""
     });
     const [isSaving, setIsSaving] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
     useEffect(() => {
         fetchProfile();
@@ -207,6 +212,10 @@ export default function ProfilePage() {
                                 orders={orders} 
                                 loading={ordersLoading} 
                                 onBrowse={() => navigate("/")} 
+                                onOrderClick={(order) => {
+                                    setSelectedOrder(order);
+                                    setIsDetailsModalOpen(true);
+                                }}
                             />
                         )}
                     </div>
@@ -214,6 +223,86 @@ export default function ProfilePage() {
                 </div>
             </div>
 
+            {/* Order Details Modal */}
+            {isDetailsModalOpen && selectedOrder && (
+                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
+                        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">Order #{selectedOrder.orderId}</h2>
+                                <p className="text-xs text-gray-500 mt-1">Placed on {new Date(selectedOrder.date).toLocaleDateString()}</p>
+                            </div>
+                            <button onClick={() => setIsDetailsModalOpen(false)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-100 transition-all">
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+                            {/* Progress Tracker */}
+                            <section>
+                                <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <Truck className="h-4 w-4 text-emerald-500" /> Delivery Progress
+                                </h3>
+                                <div className="bg-gray-50 rounded-2xl p-4 sm:p-8">
+                                    <OrderProgressTracker status={selectedOrder.status} />
+                                </div>
+                            </section>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Order Summary */}
+                                <section className="bg-gray-50 rounded-2xl p-5 space-y-4">
+                                    <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                        <ShoppingBag className="h-4 w-4 text-primary" /> Items Ordered
+                                    </h3>
+                                    <div className="space-y-4">
+                                        {(() => {
+                                            let items = selectedOrder.items;
+                                            if (typeof items === "string") {
+                                                try { items = JSON.parse(items); } catch { items = []; }
+                                            }
+                                            if (!Array.isArray(items)) items = [];
+                                            return items.map((item, idx) => (
+                                                <div key={idx} className="flex items-center gap-3 bg-white p-2.5 rounded-xl border border-gray-100">
+                                                    <img src={item.image} alt="" className="w-12 h-12 rounded-lg object-contain bg-gray-50 border border-gray-100" />
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-xs font-bold text-gray-800 truncate">{item.productName}</p>
+                                                        <p className="text-[10px] text-gray-400">Qty: {item.qty} × LKR {Number(item.price).toLocaleString()}</p>
+                                                    </div>
+                                                </div>
+                                            ));
+                                        })()}
+                                    </div>
+                                    <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
+                                        <span className="text-sm font-bold text-gray-500">Total</span>
+                                        <span className="text-lg font-black text-primary font-mono text-[1.4rem]">LKR {Number(selectedOrder.total).toLocaleString()}</span>
+                                    </div>
+                                </section>
+
+                                {/* Shipping Info */}
+                                <section className="bg-gray-50 rounded-2xl p-5 space-y-4">
+                                    <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                        <MapPin className="h-4 w-4 text-emerald-500" /> Delivery Address
+                                    </h3>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase">Recipient</p>
+                                            <p className="text-sm font-bold text-gray-800">{selectedOrder.name}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase">Phone</p>
+                                            <p className="text-sm font-medium text-gray-700">{selectedOrder.phone}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase">Address</p>
+                                            <p className="text-sm font-medium text-gray-700 leading-relaxed">{selectedOrder.address}</p>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             {/* Edit Profile Modal */}
             {isEditModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -302,7 +391,7 @@ function MenuLink({ icon, label, active = false, onClick }) {
     );
 }
 
-function OrdersListView({ orders, loading, onBrowse }) {
+function OrdersListView({ orders, loading, onBrowse, onOrderClick }) {
     if (loading) {
         return (
             <div className="bg-white border border-gray-200 rounded-lg p-12 text-center shadow-sm">
@@ -334,8 +423,12 @@ function OrdersListView({ orders, loading, onBrowse }) {
         <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <h2 className="text-xl font-bold text-gray-900 px-1">Order History ({orders.length})</h2>
             {orders.map((order) => (
-                <div key={order.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:border-gray-300 transition-colors">
-                    <div className="p-5 border-b border-gray-50 flex flex-wrap items-center justify-between gap-4 bg-gray-50/30">
+                <div 
+                    key={order.id} 
+                    onClick={() => onOrderClick(order)}
+                    className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:border-primary/30 hover:shadow-md transition-all cursor-pointer group"
+                >
+                    <div className="p-5 border-b border-gray-50 flex flex-wrap items-center justify-between gap-4 bg-gray-50/30 group-hover:bg-primary/5 transition-colors">
                         <div className="space-y-1">
                             <p className="text-xs font-black text-gray-400 tracking-wider uppercase">Order ID</p>
                             <p className="text-sm font-bold text-gray-900">#{order.orderId}</p>
@@ -389,13 +482,37 @@ function StatusBadge({ status }) {
             border: "border-amber-200",
             icon: <Clock className="h-3 w-3" />
         },
-        shipped: {
+        payment_completed: {
+            bg: "bg-green-50",
+            text: "text-green-700",
+            border: "border-green-200",
+            icon: <CheckCircle2 className="h-3 w-3" />
+        },
+        processing: {
             bg: "bg-blue-50",
             text: "text-blue-700",
             border: "border-blue-200",
+            icon: <RefreshCcw className="h-3 w-3 animate-spin-slow" />
+        },
+        shipped: {
+            bg: "bg-indigo-50",
+            text: "text-indigo-700",
+            border: "border-indigo-200",
             icon: <Package className="h-3 w-3" />
         },
+        in_transit: {
+            bg: "bg-amber-50",
+            text: "text-amber-700",
+            border: "border-amber-200",
+            icon: <Truck className="h-3 w-3" />
+        },
         delivered: {
+            bg: "bg-emerald-50",
+            text: "text-emerald-700",
+            border: "border-emerald-200",
+            icon: <MapPin className="h-3 w-3" />
+        },
+        completed: {
             bg: "bg-emerald-50",
             text: "text-emerald-700",
             border: "border-emerald-200",
@@ -409,12 +526,13 @@ function StatusBadge({ status }) {
         }
     };
 
-    const config = configs[status.toLowerCase()] || configs.pending;
+    const statusKey = status?.toLowerCase().replace(/\s+/g, '_') || 'pending';
+    const config = configs[statusKey] || configs.pending;
 
     return (
         <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${config.bg} ${config.text} ${config.border} text-[11px] font-black uppercase tracking-tight`}>
             {config.icon}
-            {status}
+            {(status || 'pending').replace(/_/g, ' ')}
         </div>
     );
 }

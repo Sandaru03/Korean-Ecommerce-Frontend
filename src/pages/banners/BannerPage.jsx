@@ -131,8 +131,8 @@ export default function BannerPage() {
             
             <div className="mx-auto max-w-[1100px] px-4 md:px-8 py-14">
                 {banner.topInstructionsText && (
-                    <div className={`bg-gradient-to-br ${banner.bgGradient || 'from-slate-100 to-slate-200'} rounded-2xl p-8 md:p-12 mb-16`}>
-                        <p className="text-[16px] text-[#444] leading-relaxed max-w-[720px] whitespace-pre-wrap">{banner.topInstructionsText}</p>
+                    <div className="mb-16">
+                        <p className="text-[17px] text-[#444] leading-relaxed max-w-[850px] whitespace-pre-wrap">{banner.topInstructionsText}</p>
                     </div>
                 )}
 

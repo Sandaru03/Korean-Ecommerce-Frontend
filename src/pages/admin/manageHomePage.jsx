@@ -343,9 +343,9 @@ export default function ManageHomePage() {
                         </button>
                       </div>
                       
-                      {/* Search Results Dropdown */}
+                      {/* Search Results Dropdown — opens upward to avoid viewport clipping */}
                       {searchQuery.length > 1 && (
-                        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                        <div className="absolute z-50 w-full bottom-full mb-1 bg-white border border-gray-200 rounded-md shadow-xl max-h-64 overflow-y-auto">
                            {searchResults.length === 0 ? (
                              <div className="p-3 text-sm text-gray-500">No products found.</div>
                            ) : (

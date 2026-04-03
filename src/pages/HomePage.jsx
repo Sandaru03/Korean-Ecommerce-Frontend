@@ -242,6 +242,13 @@ export default function HomePage() {
                                 <TopicStrip title={topic.title} products={topic.products} />
                             )}
                             
+                            {/* Insert ReelsSection after the 1st topic (index 0) */}
+                            {idx === 0 && (
+                                <div className="-mx-4 md:-mx-4 mb-4">
+                                    <ReelsSection />
+                                </div>
+                            )}
+
                             {/* Insert Middle Banners after the 2nd topic (index 1) */}
                             {idx === 1 && middleBanners.length > 0 && (
                                 <MiddleBannerSection banners={middleBanners} />
@@ -253,8 +260,6 @@ export default function HomePage() {
                 )}
             </div>
 
-            {/* Shorts & Reels Section */}
-            <ReelsSection />
 
             <div className="pb-24 lg:pb-0">
                 <Footer />

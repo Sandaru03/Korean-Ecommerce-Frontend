@@ -222,8 +222,28 @@ export function Header() {
         ========================================= */}
         <div className="hidden md:flex mx-auto max-w-[1040px] items-center gap-4 px-4 py-3">
           {/* Logo */}
-          <Link to="/" className="shrink-0">
-            <img src="/logo.png" alt="Samee and Sandu" className="h-8 w-auto object-contain" />
+          <Link to="/" className="shrink-0 flex items-center gap-1.5">
+            {/* Crop out baked-in text — show icon only */}
+            <div style={{ width: 36, height: 30, overflow: 'hidden', flexShrink: 0 }}>
+              <img
+                src="/logo.png"
+                alt="Logo"
+                style={{ width: 36, height: 43, objectFit: 'contain', objectPosition: 'top center', display: 'block' }}
+              />
+            </div>
+            <span
+              style={{
+                fontFamily: "'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif",
+                fontWeight: 800,
+                fontSize: '1.25rem',
+                color: '#c8102e',
+                letterSpacing: '0.01em',
+                lineHeight: 1,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Samee and Sandu
+            </span>
           </Link>
 
           {/* Search Bar */}
@@ -329,8 +349,28 @@ export function Header() {
         ========================================= */}
         <div className="md:hidden flex flex-col px-4 py-3 gap-3 bg-white border-b border-gray-100 shrink-0">
           <div className="flex justify-between items-center">
-            <Link to="/">
-              <img src="/logo.png" alt="Logo" className="h-7 w-auto object-contain" />
+            <Link to="/" className="flex items-center gap-1.5">
+              {/* Crop out baked-in text — show icon only */}
+              <div style={{ width: 32, height: 26, overflow: 'hidden', flexShrink: 0 }}>
+                <img
+                  src="/logo.png"
+                  alt="Logo"
+                  style={{ width: 32, height: 39, objectFit: 'contain', objectPosition: 'top center', display: 'block' }}
+                />
+              </div>
+              <span
+                style={{
+                  fontFamily: "'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif",
+                  fontWeight: 800,
+                  fontSize: '1.1rem',
+                  color: '#c8102e',
+                  letterSpacing: '0.01em',
+                  lineHeight: 1,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Samee and Sandu
+              </span>
             </Link>
             <button onClick={handleCartClick} className="relative text-black">
               <ShoppingCart className="h-6 w-6 stroke-[1.5]" />

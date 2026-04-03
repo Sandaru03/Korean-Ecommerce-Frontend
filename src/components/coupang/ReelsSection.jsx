@@ -24,8 +24,8 @@ export function ReelsSection() {
     const scroll = (direction) => {
         if (scrollRef.current) {
             const { scrollLeft, clientWidth } = scrollRef.current;
-            // On mobile/tablet (< 1024px) we show 3 reels, on desktop 4
-            const cardsToShow = window.innerWidth < 1024 ? 3 : 4;
+            // On mobile/tablet (< 1024px) we show around 2.2 reels, on desktop 4
+            const cardsToShow = window.innerWidth < 1024 ? 2.2 : 4;
             const cardWidth = clientWidth / cardsToShow;
             const scrollTo = direction === 'left' ? scrollLeft - cardWidth : scrollLeft + cardWidth;
             scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
@@ -66,7 +66,7 @@ export function ReelsSection() {
                     {reels.map((reel) => (
                         <div 
                             key={reel.id} 
-                            className="flex-shrink-0 snap-start w-[calc(33.333%-8px)] lg:w-[calc(25%-9px)]"
+                            className="flex-shrink-0 snap-start w-[calc(44%-6px)] lg:w-[calc(25%-9px)]"
                             onClick={() => setSelectedReel(reel)}
                         >
                             <ReelCard reel={reel} />

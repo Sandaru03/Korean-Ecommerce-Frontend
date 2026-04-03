@@ -320,6 +320,31 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                         />
                     </div>
 
+                    {/* Bank Information */}
+                    <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 space-y-3">
+                        <div className="flex items-center gap-2 text-blue-800">
+                            <span className="text-[18px]">🏦</span>
+                            <p className="font-black text-[14px] uppercase tracking-tight">Commercial Bank (කොමර්ෂල් බැංකුව)</p>
+                        </div>
+                        <div className="space-y-2">
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">Account Name</span>
+                                <span className="text-[13px] font-bold text-slate-800 uppercase">WEERASINGHE MUDIYANSELAGE KARUNADASA</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">Account Number</span>
+                                <span className="text-[16px] font-black text-blue-700 tracking-wider">8029797826</span>
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-blue-600 uppercase font-black tracking-widest">Branch</span>
+                                <span className="text-[13px] font-bold text-slate-800 uppercase">KATANA</span>
+                            </div>
+                        </div>
+                        <div className="pt-2 border-t border-blue-200">
+                            <p className="text-[11px] text-blue-600 font-medium">Please deposit the total amount and upload the payment slip below.</p>
+                        </div>
+                    </div>
+
                     {/* Payment Slip Upload */}
                     <div className="space-y-2">
                         <p className="font-bold text-[#111] text-[14px]">Payment Slip <span className="text-[12px] font-normal text-[#999]">(optional)</span></p>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Rocket, Truck } from "lucide-react";
+import { FaInstagram, FaFacebook, FaYoutube, FaTiktok } from "react-icons/fa6";
 
 export function Footer() {
   const [categories, setCategories] = useState([]);
@@ -27,19 +28,43 @@ export function Footer() {
       {/* Main Footer */}
       <div className="bg-white border-t border-[#e5e5e5]">
         <div className="mx-auto max-w-[1040px] px-4 py-12">
-          <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3">
             {/* Company Info */}
-            <div className="col-span-2 lg:col-span-1">
+            <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
               <Link to="/" className="flex items-center gap-1 mb-4">
                 <img src="/logo.png" alt="Samee and Sandu" className="h-7 w-auto object-contain" />
               </Link>
-              <p className="text-xs text-[#888] leading-relaxed max-w-[200px]">
+              <p className="text-xs text-[#888] leading-relaxed max-w-sm mb-6">
                 Your premium destination for authentic Korean Beauty and Health products. Delivering quality and happiness to your doorstep.
               </p>
+              
+              {/* Social Media Links */}
+              <div className="flex items-center gap-4">
+                <a href="https://www.instagram.com/samee_and_sandu?igsh=MzF0YmJ6cHd4N255&utm_source=qr" target="_blank" rel="noopener noreferrer" 
+                  className="text-[#888] hover:text-[#E4405F] transition-all transform hover:scale-110" 
+                  title="Instagram">
+                  <FaInstagram className="w-5 h-5" />
+                </a>
+                <a href="https://www.facebook.com/share/1DYeMEiEC9/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" 
+                  className="text-[#888] hover:text-[#1877F2] transition-all transform hover:scale-110" 
+                  title="Facebook">
+                  <FaFacebook className="w-5 h-5" />
+                </a>
+                <a href="https://youtube.com/@sameeandsandu?si=oDvFZboPx6kAOaQ1" target="_blank" rel="noopener noreferrer" 
+                  className="text-[#888] hover:text-[#FF0000] transition-all transform hover:scale-110" 
+                  title="YouTube">
+                  <FaYoutube className="w-5 h-5" />
+                </a>
+                <a href="https://www.tiktok.com/@samee_and_sandu?_r=1&_t=ZS-95E6BMugV5k" target="_blank" rel="noopener noreferrer" 
+                  className="text-[#888] hover:text-[#000000] transition-all transform hover:scale-110" 
+                  title="TikTok">
+                  <FaTiktok className="w-[18px] h-[18px]" />
+                </a>
+              </div>
             </div>
 
             {/* Quick Links */}
-            <div>
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
               <h3 className="mb-4 text-sm font-bold text-[#333] uppercase tracking-tight">Quick Links</h3>
               <ul className="flex flex-col gap-2.5">
                 <li><Link to="/" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Home</Link></li>
@@ -50,7 +75,7 @@ export function Footer() {
             </div>
 
             {/* Categories */}
-            <div>
+            <div className="flex flex-col items-center md:items-start text-center md:text-left">
               <h3 className="mb-4 text-sm font-bold text-[#333] uppercase tracking-tight">Top Categories</h3>
               <ul className="flex flex-col gap-2.5">
                 {categories.length > 0 ? (
@@ -71,27 +96,6 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Account */}
-            <div>
-              <h3 className="mb-4 text-sm font-bold text-[#333] uppercase tracking-tight">My Account</h3>
-              <ul className="flex flex-col gap-2.5">
-                <li><Link to="/profile" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">View Profile</Link></li>
-                <li><Link to="/login" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Login / Signup</Link></li>
-                <li><Link to="/cart" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Order History</Link></li>
-                <li><Link to="/admin-login" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Admin Dashboard</Link></li>
-              </ul>
-            </div>
-
-            {/* Policies */}
-            <div>
-              <h3 className="mb-4 text-sm font-bold text-[#333] uppercase tracking-tight">Support</h3>
-              <ul className="flex flex-col gap-2.5">
-                <li><a href="#" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Help Center</a></li>
-                <li><a href="#" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Returns & Refunds</a></li>
-                <li><a href="#" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Shipping Info</a></li>
-                <li><a href="#" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Privacy Policy</a></li>
-              </ul>
-            </div>
           </div>
         </div>
 
