@@ -32,6 +32,7 @@ import ManageMiddleBannersPage from "./admin/ManageMiddleBannersPage";
 import ManageReelsPage from "./admin/ManageReelsPage";
 import ManageNavbarCategories from "./admin/manageNavbarCategories";
 import ManageGridBanners from "./admin/manageGridBanners";
+import ManageTimeDeals from "./admin/ManageTimeDeals";
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -84,6 +85,7 @@ function DashboardHero() {
                     { label: "Ad Banners", to: "/admin/ad-banners", icon: FaFilePen, color: "bg-blue-400" },
                     { label: "Middle Banners", to: "/admin/middle-banners", icon: FaFilePen, color: "bg-amber-500" },
                     { label: "Reels", to: "/admin/reels", icon: FaVideo, color: "bg-indigo-500" },
+                    { label: "Time Deals", to: "/admin/time-deals", icon: FaFilePen, color: "bg-amber-500" },
                 ].map((c) => (
                     <NavLink
                         key={c.label}
@@ -196,6 +198,7 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/middle-banners" icon={FaFilePen} label="Middle Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/grid-banners" icon={FaFilePen} label="Grid Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/navbar-categories" icon={FaFilePen} label="Navbar Categories" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/time-deals" icon={FaFilePen} label="Time Deals" onClick={() => setSidebarOpen(false)} />
                     </nav>
 
                     {/* Sidebar Footer */}
@@ -273,6 +276,7 @@ export default function AdminPage() {
                             <Route path="banner-categories" element={<ManageBannerCategories />} />
                             <Route path="navbar-categories" element={<ManageNavbarCategories />} />
                             <Route path="reels" element={<ManageReelsPage />} />
+                            <Route path="time-deals" element={<ManageTimeDeals />} />
                         </Routes>
                     </div>
                 </main>

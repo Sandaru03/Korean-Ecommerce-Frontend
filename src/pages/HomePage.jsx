@@ -9,6 +9,7 @@ import { useState, useEffect } from "react"
 import { AdBannerSlider } from "@/components/coupang/AdBannerSlider"
 import { ReelsSection } from "@/components/coupang/ReelsSection"
 import { GridBannerSection } from "@/components/coupang/GridBannerSection"
+import { TimeDealsSection } from "@/components/coupang/TimeDealsSection"
 
 function resolveImage(p) {
     let imgs = p.images
@@ -215,6 +216,11 @@ export default function HomePage() {
             {/* Grid Banners List - New Layout Section */}
             <div className="mx-auto max-w-[1040px] px-4">
                 <GridBannerSection />
+            </div>
+
+            {/* Time Deals Section */}
+            <div className="mx-auto max-w-[1040px] px-4 mb-6">
+                <TimeDealsSection />
             </div>
 
             <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-14">
