@@ -33,9 +33,11 @@ function getCardStyle(offset, isMd) {
   }
 
   return {
-    transform: `translateX(${tx.toFixed(2)}%) translateY(-50%) scale(${scale})`,
+    transform: `translate3d(${tx.toFixed(2)}%, -50%, 0) scale(${scale})`,
     opacity,
     zIndex,
+    backfaceVisibility: 'hidden',
+    WebkitBackfaceVisibility: 'hidden',
     willChange: 'transform, opacity',
     transition: 'transform 900ms cubic-bezier(0.22, 1, 0.36, 1), opacity 700ms cubic-bezier(0.22, 1, 0.36, 1)',
   };
@@ -118,7 +120,7 @@ export function HeroBanner() {
 
   return (
     <div
-      className="relative group w-full bg-[#FFFFFF] py-6 md:py-10 overflow-hidden px-2 md:px-4"
+      className="relative group w-full bg-[#FFFFFF] pt-0 pb-2 md:py-10 overflow-hidden px-2 md:px-4"
       style={{ touchAction: 'pan-y' }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -126,13 +128,17 @@ export function HeroBanner() {
       <div className="max-w-[1400px] mx-auto">
         <div
           className="relative w-full h-[450px] sm:h-[500px] md:h-[600px]"
-          style={{ perspective: '1000px' }}
+          style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
         >
           {displayArray.map((slide, i) => {
             const total = displayArray.length;
             let offset = (i - currentSlide) % total;
             if (offset < -Math.floor(total / 2)) offset += total;
             if (offset > Math.floor(total / 2)) offset -= total;
+
+            // Performance: Only render slides that are visible or about to be (offset -2 to 2)
+            // This greatly reduces the number of DOM nodes and animated layers.
+            if (Math.abs(offset) > 2) return null;
 
             const isCenter = offset === 0;
             const cardStyle = getCardStyle(offset, isMd);

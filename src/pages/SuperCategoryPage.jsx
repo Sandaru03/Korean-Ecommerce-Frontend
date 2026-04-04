@@ -17,13 +17,13 @@ function CategoryCircles({ categories, selectedId, onSelect, title }) {
     const pastels = ['bg-[#eef2f5]', 'bg-[#fff1f1]', 'bg-[#f0f5ff]', 'bg-[#fff8ea]', 'bg-[#fcf0f5]']
 
     return (
-        <div className="w-full pt-2">
-            <div className="text-center mb-4">
+        <div className="w-full pt-0">
+            <div className="text-center mb-2 md:mb-4">
                 <h2 className="text-[18px] md:text-[22px] font-black text-[#111] tracking-tight">{title}</h2>
             </div>
             
-            <div className="w-full overflow-x-auto scrollbar-hide">
-                <div className="flex justify-center gap-4 md:gap-8 min-w-max mx-auto px-4 pb-2">
+            <div className="w-full overflow-x-auto overflow-y-visible scrollbar-hide pt-1">
+                <div className="flex justify-center gap-2.5 md:gap-8 min-w-max mx-auto px-4 pb-2">
                     {categories.map((cat, idx) => {
                         const isActive = selectedId === cat.id
                         const bgColor = pastels[idx % pastels.length]
@@ -35,11 +35,11 @@ function CategoryCircles({ categories, selectedId, onSelect, title }) {
                                 className="flex flex-col items-center gap-2 group shrink-0 w-[90px] md:w-[110px]"
                             >
                                 <div className={`w-[85px] h-[85px] md:w-[105px] md:h-[105px] rounded-full flex items-center justify-center transition-all duration-300 ${isActive ? "border-[3px] border-[#ff1268] p-1 shadow-md scale-[1.03]" : "border-[2px] border-transparent p-1 group-hover:border-gray-200 group-hover:shadow-sm group-hover:scale-[1.03]"}`}>
-                                    <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden ${bgColor}`}>
+                                    <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden p-2 md:p-2.5 ${bgColor}`}>
                                         <img
                                             src={cat.image || `https://picsum.photos/seed/${cat.slug}/200`}
                                             alt={cat.name}
-                                            className="w-[85%] h-[85%] object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500"
+                                            className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
                                         />
                                     </div>
                                 </div>
@@ -201,7 +201,7 @@ export default function SuperCategoryPage() {
             <Header />
 
             {/* ── Hero banner for the super category ── */}
-            <div className="w-full bg-white pt-6 pb-0">
+            <div className="w-full bg-white pt-0 md:pt-6 pb-0">
                 <div className="mx-auto max-w-[1200px] px-6">
                     <h1 className="text-[28px] md:text-[34px] font-black text-[#111] tracking-tight leading-none uppercase">{superCategory.name}</h1>
                     <div className="flex items-center gap-3 mt-2">
@@ -216,7 +216,7 @@ export default function SuperCategoryPage() {
             </div>
 
             {/* ── Category circles ── */}
-            <div className="bg-white pb-6 border-b border-[#eee] mt-2">
+            <div className="bg-white pb-3 md:pb-6 border-b border-[#eee] mt-0.5 md:mt-2">
                 <div className="mx-auto max-w-[1200px] px-6">
                     {categories.length > 0 ? (
                         <CategoryCircles
@@ -300,7 +300,7 @@ export default function SuperCategoryPage() {
                             </div>
                         ) : selectedCategory && (selectedCategory.children || []).length > 0 ? (
                             /* ── Grouped by Subcategory (Korean e-commerce style) ── */
-                            <div className="space-y-12 mb-20">
+                            <div className="space-y-7 md:space-y-12 mb-14 md:mb-20">
                                 {(selectedCategory.children || []).map(sub => {
                                     const subProducts = groupedProducts[sub.name] || [];
                                     if (subProducts.length === 0) return null;
@@ -313,7 +313,7 @@ export default function SuperCategoryPage() {
                                                 </h4>
                                             </div>
                                             {/* Products Grid */}
-                                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12">
+                                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-5 gap-y-7 md:gap-y-12">
                                                 {subProducts.map(p => (
                                                     <CommonProductCard key={p.id} product={p} />
                                                 ))}
@@ -324,7 +324,7 @@ export default function SuperCategoryPage() {
                             </div>
                         ) : paginatedProducts.length > 0 ? (
                             /* Standard Grid */
-                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12 mb-16">
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-5 gap-y-7 md:gap-y-12 mb-12 md:mb-16">
                                 {paginatedProducts.map(p => (
                                     <CommonProductCard key={p.id} product={p} />
                                 ))}

@@ -12,11 +12,10 @@ function fmt(num) {
     return new Intl.NumberFormat("en-IN").format(num)
 }
 
-function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, totalItems }) {
+function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, totalItems, whatsappNumber }) {
     const [name, setName] = useState("")
     const [phone, setPhone] = useState("")
     const [address, setAddress] = useState("")
-    const [whatsappNumber, setWhatsappNumber] = useState("94771234567")
     const [orderEmail, setOrderEmail] = useState("orders@yourbusiness.com")
     const [loadingUser, setLoadingUser] = useState(true)
     const [sendingEmail, setSendingEmail] = useState(false)
@@ -43,10 +42,9 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             .catch(() => { /* silently ignore — user can fill manually */ })
             .finally(() => setLoadingUser(false))
 
-        // Fetch config from backend
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/config`)
+        // Fetch order email config from backend
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/app-configs`)
             .then(res => {
-                if (res.data.whatsappNumber) setWhatsappNumber(res.data.whatsappNumber)
                 if (res.data.orderEmail) setOrderEmail(res.data.orderEmail)
             })
             .catch(err => console.error("Failed to fetch config:", err))
@@ -148,6 +146,11 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             return
         }
 
+        if (!whatsappNumber) {
+            toast.error("WhatsApp number is not configured yet.")
+            return
+        }
+
         // Upload slip first if selected but not yet uploaded
         let finalSlipUrl = slipUrl
         if (slipFile && !slipUrl) {
@@ -218,7 +221,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         
         setSendingEmail(true)
         try {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/config/send-order-email`, {
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/app-configs/send-order-email`, {
                 summary: summaryText,
                 email: orderEmail,
                 slipImageUrl: finalSlipUrl || null
@@ -229,7 +232,13 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             onClose()
         } catch (err) {
             console.error("Email send failed:", err)
-            toast.error("Order saved, but email notification failed. Please try WhatsApp.")
+            // Even if email fails, the order IS saved in the database at this point.
+            // So we clear the cart and inform the user.
+            clearCart()
+            window.scrollTo({ top: 0, behavior: "instant" })
+            toast.success("Order saved successfully! 🎉")
+            toast.error("Admin notification failed, but your order is recorded.", { duration: 5000 })
+            onClose()
         } finally {
             setSendingEmail(false)
             setIsSavingOrder(false)
@@ -411,10 +420,10 @@ export default function CartPage() {
     const navigate = useNavigate()
     const { cart, updateQty, removeFromCart, totalItems, subtotal, deliveryFee, grandTotal } = useCart()
     const [showCheckout, setShowCheckout] = useState(false)
-    const [contactNumber, setContactNumber] = useState("94742216579")
+    const [contactNumber, setContactNumber] = useState("")
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/config`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/app-configs`)
             .then(res => {
                 if (res.data.whatsappNumber) setContactNumber(res.data.whatsappNumber)
             })
@@ -433,15 +442,16 @@ export default function CartPage() {
                     deliveryFee={deliveryFee}
                     grandTotal={grandTotal}
                     totalItems={totalItems}
+                    whatsappNumber={contactNumber}
                 />
             )}
 
             {/* Floating WhatsApp Button - Upgraded Premium Version - Always Visible */}
             <a 
-                href={`https://wa.me/${contactNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(cart.length > 0 ? "Hi! I have some questions about the items in my cart." : "Hi! I'm browsing your store and have some questions.")}`}
+                href={contactNumber ? `https://wa.me/${contactNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(cart.length > 0 ? "Hi! I have some questions about the items in my cart." : "Hi! I'm browsing your store and have some questions.")}` : "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="fixed bottom-10 right-10 z-[100] group flex items-center justify-end"
+                className="fixed right-4 bottom-[calc(88px+env(safe-area-inset-bottom))] md:right-10 md:bottom-10 z-[100] group flex items-center justify-end"
             >
                 {/* Friendly Floating Label */}
                 <div className="bg-white text-[#111] px-6 py-3 rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.2)] mr-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-10 group-hover:translate-x-0 font-bold text-[15px] pointer-events-none border border-[#f0f0f0] whitespace-nowrap tracking-tight ring-1 ring-black/5">

@@ -2,6 +2,7 @@ import React from 'react';
 import { CheckCircle2, RefreshCcw, Flag, Rocket, MapPin } from 'lucide-react';
 
 const STEPS = [
+    { id: 'pending', label: 'Pending', icon: RefreshCcw },
     { id: 'payment_completed', label: 'Payment completed', icon: CheckCircle2 },
     { id: 'processing', label: 'Processing', icon: RefreshCcw },
     { id: 'shipped', label: 'Shipped', icon: Flag },
@@ -11,7 +12,7 @@ const STEPS = [
 
 export function OrderProgressTracker({ status }) {
     // Standardize status for comparison
-    const currentStatus = status?.toLowerCase().replace(/\s+/g, '_') || 'payment_completed';
+    const currentStatus = status?.toLowerCase().replace(/\s+/g, '_') || 'pending';
     
     // Find index of current status
     const currentIndex = STEPS.findIndex(step => step.id === currentStatus);
@@ -53,7 +54,7 @@ export function OrderProgressTracker({ status }) {
                             </div>
 
                             {/* Label */}
-                            <div className="absolute top-14 sm:top-16 left-1/2 -translate-x-1/2 w-[60px] sm:w-[100px] text-center">
+                            <div className="absolute top-14 sm:top-16 left-1/2 -translate-x-1/2 w-15 sm:w-25 text-center">
                                 <p 
                                     className={`
                                         text-[8px] sm:text-[11px] font-bold sm:font-black uppercase tracking-tighter transition-colors duration-300 leading-tight

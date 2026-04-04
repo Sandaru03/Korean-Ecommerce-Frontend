@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Zap } from "lucide-react";
 import { CommonProductCard } from "@/components/coupang/CommonProductCard";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
@@ -80,9 +79,6 @@ export function TimeDealsSection() {
             {/* Section Header */}
             <div className="flex items-center justify-between mb-5 px-0">
                 <div className="flex items-center gap-2.5">
-                    <div className="flex items-center justify-center w-8 h-8 bg-amber-400 rounded-lg">
-                        <Zap className="h-4 w-4 text-white fill-white" />
-                    </div>
                     <h2 className="text-[22px] font-black text-[#111] tracking-tight">{deal.title}</h2>
                     {!isDealExpired && deal.dealEndsAt && (
                         <CountdownTimer targetDate={deal.dealEndsAt} />

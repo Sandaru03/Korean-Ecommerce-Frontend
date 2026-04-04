@@ -64,7 +64,7 @@ export function GridBannerSection() {
     };
 
     return (
-        <section className="mb-14">
+        <section className="mb-4 md:mb-14">
             <div className="flex flex-col gap-4">
                 {/* Top Row: 2 Banners */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

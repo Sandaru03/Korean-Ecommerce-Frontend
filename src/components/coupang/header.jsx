@@ -347,7 +347,7 @@ export function Header() {
         {/* =========================================
             MOBILE HEADER (Top Bar)
         ========================================= */}
-        <div className="md:hidden flex flex-col px-4 py-3 gap-3 bg-white border-b border-gray-100 shrink-0">
+        <div className="md:hidden flex flex-col px-4 py-2 gap-2 bg-white border-b border-gray-100 shrink-0">
           <div className="flex justify-between items-center">
             <Link to="/" className="flex items-center gap-1.5">
               {/* Crop out baked-in text — show icon only */}
@@ -398,7 +398,7 @@ export function Header() {
 
           {/* Swippable Categories */}
           {navbarCategories.length > 0 && (
-            <div className="flex overflow-x-auto gap-2 no-scrollbar pb-1 pt-0.5">
+            <div className="flex overflow-x-auto gap-2 no-scrollbar pb-0 pt-0">
               {navbarCategories.map((cat) => (
                 <Link
                   key={cat.id}

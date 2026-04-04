@@ -188,13 +188,13 @@ export default function HomePage() {
             <Header />
 
             {/* Hero Banner */}
-            <div className="w-full mb-14">
+            <div className="w-full mb-3 md:mb-14">
                 <HeroBanner />
             </div>
 
             {/* Round Icon Categories */}
             {rootCategories.length > 0 && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-16">
+                <div className="mx-auto max-w-[1040px] px-4 mb-6 md:mb-16">
                     <div className="overflow-x-auto no-scrollbar -mx-4 px-4 pb-4">
                         <div className="grid grid-rows-2 grid-flow-col gap-x-3 gap-y-8 min-w-max md:grid md:grid-rows-1 md:grid-cols-10 md:grid-flow-row md:gap-x-2 md:min-w-0">
                             {rootCategories.map((cat, idx) => (
