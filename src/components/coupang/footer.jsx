@@ -39,24 +39,24 @@ export function Footer() {
               </p>
               
               {/* Social Media Links */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-14 md:gap-4">
                 <a href="https://www.instagram.com/samee_and_sandu?igsh=MzF0YmJ6cHd4N255&utm_source=qr" target="_blank" rel="noopener noreferrer" 
-                  className="text-[#888] hover:text-[#E4405F] transition-all transform hover:scale-110" 
+                  className="text-[#E4405F] transition-all transform hover:scale-110 hover:opacity-80" 
                   title="Instagram">
                   <FaInstagram className="w-5 h-5" />
                 </a>
                 <a href="https://www.facebook.com/share/1DYeMEiEC9/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" 
-                  className="text-[#888] hover:text-[#1877F2] transition-all transform hover:scale-110" 
+                  className="text-[#1877F2] transition-all transform hover:scale-110 hover:opacity-80" 
                   title="Facebook">
                   <FaFacebook className="w-5 h-5" />
                 </a>
                 <a href="https://youtube.com/@sameeandsandu?si=oDvFZboPx6kAOaQ1" target="_blank" rel="noopener noreferrer" 
-                  className="text-[#888] hover:text-[#FF0000] transition-all transform hover:scale-110" 
+                  className="text-[#FF0000] transition-all transform hover:scale-110 hover:opacity-80" 
                   title="YouTube">
                   <FaYoutube className="w-5 h-5" />
                 </a>
                 <a href="https://www.tiktok.com/@samee_and_sandu?_r=1&_t=ZS-95E6BMugV5k" target="_blank" rel="noopener noreferrer" 
-                  className="text-[#888] hover:text-[#000000] transition-all transform hover:scale-110" 
+                  className="text-black transition-all transform hover:scale-110 hover:opacity-80" 
                   title="TikTok">
                   <FaTiktok className="w-[18px] h-[18px]" />
                 </a>
