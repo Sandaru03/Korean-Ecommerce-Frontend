@@ -27,7 +27,7 @@ import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 // ── Horizontal scrolling topic strip ───────────────────────────
 function TopicStrip({ title, products }) {
     return (
-        <section className="mb-14">
+        <section className="mb-6 md:mb-14">
             <div className="flex items-end justify-between mb-4">
                 <h2 className="text-[22px] font-bold text-[#111] tracking-tight">{title}</h2>
             </div>
@@ -91,7 +91,7 @@ function MiddleBannerSection({ banners }) {
 
     return (
         <section 
-            className="mb-14 relative group"
+            className="mb-6 md:mb-14 relative group"
             style={{ touchAction: 'pan-y' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -184,17 +184,17 @@ export default function HomePage() {
     const activeTopicsWithProducts = topics.filter(t => t.active && (t.products?.length > 0 || t.bannerImage))
 
     return (
-        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white pb-20 overflow-x-hidden">
+        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white overflow-x-hidden">
             <Header />
 
             {/* Hero Banner */}
-            <div className="w-full -mt-2 md:mt-0 mb-3 md:mb-14">
+            <div className="w-full -mt-2 md:mt-0 mb-1 md:mb-14">
                 <HeroBanner />
             </div>
 
             {/* Round Icon Categories */}
             {rootCategories.length > 0 && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-6 md:mb-16">
+                <div className="mx-auto max-w-[1040px] px-4 mb-3 md:mb-16">
                     <div className="overflow-x-auto no-scrollbar -mx-4 px-4 pb-4">
                         <div className="grid grid-rows-2 grid-flow-col gap-x-1 gap-y-8 min-w-max md:grid md:grid-rows-1 md:grid-cols-10 md:grid-flow-row md:gap-x-2 md:min-w-0">
                             {rootCategories.map((cat, idx) => (
@@ -214,7 +214,7 @@ export default function HomePage() {
             )}
 
             {/* Time Deals Section */}
-            <div className="mx-auto max-w-[1040px] px-4 mb-6">
+            <div className="mx-auto max-w-[1040px] px-4 mb-2">
                 <TimeDealsSection />
             </div>
 
@@ -223,12 +223,12 @@ export default function HomePage() {
                 <GridBannerSection />
             </div>
 
-            <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-14">
+            <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-4 md:mb-14">
                 <AdBannerSlider />
             </div>
 
             {/* Dynamic Topics from Admin */}
-            <div className="mx-auto max-w-[1040px] px-4 space-y-4">
+            <div className="mx-auto max-w-[1040px] px-4 space-y-2 md:space-y-4">
                 {topicsLoading ? (
                     <div className="flex justify-center py-20">
                         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
@@ -261,9 +261,7 @@ export default function HomePage() {
             </div>
 
 
-            <div className="pb-24 lg:pb-0">
-                <Footer />
-            </div>
+            <Footer />
         </div>
     )
 }

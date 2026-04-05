@@ -75,9 +75,9 @@ export function TimeDealsSection() {
     const isDealExpired = deal.dealEndsAt && new Date(deal.dealEndsAt).getTime() <= Date.now();
 
     return (
-        <section className="mb-14">
+        <section className="mb-6 md:mb-14">
             {/* Section Header */}
-            <div className="flex items-center justify-between mb-5 px-0">
+            <div className="flex items-center justify-between mb-3 md:mb-5 px-0">
                 <div className="flex items-center gap-2.5">
                     <h2 className="text-[22px] font-black text-[#111] tracking-tight">{deal.title}</h2>
                     {!isDealExpired && deal.dealEndsAt && (

@@ -50,7 +50,7 @@ export function AdBannerSlider() {
 
     return (
         <div 
-            className="relative w-full overflow-hidden rounded-none group aspect-[6/1] md:aspect-[8/1] transition-all duration-700 isolate bg-[#f8f8f8]"
+            className="relative w-full overflow-hidden rounded-none group aspect-[4/1] md:aspect-[6/1] transition-all duration-700 isolate bg-[#f8f8f8]"
             style={{ touchAction: 'pan-y' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}

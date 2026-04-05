@@ -64,15 +64,15 @@ export function GridBannerSection() {
     };
 
     return (
-        <section className="mb-4 md:mb-14">
+        <section className="mb-2 md:mb-14">
             <div className="flex flex-col gap-4">
                 {/* Top Row: 2 Banners */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
                     {topBanners.map(b => renderBannerCard(b, "md:h-[180px]"))}
                 </div>
 
                 {/* Bottom Row: 4 Banners */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
                     {bottomBanners.map(b => renderBannerCard(b, "md:h-[240px]"))}
                 </div>
             </div>

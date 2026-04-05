@@ -35,9 +35,9 @@ export function ReelsSection() {
     if (loading || reels.length === 0) return null;
 
     return (
-        <section className="py-12 bg-white">
+        <section className="py-6 md:py-12 bg-white">
             <div className="mx-auto max-w-[1200px] px-6">
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-4 md:mb-8">
                     <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
                         Featured Videos
                     </h2>
