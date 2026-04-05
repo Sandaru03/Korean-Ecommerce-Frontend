@@ -50,7 +50,7 @@ export function AdBannerSlider() {
 
     return (
         <div 
-            className="relative w-full overflow-hidden rounded-none group aspect-[6/1] md:aspect-[8/1] transition-all duration-700 isolate"
+            className="relative w-full overflow-hidden rounded-none group aspect-[6/1] md:aspect-[8/1] transition-all duration-700 isolate bg-[#f8f8f8]"
             style={{ touchAction: 'pan-y' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -66,14 +66,14 @@ export function AdBannerSlider() {
                                 <img 
                                     src={banner.image} 
                                     alt="Ad Banner" 
-                                    className="w-full h-full object-cover block transition-transform duration-1000 group-hover/item:scale-105" 
+                                    className="w-full h-full object-contain block transition-transform duration-1000 group-hover/item:scale-105" 
                                 />
                             </Link>
                         ) : (
                             <img 
                                 src={banner.image} 
                                 alt="Ad Banner" 
-                                className="w-full h-full object-cover block" 
+                                className="w-full h-full object-contain block" 
                             />
                         )}
                     </div>

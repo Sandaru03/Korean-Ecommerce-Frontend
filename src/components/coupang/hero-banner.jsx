@@ -127,7 +127,7 @@ export function HeroBanner() {
     >
       <div className="max-w-[1400px] mx-auto">
         <div
-          className="relative w-full h-[450px] sm:h-[500px] md:h-[600px]"
+          className="relative w-full h-[420px] sm:h-[500px] md:h-[600px]"
           style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
         >
           {displayArray.map((slide, i) => {

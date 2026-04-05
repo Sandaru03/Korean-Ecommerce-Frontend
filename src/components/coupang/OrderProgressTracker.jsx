@@ -19,8 +19,9 @@ export function OrderProgressTracker({ status }) {
     const activeIndex = currentIndex === -1 ? 0 : currentIndex;
 
     return (
-        <div className="w-full py-12 px-2">
-            <div className="relative flex items-center justify-between">
+        <div className="w-full py-4 md:py-12 px-2">
+            {/* Desktop Horizontal View */}
+            <div className="hidden md:flex relative items-center justify-between">
                 {/* Background Line */}
                 <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-100 -translate-y-1/2 z-0 rounded-full" />
                 
@@ -41,23 +42,23 @@ export function OrderProgressTracker({ status }) {
                             {/* Icon Container */}
                             <div 
                                 className={`
-                                    w-10 h-10 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center transition-all duration-500 transform-gpu
+                                    w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 transform-gpu
                                     ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-200' : ''}
                                     ${isActive ? 'bg-emerald-500 text-white shadow-xl shadow-emerald-300 scale-110 ring-4 ring-emerald-50' : ''}
                                     ${isFuture ? 'bg-white text-gray-300 border-2 border-gray-100' : ''}
                                 `}
                             >
                                 <Icon 
-                                    size={isActive ? 24 : 20} 
+                                    size={24} 
                                     className={`${isActive ? 'animate-pulse' : ''} ${step.id === 'processing' && isActive ? 'animate-spin-slow' : ''}`} 
                                 />
                             </div>
 
                             {/* Label */}
-                            <div className="absolute top-14 sm:top-16 left-1/2 -translate-x-1/2 w-15 sm:w-25 text-center">
+                            <div className="absolute top-16 left-1/2 -translate-x-1/2 w-25 text-center">
                                 <p 
                                     className={`
-                                        text-[8px] sm:text-[11px] font-bold sm:font-black uppercase tracking-tighter transition-colors duration-300 leading-tight
+                                        text-[11px] font-black uppercase tracking-tighter transition-colors duration-300 leading-tight
                                         ${isActive ? 'text-gray-900' : 'text-gray-400'}
                                         ${isCompleted ? 'text-gray-600' : ''}
                                     `}
@@ -66,11 +67,55 @@ export function OrderProgressTracker({ status }) {
                                 </p>
                                 {isActive && <div className="h-0.5 w-6 bg-emerald-500 mx-auto mt-1 rounded-full" />}
                             </div>
+                        </div>
+                    );
+                })}
+            </div>
 
-                            {/* Connecting Line Dots (for mobile specifically or extra detail) */}
+            {/* Mobile Vertical View */}
+            <div className="md:hidden space-y-4 px-4">
+                {STEPS.map((step, idx) => {
+                    const Icon = step.icon;
+                    const isCompleted = idx < activeIndex;
+                    const isActive = idx === activeIndex;
+                    const isFuture = idx > activeIndex;
+
+                    return (
+                        <div key={step.id} className="relative flex items-start gap-4">
+                            {/* Connector Line */}
                             {idx < STEPS.length - 1 && (
-                                <div className={`hidden sm:block absolute top-1/2 left-[calc(100%+0.5rem)] w-4 h-1 -translate-y-1/2 ${isFuture ? 'bg-gray-100' : 'bg-emerald-500/20'}`} />
+                                <div className={`absolute left-5 top-10 w-0.5 h-8 -translate-x-1/2 z-0 ${isCompleted ? 'bg-emerald-500' : 'bg-gray-100'}`} />
                             )}
+
+                            {/* Icon Container */}
+                            <div 
+                                className={`
+                                    relative z-10 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500 shrink-0
+                                    ${isCompleted ? 'bg-emerald-500 text-white shadow-md' : ''}
+                                    ${isActive ? 'bg-emerald-500 text-white shadow-lg ring-4 ring-emerald-50 scale-110' : ''}
+                                    ${isFuture ? 'bg-white text-gray-300 border-2 border-gray-100' : ''}
+                                `}
+                            >
+                                <Icon 
+                                    size={18} 
+                                    className={`${isActive ? 'animate-pulse' : ''} ${step.id === 'processing' && isActive ? 'animate-spin-slow' : ''}`} 
+                                />
+                            </div>
+
+                            {/* Label and Info */}
+                            <div className="pt-2">
+                                <p 
+                                    className={`
+                                        text-xs font-bold uppercase tracking-tight transition-colors duration-300
+                                        ${isActive ? 'text-gray-900 font-black' : 'text-gray-400'}
+                                        ${isCompleted ? 'text-gray-600' : ''}
+                                    `}
+                                >
+                                    {step.label}
+                                </p>
+                                {isActive && <p className="text-[10px] text-emerald-600 font-bold mt-0.5">Current Status</p>}
+                                {isCompleted && <p className="text-[10px] text-gray-400">Step Completed</p>}
+                            </div>
                         </div>
                     );
                 })}

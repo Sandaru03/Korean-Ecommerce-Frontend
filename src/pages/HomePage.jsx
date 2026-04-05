@@ -108,7 +108,7 @@ function MiddleBannerSection({ banners }) {
                                 <img 
                                     src={banner.image} 
                                     alt="Promotion" 
-                                    className="w-full h-[220px] md:h-[420px] object-contain block bg-[#f8f8f8] md:bg-transparent transition-transform duration-1000 group-hover/item:scale-110" 
+                                    className="w-full h-[220px] md:h-[420px] object-contain block bg-[#f8f8f8] transition-transform duration-1000 group-hover/item:scale-110" 
                                 />
                                 <div className="absolute bottom-10 left-10 z-20 transition-all duration-500 transform translate-y-2 group-hover/item:translate-y-0 opacity-0 group-hover/item:opacity-100 hidden md:block">
                                     <span className="px-6 py-2 bg-white text-black font-bold rounded-full shadow-lg text-sm tracking-uppercase">Explore Collection</span>
@@ -188,7 +188,7 @@ export default function HomePage() {
             <Header />
 
             {/* Hero Banner */}
-            <div className="w-full mb-3 md:mb-14">
+            <div className="w-full -mt-2 md:mt-0 mb-3 md:mb-14">
                 <HeroBanner />
             </div>
 
@@ -196,9 +196,9 @@ export default function HomePage() {
             {rootCategories.length > 0 && (
                 <div className="mx-auto max-w-[1040px] px-4 mb-6 md:mb-16">
                     <div className="overflow-x-auto no-scrollbar -mx-4 px-4 pb-4">
-                        <div className="grid grid-rows-2 grid-flow-col gap-x-3 gap-y-8 min-w-max md:grid md:grid-rows-1 md:grid-cols-10 md:grid-flow-row md:gap-x-2 md:min-w-0">
+                        <div className="grid grid-rows-2 grid-flow-col gap-x-1 gap-y-8 min-w-max md:grid md:grid-rows-1 md:grid-cols-10 md:grid-flow-row md:gap-x-2 md:min-w-0">
                             {rootCategories.map((cat, idx) => (
-                                <Link key={cat.id || idx} to={`/super-category/${cat.slug}`} className="flex flex-col items-center gap-3 group w-[80px] md:w-auto">
+                                <Link key={cat.id || idx} to={`/super-category/${cat.slug}`} className="flex flex-col items-center gap-1 group w-[80px] md:w-auto">
                                     <div className="w-[64px] h-[64px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-[#eaeaea] bg-[#f8f8f8] shrink-0">
                                         {cat.image
                                             ? <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
@@ -213,14 +213,14 @@ export default function HomePage() {
                 </div>
             )}
 
-            {/* Grid Banners List - New Layout Section */}
-            <div className="mx-auto max-w-[1040px] px-4">
-                <GridBannerSection />
-            </div>
-
             {/* Time Deals Section */}
             <div className="mx-auto max-w-[1040px] px-4 mb-6">
                 <TimeDealsSection />
+            </div>
+
+            {/* Grid Banners List - New Layout Section */}
+            <div className="mx-auto max-w-[1040px] px-4">
+                <GridBannerSection />
             </div>
 
             <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-14">

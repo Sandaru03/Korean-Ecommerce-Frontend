@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -178,7 +178,7 @@ export default function ProfilePage() {
                     </div>
 
                     {/* Main Content Area */}
-                    <div className="flex-1 space-y-6">
+                    <div className="flex-1 space-y-6 w-full overflow-hidden md:overflow-visible">
                         {activeTab === "profile" ? (
                             <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
                                 <div className="p-6 border-b border-gray-100">
@@ -226,8 +226,8 @@ export default function ProfilePage() {
             {/* Order Details Modal */}
             {isDetailsModalOpen && selectedOrder && (
                 <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
-                        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-gray-50/50">
+                <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
+                        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
                             <div>
                                 <h2 className="text-xl font-bold text-gray-900">Order #{selectedOrder.orderId}</h2>
                                 <p className="text-xs text-gray-500 mt-1">Placed on {new Date(selectedOrder.date).toLocaleDateString()}</p>
@@ -428,22 +428,24 @@ function OrdersListView({ orders, loading, onBrowse, onOrderClick }) {
                     onClick={() => onOrderClick(order)}
                     className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:border-primary/30 hover:shadow-md transition-all cursor-pointer group"
                 >
-                    <div className="p-5 border-b border-gray-50 flex flex-wrap items-center justify-between gap-4 bg-gray-50/30 group-hover:bg-primary/5 transition-colors">
+                    <div className="p-4 md:p-5 border-b border-gray-50 grid grid-cols-2 md:flex md:flex-wrap items-center justify-between gap-y-4 gap-x-4 bg-gray-50/30 group-hover:bg-primary/5 transition-colors text-left">
                         <div className="space-y-1">
-                            <p className="text-xs font-black text-gray-400 tracking-wider uppercase">Order ID</p>
+                            <p className="text-[10px] md:text-xs font-black text-gray-400 tracking-wider uppercase">Order ID</p>
                             <p className="text-sm font-bold text-gray-900">#{order.orderId}</p>
                         </div>
-                        <div className="space-y-1">
-                            <p className="text-xs font-black text-gray-400 tracking-wider uppercase">Date Placed</p>
+                        <div className="space-y-1 md:text-left text-right">
+                            <p className="text-[10px] md:text-xs font-black text-gray-400 tracking-wider uppercase">Date Placed</p>
                             <p className="text-sm font-medium text-gray-700">
                                 {new Date(order.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                             </p>
                         </div>
                         <div className="space-y-1">
-                            <p className="text-xs font-black text-gray-400 tracking-wider uppercase">Total Amount</p>
+                            <p className="text-[10px] md:text-xs font-black text-gray-400 tracking-wider uppercase">Total Amount</p>
                             <p className="text-sm font-black text-primary">LKR {Number(order.total).toLocaleString()}</p>
                         </div>
-                        <StatusBadge status={order.status} />
+                        <div className="flex justify-end md:block">
+                            <StatusBadge status={order.status} />
+                        </div>
                     </div>
                     <div className="p-5">
                         <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
@@ -530,8 +532,8 @@ function StatusBadge({ status }) {
     const config = configs[statusKey] || configs.pending;
 
     return (
-        <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${config.bg} ${config.text} ${config.border} text-[11px] font-black uppercase tracking-tight`}>
-            {config.icon}
+        <div className={`flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 rounded-full border ${config.bg} ${config.text} ${config.border} text-[9px] md:text-[11px] font-black uppercase tracking-tight whitespace-nowrap`}>
+            {React.cloneElement(config.icon, { className: "h-2.5 w-2.5 md:h-3 md:w-3" })}
             {(status || 'pending').replace(/_/g, ' ')}
         </div>
     );
