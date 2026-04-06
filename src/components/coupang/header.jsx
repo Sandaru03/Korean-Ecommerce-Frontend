@@ -222,7 +222,7 @@ export function Header() {
         ========================================= */}
         <div className="hidden md:flex mx-auto max-w-[1040px] items-center gap-4 px-4 py-3">
           {/* Logo */}
-          <Link to="/" className="shrink-0 flex items-center gap-1.5">
+          <Link to="/" className="shrink-0 flex items-end gap-2 pb-0.5">
             {/* Crop out baked-in text — show icon only */}
             <div style={{ width: 36, height: 30, overflow: 'hidden', flexShrink: 0 }}>
               <img
@@ -235,11 +235,12 @@ export function Header() {
               style={{
                 fontFamily: "'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif",
                 fontWeight: 800,
-                fontSize: '1.25rem',
+                fontSize: '1.4rem',
                 color: '#c8102e',
-                letterSpacing: '0.01em',
+                letterSpacing: '0.08em',
                 lineHeight: 1,
                 whiteSpace: 'nowrap',
+                textTransform: 'uppercase',
               }}
             >
               Samee and Sandu
@@ -349,24 +350,25 @@ export function Header() {
         ========================================= */}
         <div className="md:hidden flex flex-col px-4 py-2 gap-2 bg-white border-b border-gray-100 shrink-0">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-1.5">
+            <Link to="/" className="flex items-end gap-2 pb-0.5">
               {/* Crop out baked-in text — show icon only */}
-              <div style={{ width: 32, height: 26, overflow: 'hidden', flexShrink: 0 }}>
+              <div style={{ width: 40, height: 32, overflow: 'hidden', flexShrink: 0 }}>
                 <img
                   src="/logo.png"
                   alt="Logo"
-                  style={{ width: 32, height: 39, objectFit: 'contain', objectPosition: 'top center', display: 'block' }}
+                  style={{ width: 40, height: 48, objectFit: 'contain', objectPosition: 'top center', display: 'block' }}
                 />
               </div>
               <span
                 style={{
                   fontFamily: "'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif",
                   fontWeight: 800,
-                  fontSize: '1.1rem',
+                  fontSize: '1.2rem',
                   color: '#c8102e',
-                  letterSpacing: '0.01em',
+                  letterSpacing: '0.08em',
                   lineHeight: 1,
                   whiteSpace: 'nowrap',
+                  textTransform: 'uppercase',
                 }}
               >
                 Samee and Sandu
