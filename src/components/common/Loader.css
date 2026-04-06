@@ -6,8 +6,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(250, 249, 246, 0.95);
-  backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, #c8102e 0%, #a00d25 50%, #8b0a1e 100%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,7 +18,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 /* ---------- Icon wrapper: clips out the "SAMEE AND SANDU" text baked into logo.png ---------- */
@@ -31,6 +30,7 @@
   overflow: hidden;
   animation: slideInTop 1.5s forwards cubic-bezier(0.77, 0, 0.175, 1);
   transform: translateY(-100%);
+  filter: brightness(0) invert(1); /* Make logo white for contrast */
 }
 
 .logo-part img {
@@ -47,7 +47,7 @@
 .logo-text-row {
   display: flex;
   align-items: baseline;
-  gap: 0;
+  gap: 12px;
 }
 
 /* Each word gets its own clip container */
@@ -59,8 +59,9 @@
   font-family: 'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif;
   font-weight: 800;
   font-size: 3.4rem;
-  color: #c8102e;
-  letter-spacing: 0.01em;
+  color: #ffffff; /* White text for contrast */
+  letter-spacing: 0.08em; /* Stretched branding */
+  text-transform: uppercase;
   line-height: 1.2;      /* Increased to prevent cropping of font edges */
   display: block;
   opacity: 0;            /* Start invisible */
@@ -75,7 +76,7 @@
 .and-text {
   font-size: 3.4rem;
   font-weight: 800;
-  margin: 0 6px;
+  margin: 0 16px;
   animation: slideInBottom 1.6s forwards cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -136,4 +137,39 @@
 .loader-container.fade-out {
   opacity: 0;
   pointer-events: none;
+}
+
+/* ---------- Responsive Adjustments ---------- */
+@media (max-width: 768px) {
+  .logo-part {
+    width: 300px;
+    height: 245px; /* 300 * 0.816 ≈ 245 */
+  }
+
+  .logo-text-part {
+    font-size: 2.8rem;
+    letter-spacing: 0.06em;
+  }
+
+  .and-text {
+    font-size: 2.8rem;
+    margin: 0 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-part {
+    width: 260px;
+    height: 212px; /* 260 * 0.816 ≈ 212 */
+  }
+
+  .logo-text-part {
+    font-size: 2.2rem;
+    letter-spacing: 0.04em;
+  }
+
+  .and-text {
+    font-size: 2.2rem;
+    margin: 0 8px;
+  }
 }
