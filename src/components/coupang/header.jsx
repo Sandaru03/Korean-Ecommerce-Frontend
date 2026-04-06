@@ -222,7 +222,7 @@ export function Header() {
         ========================================= */}
         <div className="hidden md:flex mx-auto max-w-[1040px] items-center gap-4 px-4 py-3">
           {/* Logo */}
-          <Link to="/" className="shrink-0 flex items-end gap-2 pb-0.5">
+          <Link to="/" className="shrink-0 flex items-end gap-2">
             {/* Crop out baked-in text — show icon only */}
             <div style={{ width: 36, height: 30, overflow: 'hidden', flexShrink: 0 }}>
               <img
@@ -241,6 +241,7 @@ export function Header() {
                 lineHeight: 1,
                 whiteSpace: 'nowrap',
                 textTransform: 'uppercase',
+                transform: 'translateY(1.5px)',
               }}
             >
               Samee and Sandu
@@ -350,7 +351,7 @@ export function Header() {
         ========================================= */}
         <div className="md:hidden flex flex-col px-4 py-2 gap-2 bg-white border-b border-gray-100 shrink-0">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-end gap-2 pb-0.5">
+            <Link to="/" className="flex items-end gap-2">
               {/* Crop out baked-in text — show icon only */}
               <div style={{ width: 40, height: 32, overflow: 'hidden', flexShrink: 0 }}>
                 <img
@@ -369,6 +370,7 @@ export function Header() {
                   lineHeight: 1,
                   whiteSpace: 'nowrap',
                   textTransform: 'uppercase',
+                  transform: 'translateY(2px)',
                 }}
               >
                 Samee and Sandu
