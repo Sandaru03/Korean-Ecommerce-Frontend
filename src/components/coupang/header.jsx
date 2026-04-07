@@ -19,7 +19,8 @@ export function Header() {
   const navigate = useNavigate()
   const { totalItems } = useCart()
 
-  const [navbarCategories, setNavbarCategories] = useState([])
+  const [navRowCategories, setNavRowCategories] = useState([])
+  const [navDropdownCategories, setNavDropdownCategories] = useState([])
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -96,7 +97,10 @@ export function Header() {
       try {
         const { data } = await axios.get(`${backendUrl}/categories`);
         if (data.categories) {
-          setNavbarCategories(data.categories.filter(c => c.showInNavbar && c.parentId === null));
+          const allSuperCats = data.categories.filter(c => c.showInNavbar && c.parentId === null);
+          // Split into top row (first 10) and dropdown (remaining)
+          setNavRowCategories(allSuperCats.slice(0, 10));
+          setNavDropdownCategories(allSuperCats.slice(10));
         }
       } catch (error) {
         console.error("Error fetching navbar categories:", error);
@@ -138,18 +142,7 @@ export function Header() {
     navigate("/")
   }
 
-  const NAV_CATEGORIES = [
-    { name: "Skin Care", slug: "skin-care" },
-    { name: "Collagen", slug: "collagen" },
-    { name: "Branded Items", slug: "branded-items" },
-    { name: "Fashion", slug: "fashion" },
-    { name: "K-pop", slug: "k-pop" },
-    { name: "Baby & Kids", slug: "baby-kids" },
-    { name: "Makeup", slug: "makeup" },
-    { name: "Electrical Items", slug: "electrical-items" },
-    { name: "Food", slug: "food" },
-    { name: "Give a Gift", slug: "give-a-gift" },
-  ]
+  // Hardcoded NAV_CATEGORIES removed in favor of dynamic navDropdownCategories
 
   const [showMobileCategories, setShowMobileCategories] = useState(false);
 
@@ -326,9 +319,9 @@ export function Header() {
               </button>
               <div className="absolute top-full left-[-1px] w-[200px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <ul className="py-2">
-                  {NAV_CATEGORIES.map(cat => (
-                    <li key={cat.slug}>
-                      <Link to={`/category/${cat.slug}`} className="block px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-primary transition-colors">
+                  {navDropdownCategories.map(cat => (
+                    <li key={cat.id}>
+                      <Link to={`/super-category/${cat.slug}`} className="block px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-primary transition-colors">
                         {cat.name}
                       </Link>
                     </li>
@@ -338,8 +331,8 @@ export function Header() {
             </div>
 
             <div className="flex-1 flex gap-8 items-center px-8 text-[17px] font-bold text-[#111]">
-              {navbarCategories.map((cat) => (
-                <Link key={cat.id} to={`/category/${cat.slug}`} className="hover:text-primary transition uppercase">
+              {navRowCategories.map((cat) => (
+                <Link key={cat.id} to={`/super-category/${cat.slug}`} className="hover:text-primary transition uppercase whitespace-nowrap">
                   {cat.name}
                 </Link>
               ))}
@@ -402,13 +395,13 @@ export function Header() {
             {renderSearchSuggestions()}
           </form>
 
-          {/* Swippable Categories */}
-          {navbarCategories.length > 0 && (
+          {/* Swippable Categories (Full list for mobile) */}
+          {(navRowCategories.length > 0 || navDropdownCategories.length > 0) && (
             <div className="flex overflow-x-auto gap-2 no-scrollbar pb-0 pt-0">
-              {navbarCategories.map((cat) => (
+              {[...navRowCategories, ...navDropdownCategories].map((cat) => (
                 <Link
                   key={cat.id}
-                  to={cat.parentId === null ? `/super-category/${cat.slug}` : `/category/${cat.slug}`}
+                  to={`/super-category/${cat.slug}`}
                   className="whitespace-nowrap px-4 py-2 bg-gray-50 rounded-full text-[14px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors border border-gray-100"
                 >
                   {cat.name}
@@ -491,21 +484,10 @@ export function Header() {
             </div>
             <div className="flex-1 overflow-y-auto pb-safe p-4">
               <ul className="space-y-2">
-                {NAV_CATEGORIES.map(cat => (
-                  <li key={cat.slug}>
-                    <Link 
-                      to={`/category/${cat.slug}`} 
-                      onClick={() => setShowMobileCategories(false)}
-                      className="block px-4 py-3 rounded-lg text-[15px] font-medium text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors border border-transparent hover:border-gray-100"
-                    >
-                      {cat.name}
-                    </Link>
-                  </li>
-                ))}
-                {navbarCategories.map((cat) => (
+                {navDropdownCategories.map(cat => (
                   <li key={cat.id}>
                     <Link 
-                      to={`/category/${cat.slug}`}
+                      to={`/super-category/${cat.slug}`} 
                       onClick={() => setShowMobileCategories(false)}
                       className="block px-4 py-3 rounded-lg text-[15px] font-medium text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors border border-transparent hover:border-gray-100 uppercase"
                     >
