@@ -4,7 +4,6 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import AdminPage from "./pages/AdminPage";
-import AdminLoginPage from "./pages/AdminLoginPage";
 import CartPage from "./pages/CartPage";
 import ProfilePage from "./pages/ProfilePage";
 import CategoryPage from "./pages/CategoryPage";
@@ -36,7 +35,6 @@ export default function App() {
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/banner/:id" element={<BannerPage />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/admin-login" element={<AdminLoginPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
     </>

@@ -33,6 +33,7 @@ import ManageReelsPage from "./admin/ManageReelsPage";
 import ManageNavbarCategories from "./admin/manageNavbarCategories";
 import ManageGridBanners from "./admin/manageGridBanners";
 import ManageTimeDeals from "./admin/ManageTimeDeals";
+import AdminManagementPage from "./admin/AdminManagementPage";
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -86,6 +87,7 @@ function DashboardHero() {
                     { label: "Middle Banners", to: "/admin/middle-banners", icon: FaFilePen, color: "bg-amber-500" },
                     { label: "Reels", to: "/admin/reels", icon: FaVideo, color: "bg-indigo-500" },
                     { label: "Time Deals", to: "/admin/time-deals", icon: FaFilePen, color: "bg-amber-500" },
+                    { label: "Admins", to: "/admin/admins", icon: RiAdminFill, color: "bg-slate-900" },
                 ].map((c) => (
                     <NavLink
                         key={c.label}
@@ -142,7 +144,7 @@ export default function AdminPage() {
     }, [status]);
 
     if (status === "loading") return <Loader />;
-    if (status === "not-admin") return <Navigate to="/admin-login" replace />;
+    if (status === "not-admin") return <Navigate to="/login" replace />;
 
     const handleLogout = () => {
         localStorage.removeItem("token");
@@ -199,6 +201,11 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/grid-banners" icon={FaFilePen} label="Grid Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/navbar-categories" icon={FaFilePen} label="Navbar Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/time-deals" icon={FaFilePen} label="Time Deals" onClick={() => setSidebarOpen(false)} />
+                        
+                        <div className="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            Settings & Security
+                        </div>
+                        <SidebarLink to="/admin/admins" icon={RiAdminFill} label="Admin Management" onClick={() => setSidebarOpen(false)} />
                     </nav>
 
                     {/* Sidebar Footer */}
@@ -277,6 +284,7 @@ export default function AdminPage() {
                             <Route path="navbar-categories" element={<ManageNavbarCategories />} />
                             <Route path="reels" element={<ManageReelsPage />} />
                             <Route path="time-deals" element={<ManageTimeDeals />} />
+                            <Route path="admins" element={<AdminManagementPage />} />
                         </Routes>
                     </div>
                 </main>
