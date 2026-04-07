@@ -215,36 +215,37 @@ export function Header() {
 
   return (
     <>
-      <header className="relative z-50 bg-white shadow-sm pb-safe md:pb-0">
+      <header className="relative z-50 bg-white shadow-sm md:pb-0">
         
         {/* =========================================
             DESKTOP HEADER
         ========================================= */}
-        <div className="hidden md:flex mx-auto max-w-[1040px] items-center gap-4 px-4 py-3">
+        <div className="hidden md:flex mx-auto max-w-[1040px] items-center gap-4 px-4 pt-3 pb-4">
           {/* Logo */}
           <Link to="/" className="shrink-0 flex items-end gap-2">
             {/* Crop out baked-in text — show icon only */}
-            <div style={{ width: 36, height: 30, overflow: 'hidden', flexShrink: 0 }}>
+            <div className="w-11 h-11 shrink-0">
               <img
-                src="/logo.png"
+                src="/logo-crop.png"
                 alt="Logo"
-                style={{ width: 36, height: 43, objectFit: 'contain', objectPosition: 'top center', display: 'block' }}
+                className="w-full h-full object-contain block"
               />
             </div>
             <span
               style={{
-                fontFamily: "'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif",
+                fontFamily: "'Outfit', sans-serif",
                 fontWeight: 800,
-                fontSize: '1.4rem',
-                color: '#c8102e',
-                letterSpacing: '0.08em',
+                fontSize: '1.65rem',
+                color: '#c8102e', // Restored brand color
+                letterSpacing: '-0.06em',
                 lineHeight: 1,
                 whiteSpace: 'nowrap',
-                textTransform: 'uppercase',
-                transform: 'translateY(1.5px)',
+                transform: 'translateY(2px) scaleY(1.15)', // Vertically stretched for more presence
+                transformOrigin: 'bottom',
+                display: 'inline-block' // Ensure transform works correctly
               }}
             >
-              Samee and Sandu
+              Samee And Sandu
             </span>
           </Link>
 
@@ -319,7 +320,7 @@ export function Header() {
         <div className="border-b border-[#eee] bg-white relative z-50 hidden md:block">
           <div className="mx-auto max-w-[1040px] px-4 flex">
             <div className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group" ref={catMenuRef}>
-              <button className="w-full py-3.5 px-4 text-[15px] font-bold text-[#111] flex items-center gap-2 group-hover:text-primary transition-colors">
+              <button className="w-full py-4.5 px-4 text-[17px] font-bold text-[#111] flex items-center gap-2 group-hover:text-primary transition-colors">
                 <Menu className="h-5 w-5" />
                 Category
               </button>
@@ -336,7 +337,7 @@ export function Header() {
               </div>
             </div>
 
-            <div className="flex-1 flex gap-8 items-center px-8 text-[15px] font-bold text-[#111]">
+            <div className="flex-1 flex gap-8 items-center px-8 text-[17px] font-bold text-[#111]">
               {navbarCategories.map((cat) => (
                 <Link key={cat.id} to={`/category/${cat.slug}`} className="hover:text-primary transition uppercase">
                   {cat.name}
@@ -349,31 +350,32 @@ export function Header() {
         {/* =========================================
             MOBILE HEADER (Top Bar)
         ========================================= */}
-        <div className="md:hidden flex flex-col px-4 py-2 gap-2 bg-white border-b border-gray-100 shrink-0">
+        <div className="md:hidden flex flex-col px-4 pt-2 pb-2 gap-2 bg-white border-b border-gray-100 shrink-0">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-end gap-2">
+            <Link to="/" className="flex items-end gap-0">
               {/* Crop out baked-in text — show icon only */}
-              <div style={{ width: 40, height: 32, overflow: 'hidden', flexShrink: 0 }}>
+              <div className="w-12 h-12 shrink-0">
                 <img
-                  src="/logo.png"
+                  src="/logo-crop.png"
                   alt="Logo"
-                  style={{ width: 40, height: 48, objectFit: 'contain', objectPosition: 'top center', display: 'block' }}
+                  className="w-full h-full object-contain block"
                 />
               </div>
               <span
                 style={{
-                  fontFamily: "'Barlow Condensed', 'Helvetica Neue', Arial, sans-serif",
+                  fontFamily: "'Outfit', sans-serif",
                   fontWeight: 800,
-                  fontSize: '1.2rem',
-                  color: '#c8102e',
-                  letterSpacing: '0.08em',
+                  fontSize: '1.45rem',
+                  color: '#c8102e', // Restored brand color
+                  letterSpacing: '-0.06em',
                   lineHeight: 1,
                   whiteSpace: 'nowrap',
-                  textTransform: 'uppercase',
-                  transform: 'translateY(2px)',
+                  transform: 'translateY(1px) scaleY(1.15)', // Vertically stretched for more presence
+                  transformOrigin: 'bottom',
+                  display: 'inline-block'
                 }}
               >
-                Samee and Sandu
+                Samee And Sandu
               </span>
             </Link>
             <button onClick={handleCartClick} className="relative text-black">
@@ -407,7 +409,7 @@ export function Header() {
                 <Link
                   key={cat.id}
                   to={cat.parentId === null ? `/super-category/${cat.slug}` : `/category/${cat.slug}`}
-                  className="whitespace-nowrap px-4 py-2 bg-gray-50 rounded-full text-[13px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors border border-gray-100"
+                  className="whitespace-nowrap px-4 py-2 bg-gray-50 rounded-full text-[14px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors border border-gray-100"
                 >
                   {cat.name}
                 </Link>
@@ -440,7 +442,7 @@ export function Header() {
             <Link to="/" className="flex items-center justify-center w-[76px] h-[76px] bg-white rounded-full shadow-[0_-5px_15px_rgba(0,0,0,0.08)] p-2">
               <div className="w-full h-full rounded-full bg-gradient-to-tr from-rose-400 to-indigo-500 flex items-center justify-center overflow-hidden">
                 <div className="w-[90%] h-[90%] bg-white rounded-full flex items-center justify-center p-2">
-                   <img src="/logo.png" alt="Home" className="w-[85%] h-[85%] object-contain" />
+                   <img src="/logo-crop.png" alt="Home" className="w-[85%] h-[85%] object-contain" />
                 </div>
               </div>
             </Link>

@@ -14,7 +14,7 @@ export function Footer() {
         const { data } = await axios.get(`${backendUrl}/categories`);
         if (data.categories) {
           // Get only top-level categories and limit to 5 for footer display
-          setCategories(data.categories.filter(c => c.parentId === null).slice(0, 5));
+          setCategories(data.categories.filter(c => c.parentId === null).slice(0, 4));
         }
       } catch (error) {
         console.error("Error fetching categories for footer:", error);

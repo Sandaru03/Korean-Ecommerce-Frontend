@@ -134,7 +134,7 @@ function MiddleBannerSection({ banners }) {
                         <ChevronRight className="w-6 h-6" />
                     </button>
                     
-                    <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
                         {banners.map((_, idx) => (
                             <button
                                 key={idx}
@@ -188,7 +188,7 @@ export default function HomePage() {
             <Header />
 
             {/* Hero Banner */}
-            <div className="w-full -mt-2 md:mt-0 mb-1 md:mb-14">
+            <div className="w-full mt-0 md:mt-0 mb-1 md:mb-14">
                 <HeroBanner />
             </div>
 

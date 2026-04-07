@@ -11,7 +11,7 @@ const Loader = ({ onFinished }) => {
       if (onFinished) {
         onFinished();
       }
-    }, 2800); // Slightly longer than the animation duration
+    }, 2200); // Wait for the 1.2s + delay animation to settle
 
     return () => clearTimeout(timer);
   }, [onFinished]);
@@ -22,7 +22,7 @@ const Loader = ({ onFinished }) => {
     <div className="loader-container">
       <div className="loader-content">
         <div className="logo-part">
-          <img src="/logo.png" alt="Logo Icon" />
+          <img src="/logo-crop.png" alt="Logo Icon" />
         </div>
         <div className="logo-text-row">
           <div className="logo-text-clip">

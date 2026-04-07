@@ -37,7 +37,7 @@ export default function LoginPage() {
             <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4">
                 {/* Logo Section */}
                 <Link to="/" className="mb-8 transition-transform hover:scale-105 active:scale-95 duration-300">
-                    <img src="/logo.png" alt="Samee and Sandu" className="h-12 w-auto object-contain" />
+                    <img src="/logo-crop.png" alt="Samee and Sandu" className="h-12 w-auto object-contain" />
                 </Link>
 
                 <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 md:p-10">
