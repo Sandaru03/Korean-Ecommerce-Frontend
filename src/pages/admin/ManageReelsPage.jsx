@@ -166,11 +166,11 @@ export default function ManageReelsPage() {
     };
 
     const resolveImage = (p) => {
-        if (!p) return "/defult-product.jpg";
+        if (!p) return "/default-product.jpg";
         let imgs = p.images;
         if (typeof imgs === "string") { try { imgs = JSON.parse(imgs); } catch { imgs = [imgs]; } }
-        if (Array.isArray(imgs) && imgs.length > 0) return imgs[0];
-        return "/defult-product.jpg";
+        if (Array.isArray(imgs) && imgs.length > 0 && imgs[0]) return imgs[0];
+        return "/default-product.jpg";
     };
 
     if (loading) return <Loader />;

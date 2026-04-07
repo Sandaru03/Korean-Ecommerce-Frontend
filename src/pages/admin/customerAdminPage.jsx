@@ -12,8 +12,11 @@ export default function CustomerAdminPage() {
     const [query, setQuery] = useState("");
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
         axios
-            .get(import.meta.env.VITE_BACKEND_URL + "/users/customers")
+            .get(import.meta.env.VITE_BACKEND_URL + "/users/customers", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
             .then((res) => {
                 setCustomers(res.data || []);
                 setIsLoading(false);
@@ -38,12 +41,14 @@ export default function CustomerAdminPage() {
     }, [customers, query]);
 
     function toggleBlock(cus) {
+        const token = localStorage.getItem("token");
         axios
             .patch(
                 `${import.meta.env.VITE_BACKEND_URL}/users/customers/${encodeURIComponent(
                     cus.email
                 )}/block`,
-                { isBlock: !cus.isBlock }
+                { isBlock: !cus.isBlock },
+                { headers: { Authorization: `Bearer ${token}` } }
             )
             .then((res) => {
                 toast.success(res.data?.message || "Updated");

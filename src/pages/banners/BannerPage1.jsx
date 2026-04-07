@@ -25,14 +25,11 @@ const DATA = {
 }
 
 function resolveImage(p) {
-    if (p.images && Array.isArray(p.images) && p.images.length > 0) return p.images[0];
-    if (p.images && typeof p.images === 'string') {
-        try {
-            const parsed = JSON.parse(p.images);
-            return Array.isArray(parsed) ? parsed[0] : parsed;
-        } catch { return p.images; }
-    }
-    return p.image || "/defult-product.jpg";
+    if (!p) return "/default-product.jpg";
+    let imgs = p.images;
+    if (typeof imgs === "string") { try { imgs = JSON.parse(imgs); } catch { imgs = [imgs]; } }
+    if (Array.isArray(imgs) && imgs.length > 0 && imgs[0]) return imgs[0];
+    return p.image || "/default-product.jpg";
 }
 
 function StarRating({ rating, reviews }) {

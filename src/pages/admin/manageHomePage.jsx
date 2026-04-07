@@ -307,10 +307,10 @@ export default function ManageHomePage() {
                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 pb-6 border-b border-gray-100">
                        {topic.products.map(product => (
                          <div key={product.id} className="relative flex gap-3 border border-gray-200 rounded p-2 items-center">
-                           <img src={product.image} className="w-12 h-12 object-cover rounded bg-gray-50" />
+                           <img src={product.images?.[0] || "/default-product.jpg"} className="w-12 h-12 object-cover rounded bg-gray-50" />
                            <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
-                              <p className="text-xs text-gray-500">{product.price}</p>
+                              <p className="text-xs text-gray-500">LKR {Number(product.price).toLocaleString()}</p>
                            </div>
                            <button 
                               onClick={() => handleRemoveProductFromTopic(topic.id, product.id)}
@@ -355,10 +355,10 @@ export default function ManageHomePage() {
                                  onClick={() => handleAddProductToTopic(topic.id, product)}
                                  className="w-full text-left flex items-center gap-3 p-2 hover:bg-gray-50 border-b border-gray-100 last:border-0"
                                >
-                                 <img src={product.image} className="w-10 h-10 object-cover rounded bg-gray-50" />
+                                 <img src={product.images?.[0] || "/default-product.jpg"} className="w-10 h-10 object-cover rounded bg-gray-50" />
                                  <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-gray-900 truncate">{product.name}</p>
-                                    <p className="text-xs text-gray-500">{product.price}</p>
+                                    <p className="text-xs text-gray-500">LKR {Number(product.price).toLocaleString()}</p>
                                  </div>
                                  <Plus className="w-4 h-4 text-[#ff1268]" />
                                </button>

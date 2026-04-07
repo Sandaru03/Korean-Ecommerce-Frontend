@@ -538,7 +538,7 @@ export default function OrdersPageAdmin() {
                                                     >
                                                         <div className="w-14 h-14 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 shrink-0">
                                                             <img
-                                                                src={item.image || "/default-product.jpg"}
+                                                                src={item.image || item.images?.[0] || "/default-product.jpg"}
                                                                 alt=""
                                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                             />

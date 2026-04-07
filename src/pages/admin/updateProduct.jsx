@@ -114,7 +114,7 @@ export default function UpdateProductPage() {
                     {location.state?.images && location.state.images.length > 0 && images.length === 0 && (
                         <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
                             {location.state.images.map((img, idx) => (
-                                <img key={idx} src={img} alt={`Existing ${idx + 1}`} className="w-16 h-16 object-cover rounded-md border border-gray-300" />
+                                <img key={idx} src={img === "/defult-product.jpg" ? "/default-product.jpg" : (img || "/default-product.jpg")} alt={`Existing ${idx + 1}`} className="w-16 h-16 object-cover rounded-md border border-gray-300" />
                             ))}
                         </div>
                     )}

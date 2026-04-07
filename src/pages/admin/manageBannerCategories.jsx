@@ -14,10 +14,11 @@ const BANNERS = [
 ];
 
 function resolveImage(p) {
-    let imgs = p?.images;
+    if (!p) return "/default-product.jpg";
+    let imgs = p.images;
     if (typeof imgs === "string") { try { imgs = JSON.parse(imgs); } catch { imgs = [imgs]; } }
-    if (Array.isArray(imgs) && imgs.length > 0) return imgs[0];
-    return p?.image || "/defult-product.jpg";
+    if (Array.isArray(imgs) && imgs.length > 0 && imgs[0]) return imgs[0];
+    return p.image || "/default-product.jpg";
 }
 
 export default function ManageBannerCategories() {

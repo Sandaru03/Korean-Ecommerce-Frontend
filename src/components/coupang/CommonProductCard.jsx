@@ -10,7 +10,7 @@ export function CommonProductCard({ product }) {
     const brandName = product.name ? product.name.split(" ")[0] : "Brand"
 
     // Robust image handling
-    let imageUrl = "https://via.placeholder.com/300"
+    let imageUrl = "/default-product.jpg"
     let images = product.images || product.image
     if (typeof images === 'string') {
         const trimmed = images.trim();
@@ -29,13 +29,13 @@ export function CommonProductCard({ product }) {
     }
     
     if (Array.isArray(images) && images.length > 0) {
-        imageUrl = images[0] || "https://via.placeholder.com/300"
+        imageUrl = images[0] || "/default-product.jpg"
     } else if (typeof images === 'string' && images.trim()) {
         imageUrl = images.trim()
     }
     
-    if (!imageUrl || imageUrl === "undefined" || imageUrl === "null") {
-        imageUrl = "https://via.placeholder.com/300"
+    if (!imageUrl || imageUrl === "undefined" || imageUrl === "null" || imageUrl === "/defult-product.jpg") {
+        imageUrl = "/default-product.jpg"
     }
 
     const price = Number(product.price) || 0

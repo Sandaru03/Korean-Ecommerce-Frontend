@@ -57,7 +57,7 @@ export default function ProductAdminPage() {
                                     {/* Image */}
                                     <td className="p-4">
                                         <img
-                                            src={product.images[0]}
+                                            src={product.images?.[0] || "/default-product.jpg"}
                                             alt={product.name}
                                             className="w-12 h-12 rounded-lg object-cover shadow"
                                         />
