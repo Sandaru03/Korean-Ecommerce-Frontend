@@ -194,18 +194,18 @@ export default function HomePage() {
 
             {/* Round Icon Categories */}
             {rootCategories.length > 0 && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-3 md:mb-16">
-                    <div className="overflow-x-auto no-scrollbar -mx-4 px-4 pb-4">
-                        <div className="grid grid-rows-2 grid-flow-col gap-x-1 gap-y-8 min-w-max md:grid md:grid-rows-1 md:grid-cols-10 md:grid-flow-row md:gap-x-2 md:min-w-0">
+                <div className="mx-auto max-w-[1040px] px-4 mb-0 md:mb-16">
+                    <div className="overflow-x-auto no-scrollbar -mx-4 px-4 pb-0">
+                        <div className="grid grid-rows-2 grid-flow-col gap-x-1 gap-y-2 min-w-max md:grid md:grid-rows-1 md:grid-cols-10 md:grid-flow-row md:gap-x-2 md:min-w-0">
                             {rootCategories.map((cat, idx) => (
-                                <Link key={cat.id || idx} to={`/super-category/${cat.slug}`} className="flex flex-col items-center gap-1 group w-[80px] md:w-auto">
-                                    <div className="w-[64px] h-[64px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-[#eaeaea] bg-[#f8f8f8] shrink-0">
+                                <Link key={cat.id || idx} to={`/super-category/${cat.slug}`} className="flex flex-col items-center gap-1 group w-[76px] md:w-auto">
+                                    <div className="w-[58px] h-[58px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-[#eaeaea] bg-[#f8f8f8] shrink-0">
                                         {cat.image
                                             ? <img src={cat.image} alt={cat.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
                                             : <div className="w-full h-full bg-gradient-to-br from-accent to-accent/50" />
                                         }
                                     </div>
-                                    <span className="text-[11px] md:text-[13px] text-[#333] font-medium text-center leading-tight group-hover:text-primary transition-colors">{cat.name}</span>
+                                    <span className="text-[10.5px] md:text-[13px] text-[#333] font-medium text-center leading-tight group-hover:text-primary transition-colors">{cat.name}</span>
                                 </Link>
                             ))}
                         </div>
