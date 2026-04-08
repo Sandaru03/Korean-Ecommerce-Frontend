@@ -97,10 +97,12 @@ export function Header() {
       try {
         const { data } = await axios.get(`${backendUrl}/categories`);
         if (data.categories) {
-          const allSuperCats = data.categories.filter(c => c.showInNavbar && c.parentId === null);
-          // Split into top row (first 10) and dropdown (remaining)
-          setNavRowCategories(allSuperCats.slice(0, 10));
-          setNavDropdownCategories(allSuperCats.slice(10));
+          const allSuperCats = data.categories.filter(c => c.parentId === null);
+          const flaggedSuperCats = allSuperCats.filter(c => c.showInNavbar);
+          // Top row: first 10 that are flagged
+          setNavRowCategories(flaggedSuperCats.slice(0, 10));
+          // Dropdown: last 10 super categories in the database
+          setNavDropdownCategories(allSuperCats.slice(-10));
         }
       } catch (error) {
         console.error("Error fetching navbar categories:", error);
