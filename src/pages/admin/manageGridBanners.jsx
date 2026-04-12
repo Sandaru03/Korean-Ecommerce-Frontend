@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { FaImage, FaLink, FaSave } from "react-icons/fa";
+import { FaImage, FaLink, FaSave, FaTag } from "react-icons/fa";
 import Loader from "../../components/admin-utils/loader";
 import uploadFile from "../../utils/mediaUpload";
 
@@ -11,9 +11,12 @@ export default function ManageGridBanners() {
     const [banners, setBanners] = useState([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState({});
+    const [sectionTitle, setSectionTitle] = useState("");
+    const [savingTitle, setSavingTitle] = useState(false);
 
     useEffect(() => {
         fetchBanners();
+        fetchSectionTitle();
     }, []);
 
     const fetchBanners = async () => {
@@ -33,6 +36,35 @@ export default function ManageGridBanners() {
             toast.error("Failed to load grid banners");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchSectionTitle = async () => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/section-labels`);
+            if (data.success && data.labels.gridBannerTitle !== undefined) {
+                setSectionTitle(data.labels.gridBannerTitle);
+            }
+        } catch (error) {
+            console.error("Error fetching section title:", error);
+        }
+    };
+
+    const saveSectionTitle = async () => {
+        try {
+            setSavingTitle(true);
+            const token = localStorage.getItem("token");
+            const { data } = await axios.put(
+                `${backendUrl}/section-labels/gridBannerTitle`,
+                { value: sectionTitle },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            if (data.success) toast.success("Section title saved!");
+        } catch (error) {
+            console.error("Error saving section title:", error);
+            toast.error("Failed to save section title");
+        } finally {
+            setSavingTitle(false);
         }
     };
 
@@ -89,6 +121,31 @@ export default function ManageGridBanners() {
                     Update the 6 banners displayed in the dynamic grid section beneath the categories.
                     Positions 1-2 are the large top banners. Positions 3-6 are the smaller bottom banners.
                 </p>
+            </div>
+
+            {/* ── Section Title Card ─────────────────────────────── */}
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                    <FaTag className="text-blue-500" />
+                    <h2 className="text-base font-bold text-slate-800">Grid Section Title</h2>
+                    <span className="text-xs text-slate-400 font-normal">(shown above this section on the homepage)</span>
+                </div>
+                <div className="flex gap-3">
+                    <input
+                        type="text"
+                        value={sectionTitle}
+                        onChange={e => setSectionTitle(e.target.value)}
+                        placeholder="e.g. Featured Collections — leave blank to hide the heading"
+                        className="flex-1 text-sm border border-slate-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <button
+                        onClick={saveSectionTitle}
+                        disabled={savingTitle}
+                        className="flex items-center gap-2 px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-sm font-semibold transition-colors disabled:bg-slate-400 whitespace-nowrap"
+                    >
+                        <FaSave /> {savingTitle ? "Saving…" : "Save Title"}
+                    </button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

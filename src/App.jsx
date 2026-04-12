@@ -17,8 +17,14 @@ import Loader from "./components/common/Loader";
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
 
-  // You can also add logic here to hide the loader once specific data is fetched
-  // For now, it's handled by the Loader's internal timer and this state.
+  useEffect(() => {
+    // Force ALL theme-color metas to white immediately on mount
+    // to prevent Safari/Brave on iOS from sampling the red loader background
+    const allThemeMetas = document.querySelectorAll('meta[name="theme-color"]');
+    allThemeMetas.forEach((meta) => {
+      meta.setAttribute("content", "#ffffff");
+    });
+  }, []);
 
   return (
     <>

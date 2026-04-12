@@ -1,7 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="background-color:#ffffff;">
   <head>
     <meta charset="UTF-8" />
+    <!-- CRITICAL: Synchronous script — runs before React mounts, before the red loader paints.
+         Forces all theme-color metas to white so iOS never samples the red loader on pull-to-refresh. -->
+    <script>
+      (function() {
+        // Set all theme-color metas to white synchronously
+        var metas = document.querySelectorAll('meta[name="theme-color"]');
+        for (var i = 0; i < metas.length; i++) {
+          metas[i].setAttribute('content', '#ffffff');
+        }
+        // Force html/body background white so iOS overscroll area is white
+        document.documentElement.style.backgroundColor = '#ffffff';
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -9,13 +22,18 @@
       rel="stylesheet"
     />
     <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- Universal fallback: iOS reads this first before JS runs, preventing red status bar from loader -->
     <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: dark)" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>Samee and Sandu</title>
   </head>
-  <body>
+  <body style="background-color:#ffffff;">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

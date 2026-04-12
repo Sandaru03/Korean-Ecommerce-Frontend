@@ -6,12 +6,25 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: #FF3131; /* Solid-neon-red Fabric colour */
+  background: linear-gradient(
+    135deg,
+    #833ab4 0%,
+    #c13584 25%,
+    #e1306c 45%,
+    #fd1d1d 65%,
+    #f77737 80%,
+    #fcaf45 100%
+  ); /* Instagram Story gradient */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10000;
   transition: opacity 0.5s ease-out;
+  /* Prevent pull-to-refresh triggering while the red loader is visible.
+     Without this, iOS samples the red background during the bounce gesture. */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+  touch-action: none;
 }
 
 .loader-content {

@@ -100,9 +100,12 @@ export function Header() {
           const allSuperCats = data.categories.filter(c => c.parentId === null);
           const flaggedSuperCats = allSuperCats.filter(c => c.showInNavbar);
           // Top row: first 10 that are flagged
-          setNavRowCategories(flaggedSuperCats.slice(0, 10));
-          // Dropdown: last 10 super categories in the database
-          setNavDropdownCategories(allSuperCats.slice(-10));
+          const row = flaggedSuperCats.slice(0, 10);
+          setNavRowCategories(row);
+          // Dropdown: show super categories NOT in the top row
+          const rowIds = new Set(row.map(c => c.id));
+          const dropdown = allSuperCats.filter(c => !rowIds.has(c.id)).slice(0, 15);
+          setNavDropdownCategories(dropdown);
         }
       } catch (error) {
         console.error("Error fetching navbar categories:", error);
@@ -219,7 +222,7 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="shrink-0 flex items-end gap-2">
             {/* Crop out baked-in text — show icon only */}
-            <div className="w-11 h-11 shrink-0">
+            <div className="w-11 h-11 shrink-0 flex items-end">
               <img
                 src="/logo-crop.png"
                 alt="Logo"
@@ -231,13 +234,13 @@ export function Header() {
                 fontFamily: "'Outfit', sans-serif",
                 fontWeight: 800,
                 fontSize: '1.65rem',
-                color: '#c8102e', // Restored brand color
+                color: '#c8102e',
                 letterSpacing: '-0.06em',
                 lineHeight: 1,
                 whiteSpace: 'nowrap',
-                transform: 'translateY(2px) scaleY(1.15)', // Vertically stretched for more presence
+                transform: 'translateY(2px) scaleY(1.15)',
                 transformOrigin: 'bottom',
-                display: 'inline-block' // Ensure transform works correctly
+                display: 'inline-block'
               }}
             >
               Samee And Sandu
@@ -347,9 +350,9 @@ export function Header() {
         ========================================= */}
         <div className="md:hidden flex flex-col px-4 pt-2 pb-2 gap-2 bg-white border-b border-gray-100 shrink-0">
           <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-end gap-0">
+            <Link to="/" className="flex items-end gap-1">
               {/* Crop out baked-in text — show icon only */}
-              <div className="w-12 h-12 shrink-0">
+              <div className="w-12 h-12 shrink-0 flex items-end">
                 <img
                   src="/logo-crop.png"
                   alt="Logo"
@@ -361,11 +364,11 @@ export function Header() {
                   fontFamily: "'Outfit', sans-serif",
                   fontWeight: 800,
                   fontSize: '1.45rem',
-                  color: '#c8102e', // Restored brand color
+                  color: '#c8102e',
                   letterSpacing: '-0.06em',
                   lineHeight: 1,
                   whiteSpace: 'nowrap',
-                  transform: 'translateY(1px) scaleY(1.15)', // Vertically stretched for more presence
+                  transform: 'translateY(2px) scaleY(1.15)',
                   transformOrigin: 'bottom',
                   display: 'inline-block'
                 }}
@@ -400,7 +403,8 @@ export function Header() {
           {/* Swippable Categories (Full list for mobile) */}
           {(navRowCategories.length > 0 || navDropdownCategories.length > 0) && (
             <div className="flex overflow-x-auto gap-2 no-scrollbar pb-0 pt-0">
-              {[...navRowCategories, ...navDropdownCategories].map((cat) => (
+              {/* Combine and de-duplicate by ID */}
+              {Array.from(new Map([...navRowCategories, ...navDropdownCategories].map(c => [c.id, c])).values()).map((cat) => (
                 <Link
                   key={cat.id}
                   to={`/super-category/${cat.slug}`}

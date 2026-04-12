@@ -160,6 +160,7 @@ export default function HomePage() {
     const [topics, setTopics] = useState([])
     const [middleBanners, setMiddleBanners] = useState([])
     const [topicsLoading, setTopicsLoading] = useState(true)
+    const [sectionLabels, setSectionLabels] = useState({})
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"
 
     useEffect(() => {
@@ -178,10 +179,22 @@ export default function HomePage() {
             .then(r => r.json())
             .then(d => { if (d.success) setMiddleBanners(d.banners) })
             .catch(console.error)
+
+        fetch(`${backendUrl}/section-labels`)
+            .then(r => r.json())
+            .then(d => { if (d.success) setSectionLabels(d.labels) })
+            .catch(console.error)
     }, [backendUrl])
 
-    const rootCategories = categories.filter(c => c.parentId === null)
-    const activeTopicsWithProducts = topics.filter(t => t.active && (t.products?.length > 0 || t.bannerImage))
+    // Root categories de-duplicated by ID
+    const rootCategories = Array.from(
+        new Map(categories.filter(c => c.parentId === null).map(c => [c.id, c])).values()
+    );
+
+    // Active topics de-duplicated by ID
+    const activeTopicsWithProducts = Array.from(
+        new Map(topics.filter(t => t.active && (t.products?.length > 0 || t.bannerImage)).map(t => [t.id, t])).values()
+    );
 
     return (
         <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white overflow-x-hidden">
@@ -213,53 +226,88 @@ export default function HomePage() {
                 </div>
             )}
 
-            {/* Time Deals Section */}
+            {/* ── Topic 1 ─────────────────────────────────────────── */}
+            {!topicsLoading && activeTopicsWithProducts[0] && (
+                <div className="mx-auto max-w-[1040px] px-4 mb-2 md:mb-4">
+                    {activeTopicsWithProducts[0].bannerImages?.length > 0 || activeTopicsWithProducts[0].bannerImage ? (
+                        <BannerTopicSection title={activeTopicsWithProducts[0].title} products={activeTopicsWithProducts[0].products} bannerImage={activeTopicsWithProducts[0].bannerImage} bannerImages={activeTopicsWithProducts[0].bannerImages} />
+                    ) : (
+                        <TopicStrip title={activeTopicsWithProducts[0].title} products={activeTopicsWithProducts[0].products} />
+                    )}
+                </div>
+            )}
+
+            {/* ── Grid Banners ─────────────────────────────────────── */}
+            <div className="mx-auto max-w-[1040px] px-4">
+                <GridBannerSection title={sectionLabels.gridBannerTitle || ""} />
+            </div>
+
+            {/* ── Time Deals ───────────────────────────────────────── */}
             <div className="mx-auto max-w-[1040px] px-4 mb-2">
                 <TimeDealsSection />
             </div>
 
-            {/* Grid Banners List - New Layout Section */}
-            <div className="mx-auto max-w-[1040px] px-4">
-                <GridBannerSection />
-            </div>
-
+            {/* ── Ad Banners ───────────────────────────────────────── */}
             <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-4 md:mb-14">
                 <AdBannerSlider />
             </div>
 
-            {/* Dynamic Topics from Admin */}
-            <div className="mx-auto max-w-[1040px] px-4 space-y-2 md:space-y-4">
-                {topicsLoading ? (
-                    <div className="flex justify-center py-20">
-                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
-                    </div>
-                ) : activeTopicsWithProducts.length > 0 ? (
-                    activeTopicsWithProducts.map((topic, idx) => (
+            {/* ── Topic 2 ─────────────────────────────────────────── */}
+            {!topicsLoading && activeTopicsWithProducts[1] && (
+                <div className="mx-auto max-w-[1040px] px-4 mb-2 md:mb-4">
+                    {activeTopicsWithProducts[1].bannerImages?.length > 0 || activeTopicsWithProducts[1].bannerImage ? (
+                        <BannerTopicSection title={activeTopicsWithProducts[1].title} products={activeTopicsWithProducts[1].products} bannerImage={activeTopicsWithProducts[1].bannerImage} bannerImages={activeTopicsWithProducts[1].bannerImages} />
+                    ) : (
+                        <TopicStrip title={activeTopicsWithProducts[1].title} products={activeTopicsWithProducts[1].products} />
+                    )}
+                </div>
+            )}
+
+            {/* ── Reels ────────────────────────────────────────────── */}
+            <div className="-mx-0 mb-4">
+                <ReelsSection />
+            </div>
+
+            {/* ── Topic 3 ─────────────────────────────────────────── */}
+            {!topicsLoading && activeTopicsWithProducts[2] && (
+                <div className="mx-auto max-w-[1040px] px-4 mb-2 md:mb-4">
+                    {activeTopicsWithProducts[2].bannerImages?.length > 0 || activeTopicsWithProducts[2].bannerImage ? (
+                        <BannerTopicSection title={activeTopicsWithProducts[2].title} products={activeTopicsWithProducts[2].products} bannerImage={activeTopicsWithProducts[2].bannerImage} bannerImages={activeTopicsWithProducts[2].bannerImages} />
+                    ) : (
+                        <TopicStrip title={activeTopicsWithProducts[2].title} products={activeTopicsWithProducts[2].products} />
+                    )}
+                </div>
+            )}
+
+            {/* ── Middle Banner ─────────────────────────────────────── */}
+            {middleBanners.length > 0 && (
+                <div className="mx-auto max-w-[1040px] px-4 mb-2 md:mb-4">
+                    {sectionLabels.middleBannerTitle && (
+                        <h2 className="text-[22px] font-bold text-[#111] tracking-tight mb-4">
+                            {sectionLabels.middleBannerTitle}
+                        </h2>
+                    )}
+                    <MiddleBannerSection banners={middleBanners} />
+                </div>
+            )}
+
+            {/* ── Remaining Topics (4th onwards) ───────────────────── */}
+            {!topicsLoading && activeTopicsWithProducts.length > 3 && (
+                <div className="mx-auto max-w-[1040px] px-4 space-y-2 md:space-y-4">
+                    {activeTopicsWithProducts.slice(3).map((topic) => (
                         <div key={topic.id}>
                             {topic.bannerImages?.length > 0 || topic.bannerImage ? (
                                 <BannerTopicSection title={topic.title} products={topic.products} bannerImage={topic.bannerImage} bannerImages={topic.bannerImages} />
                             ) : (
                                 <TopicStrip title={topic.title} products={topic.products} />
                             )}
-                            
-                            {/* Insert ReelsSection after the 1st topic (index 0) */}
-                            {idx === 0 && (
-                                <div className="-mx-4 md:-mx-4 mb-4">
-                                    <ReelsSection />
-                                </div>
-                            )}
-
-                            {/* Insert Middle Banners after the 2nd topic (index 1) */}
-                            {idx === 1 && middleBanners.length > 0 && (
-                                <MiddleBannerSection banners={middleBanners} />
-                            )}
                         </div>
-                    ))
-                ) : (
-                    <EmptyTopics />
-                )}
-            </div>
+                    ))}
+                </div>
+            )}
 
+            {/* Empty state if no topics at all */}
+            {!topicsLoading && activeTopicsWithProducts.length === 0 && <EmptyTopics />}
 
             <Footer />
         </div>

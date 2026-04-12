@@ -5,7 +5,7 @@ import axios from "axios";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-export function GridBannerSection() {
+export function GridBannerSection({ title }) {
     const [banners, setBanners] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -65,6 +65,9 @@ export function GridBannerSection() {
 
     return (
         <section className="mb-2 md:mb-14">
+            {title && (
+                <h2 className="text-[22px] font-bold text-[#111] tracking-tight mb-4">{title}</h2>
+            )}
             <div className="flex flex-col gap-4">
                 {/* Top Row: 2 Banners */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">

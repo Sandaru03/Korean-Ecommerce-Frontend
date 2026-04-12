@@ -134,8 +134,13 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    /* Ensures iOS overscroll/rubber-band area is always white, not red from the loader */
+    background-color: #ffffff !important;
+  }
   body {
     @apply bg-bg-main text-neutral-dark;
+    background-color: #ffffff;
   }
 }
 
