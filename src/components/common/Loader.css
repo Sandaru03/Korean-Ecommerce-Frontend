@@ -41,8 +41,8 @@
   width: 340px;
   height: auto;
   overflow: visible;
-  animation: slideInTop 1.2s forwards cubic-bezier(0.23, 1, 0.32, 1);
-  transform: translateY(-80px);
+  animation: zoomInCenter 1.8s forwards cubic-bezier(0.23, 1, 0.32, 1);
+  transform: scale(0.3);
   filter: brightness(0) invert(1);
   opacity: 0;
 }
@@ -79,56 +79,46 @@
   opacity: 0;            /* Start invisible */
 }
 
-/* "Samee" slides in from Top-Left corner slightly */
+/* "Samee" slides in from Left edge */
 .samee-text {
-  animation: slideInTopLeft 1.2s forwards cubic-bezier(0.23, 1, 0.32, 1);
+  animation: slideInLeftEdge 1.8s forwards cubic-bezier(0.23, 1, 0.32, 1);
   animation-delay: 0.2s;
 }
 
-/* "And" slides up from Bottom center */
+/* "And" slides up from Bottom edge */
 .and-text {
   font-size: 3.4rem;
   font-weight: 800;
   margin: 0 2px;
-  animation: slideInBottom 1.2s forwards cubic-bezier(0.23, 1, 0.32, 1);
+  animation: slideInBottomEdge 1.8s forwards cubic-bezier(0.23, 1, 0.32, 1);
   animation-delay: 0.3s;
 }
 
-/* "Sandu" slides in from Top-Right corner slightly */
+/* "Sandu" slides in from Right edge */
 .sandu-text {
-  animation: slideInTopRight 1.2s forwards cubic-bezier(0.23, 1, 0.32, 1);
+  animation: slideInRightEdge 1.8s forwards cubic-bezier(0.23, 1, 0.32, 1);
   animation-delay: 0.2s;
 }
 
 /* ---------- Keyframes ---------- */
-@keyframes slideInTop {
-  from { transform: translateY(-80px); opacity: 0; filter: brightness(0) invert(1); }
-  to   { transform: translateY(0); opacity: 1; filter: brightness(0) invert(1); }
+@keyframes zoomInCenter {
+  from { transform: scale(0.3); opacity: 0; filter: brightness(0) invert(1); }
+  to   { transform: scale(1); opacity: 1; filter: brightness(0) invert(1); }
 }
 
-@keyframes slideInTopLeft {
-  from { transform: translate(-60px, -40px); opacity: 0; }
-  to   { transform: translate(0, 0); opacity: 1; }
+@keyframes slideInLeftEdge {
+  from { transform: translateX(-100vw); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
 
-@keyframes slideInTopRight {
-  from { transform: translate(60px, -40px); opacity: 0; }
-  to   { transform: translate(0, 0); opacity: 1; }
+@keyframes slideInRightEdge {
+  from { transform: translateX(100vw); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
 }
 
-@keyframes slideInBottom {
-  from { transform: translateY(60px); opacity: 0; }
+@keyframes slideInBottomEdge {
+  from { transform: translateY(100vh); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes slideInLeft {
-  from { transform: translateX(-200%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes slideInRight {
-  from { transform: translateX(200%); opacity: 0; }
-  to   { transform: translateX(0); opacity: 1; }
 }
 
 .loader-container.fade-out {

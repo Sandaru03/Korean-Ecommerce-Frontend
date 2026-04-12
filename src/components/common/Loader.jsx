@@ -11,7 +11,7 @@ const Loader = ({ onFinished }) => {
       if (onFinished) {
         onFinished();
       }
-    }, 2200); // Wait for the 1.2s + delay animation to settle
+    }, 2800); // Wait for the 1.8s + delay animation to settle
 
     return () => clearTimeout(timer);
   }, [onFinished]);
