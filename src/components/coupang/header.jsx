@@ -368,7 +368,7 @@ export function Header() {
                   letterSpacing: '-0.06em',
                   lineHeight: 1,
                   whiteSpace: 'nowrap',
-                  transform: 'translateY(2px) scaleY(1.15)',
+                  transform: 'translateY(0px) scaleY(1.15)',
                   transformOrigin: 'bottom',
                   display: 'inline-block'
                 }}

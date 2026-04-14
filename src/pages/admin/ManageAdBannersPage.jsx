@@ -1,12 +1,43 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Plus, Trash2, Edit, Image as ImageIcon, UploadCloud, Loader2 } from "lucide-react";
+import { Plus, Trash2, Edit, UploadCloud, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import mediaUpload from "../../utils/mediaUpload.jsx";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 export default function ManageAdBannersPage() {
+    const [activeSlot, setActiveSlot] = useState(1);
+
+    return (
+        <div className="w-full h-full p-6 bg-gray-50">
+            <div className="mb-6">
+                <h1 className="text-2xl font-bold text-slate-900 mb-1">Ad Banners Slider</h1>
+                <p className="text-sm text-slate-500">Manage the advertisement banners shown at different positions on the homepage.</p>
+            </div>
+
+            {/* Slot Tabs */}
+            <div className="flex border-b border-slate-200 mb-6">
+                <button
+                    onClick={() => setActiveSlot(1)}
+                    className={`px-6 py-3 font-semibold text-sm border-b-2 transition-colors ${activeSlot === 1 ? 'border-blue-600 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                >
+                    📢 Ad Slot 1 — After Grid Banners
+                </button>
+                <button
+                    onClick={() => setActiveSlot(2)}
+                    className={`px-6 py-3 font-semibold text-sm border-b-2 transition-colors ${activeSlot === 2 ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+                >
+                    📣 Ad Slot 2 — After 5th Topic
+                </button>
+            </div>
+
+            <AdBannerSlotManager key={activeSlot} slot={activeSlot} />
+        </div>
+    );
+}
+
+function AdBannerSlotManager({ slot }) {
     const [banners, setBanners] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -17,12 +48,12 @@ export default function ManageAdBannersPage() {
 
     useEffect(() => {
         fetchBanners();
-    }, []);
+    }, [slot]);
 
     const fetchBanners = async () => {
         try {
             setLoading(true);
-            const { data } = await axios.get(`${backendUrl}/ad-banners`);
+            const { data } = await axios.get(`${backendUrl}/ad-banners?slot=${slot}`);
             if (data.success) setBanners(data.banners);
         } catch (err) {
             console.error("Error fetching ad banners:", err);
@@ -51,7 +82,6 @@ export default function ManageAdBannersPage() {
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
         try {
             setUploading(true);
             const url = await mediaUpload(file);
@@ -67,18 +97,17 @@ export default function ManageAdBannersPage() {
 
     const handleSave = async () => {
         if (!formData.image) return toast.error("An image is required!");
-
         try {
             setSaving(true);
             if (editingBanner) {
-                const { data } = await axios.put(`${backendUrl}/ad-banners/${editingBanner.id}`, formData);
+                const { data } = await axios.put(`${backendUrl}/ad-banners/${editingBanner.id}`, { ...formData, slot });
                 if (data.success) {
                     toast.success("Ad Banner updated");
                     fetchBanners();
                     handleCloseModal();
                 }
             } else {
-                const { data } = await axios.post(`${backendUrl}/ad-banners`, formData);
+                const { data } = await axios.post(`${backendUrl}/ad-banners`, { ...formData, slot });
                 if (data.success) {
                     toast.success("Ad Banner created");
                     fetchBanners();
@@ -105,14 +134,19 @@ export default function ManageAdBannersPage() {
         }
     };
 
+    const slotColor = slot === 1 ? "bg-blue-600 hover:bg-blue-700" : "bg-indigo-600 hover:bg-indigo-700";
+    const slotLabel = slot === 1 ? "Slot 1 — Shown after Grid Banners" : "Slot 2 — Shown after 5th Topic Section";
+
     return (
-        <div className="w-full h-full p-6 bg-gray-50">
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 mb-1">Ad Banners Slider</h1>
-                    <p className="text-sm text-slate-500">Manage the advertisement images shown on the homepage slider.</p>
-                </div>
-                <button onClick={() => handleOpenModal()} className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+        <>
+            <div className="flex justify-between items-center mb-4">
+                <p className="text-sm font-medium text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg">
+                    📍 Position: <span className="font-bold text-slate-800">{slotLabel}</span>
+                </p>
+                <button
+                    onClick={() => handleOpenModal()}
+                    className={`flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm ${slotColor}`}
+                >
                     <Plus className="w-4 h-4" /> Add New Ad Banner
                 </button>
             </div>
@@ -154,7 +188,7 @@ export default function ManageAdBannersPage() {
                             ))}
                             {banners.length === 0 && (
                                 <tr>
-                                    <td colSpan={5} className="p-8 text-center text-slate-500">No ad banners found. Click "Add New" to create one.</td>
+                                    <td colSpan={5} className="p-8 text-center text-slate-500">No ad banners for this slot yet. Click "Add New" to create one.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -166,7 +200,10 @@ export default function ManageAdBannersPage() {
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
                         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
-                            <h2 className="text-lg font-bold text-slate-800">{editingBanner ? "Edit Ad Banner" : "New Ad Banner"}</h2>
+                            <div>
+                                <h2 className="text-lg font-bold text-slate-800">{editingBanner ? "Edit Ad Banner" : "New Ad Banner"}</h2>
+                                <p className="text-xs text-slate-400 mt-0.5">Slot {slot}: {slotLabel}</p>
+                            </div>
                             <button onClick={handleCloseModal} className="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
                         </div>
                         <div className="p-6 space-y-5">
@@ -186,7 +223,7 @@ export default function ManageAdBannersPage() {
                                 </p>
                                 {formData.image && <img src={formData.image} alt="Preview" className="mt-3 w-full h-32 object-cover rounded-lg border border-slate-200 shadow-sm" />}
                             </div>
-                            
+
                             <div>
                                 <label className="block text-sm font-semibold text-slate-700 mb-1">Target Link (Optional)</label>
                                 <input value={formData.link} onChange={e => setFormData(p => ({ ...p, link: e.target.value }))} className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. /product/123 or https://..." />
@@ -209,13 +246,13 @@ export default function ManageAdBannersPage() {
                         </div>
                         <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
                             <button onClick={handleCloseModal} className="px-4 py-2 font-semibold text-slate-600 hover:bg-slate-200 bg-slate-100 rounded-lg transition-colors">Cancel</button>
-                            <button onClick={handleSave} disabled={saving} className="px-6 py-2 font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors disabled:opacity-50 min-w-[100px]">
+                            <button onClick={handleSave} disabled={saving} className={`px-6 py-2 font-semibold text-white rounded-lg transition-colors disabled:opacity-50 min-w-[100px] ${slotColor}`}>
                                 {saving ? "Saving..." : "Save Banner"}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }

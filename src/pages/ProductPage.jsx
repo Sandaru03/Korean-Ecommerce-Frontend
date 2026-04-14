@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
 import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
@@ -46,6 +46,8 @@ export default function ProductPage() {
     const [isTodayDream, setIsTodayDream] = useState(false)
     const [mainImageIdx, setMainImageIdx] = useState(0)
 
+
+
     useEffect(() => {
         const backendUrl = import.meta.env.VITE_BACKEND_URL;
         axios.get(`${backendUrl}/products/${id}`)
@@ -84,6 +86,40 @@ export default function ProductPage() {
         }
     }
     const images = parsedImages;
+
+    const carouselRef = useRef(null)
+    const autoplayTimer = useRef(null)
+
+    const startAutoplay = () => {
+        if (autoplayTimer.current) clearInterval(autoplayTimer.current)
+        autoplayTimer.current = setInterval(() => {
+            if (carouselRef.current) {
+                const { scrollLeft, clientWidth, scrollWidth } = carouselRef.current
+                const maxScrollLeft = scrollWidth - clientWidth
+                let nextScrollLeft = scrollLeft + clientWidth
+                
+                if (nextScrollLeft > maxScrollLeft - 10) {
+                    nextScrollLeft = 0
+                }
+                
+                carouselRef.current.scrollTo({
+                    left: nextScrollLeft,
+                    behavior: 'smooth'
+                })
+            }
+        }, 3000)
+    }
+
+    const stopAutoplay = () => {
+        if (autoplayTimer.current) clearInterval(autoplayTimer.current)
+    }
+
+    useEffect(() => {
+        if (images && images.length > 1) {
+            startAutoplay()
+        }
+        return () => stopAutoplay()
+    }, [images])
 
     if (loading) {
         return (
@@ -186,31 +222,53 @@ export default function ProductPage() {
 
                     {/* Left: Image gallery */}
                     <div className="w-full lg:w-[460px] shrink-0">
-                        {/* Main image */}
-                        <div className="relative aspect-square w-full bg-[#f8f8f8] mb-4 overflow-hidden border border-[#eee] rounded-xl">
-                            <img
-                                src={images[mainImageIdx] || images[0]}
-                                alt={product.name}
-                                className="h-full w-full object-contain bg-[#f8f8f8] transition-all duration-300"
-                            />
-                        </div>
-
-                        {/* Thumbnails */}
-                        {images.length > 1 && (
-                            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                        {/* Mobile view: Auto scroll & swipeable carousel */}
+                        <div className="block lg:hidden">
+                            <div 
+                                className="relative aspect-square w-full bg-[#f8f8f8] mb-4 overflow-hidden border border-[#eee] rounded-xl flex snap-x snap-mandatory overflow-x-auto scrollbar-hide"
+                                ref={carouselRef}
+                                onTouchStart={stopAutoplay}
+                                onTouchEnd={startAutoplay}
+                            >
                                 {images.map((img, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => setMainImageIdx(idx)}
-                                        className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 transition-colors ${
-                                            mainImageIdx === idx ? "border-[#ff1268]" : "border-transparent hover:border-[#ccc]"
-                                        }`}
-                                    >
-                                        <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-contain bg-[#f8f8f8]" />
-                                    </button>
+                                    <img
+                                        key={`mobile-img-${idx}`}
+                                        src={img}
+                                        alt={`${product.name} - ${idx}`}
+                                        className="h-full w-full object-cover bg-[#f8f8f8] shrink-0 snap-center"
+                                    />
                                 ))}
                             </div>
-                        )}
+                        </div>
+
+                        {/* Desktop view: Main image + thumbnails */}
+                        <div className="hidden lg:block">
+                            {/* Main image */}
+                            <div className="relative aspect-square w-full bg-[#f8f8f8] mb-4 overflow-hidden border border-[#eee] rounded-xl">
+                                <img
+                                    src={images[mainImageIdx] || images[0]}
+                                    alt={product.name}
+                                    className="h-full w-full object-cover bg-[#f8f8f8] transition-all duration-300"
+                                />
+                            </div>
+
+                            {/* Thumbnails */}
+                            {images.length > 1 && (
+                                <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                                    {images.map((img, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => setMainImageIdx(idx)}
+                                            className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 transition-colors ${
+                                                mainImageIdx === idx ? "border-[#ff1268]" : "border-transparent hover:border-[#ccc]"
+                                            }`}
+                                        >
+                                            <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover bg-[#f8f8f8]" />
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Right: Sticky Product info */}

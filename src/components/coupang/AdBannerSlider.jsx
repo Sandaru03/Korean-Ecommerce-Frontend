@@ -3,18 +3,18 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export function AdBannerSlider() {
+export function AdBannerSlider({ slot = 1 }) {
     const [banners, setBanners] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
     useEffect(() => {
-        axios.get(`${backendUrl}/ad-banners/active`)
+        axios.get(`${backendUrl}/ad-banners/active?slot=${slot}`)
             .then(res => {
                 if (res.data.success) setBanners(res.data.banners);
             })
             .catch(console.error);
-    }, [backendUrl]);
+    }, [backendUrl, slot]);
 
     useEffect(() => {
         if (banners.length <= 1) return;

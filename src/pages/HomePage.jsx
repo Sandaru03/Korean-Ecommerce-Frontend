@@ -291,10 +291,30 @@ export default function HomePage() {
                 </div>
             )}
 
-            {/* ── Remaining Topics (4th onwards) ───────────────────── */}
+            {/* ── Remaining Topics (4th & 5th) ─────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts.length > 3 && (
                 <div className="mx-auto max-w-[1040px] px-4 space-y-8 md:space-y-12">
-                    {activeTopicsWithProducts.slice(3).map((topic) => (
+                    {activeTopicsWithProducts.slice(3, 5).map((topic) => (
+                        <div key={topic.id}>
+                            {topic.bannerImages?.length > 0 || topic.bannerImage ? (
+                                <BannerTopicSection title={topic.title} products={topic.products} bannerImage={topic.bannerImage} bannerImages={topic.bannerImages} />
+                            ) : (
+                                <TopicStrip title={topic.title} products={topic.products} />
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* ── Ad Banner 2 (after 5th topic) ────────────────────── */}
+            <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-8 md:mb-14">
+                <AdBannerSlider slot={2} />
+            </div>
+
+            {/* ── Remaining Topics (6th onwards) ───────────────────── */}
+            {!topicsLoading && activeTopicsWithProducts.length > 5 && (
+                <div className="mx-auto max-w-[1040px] px-4 space-y-8 md:space-y-12">
+                    {activeTopicsWithProducts.slice(5).map((topic) => (
                         <div key={topic.id}>
                             {topic.bannerImages?.length > 0 || topic.bannerImage ? (
                                 <BannerTopicSection title={topic.title} products={topic.products} bannerImage={topic.bannerImage} bannerImages={topic.bannerImages} />

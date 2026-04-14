@@ -84,6 +84,7 @@ function DashboardHero() {
                     { label: "Manage Topics", to: "/admin/manage-homepage", icon: FaFilePen, color: "bg-rose-500" },
                     { label: "Banners", to: "/admin/banners", icon: FaFilePen, color: "bg-cyan-500" },
                     { label: "Ad Banners", to: "/admin/ad-banners", icon: FaFilePen, color: "bg-blue-400" },
+                    { label: "Ad Banners 2", to: "/admin/ad-banners", icon: FaFilePen, color: "bg-indigo-500" },
                     { label: "Middle Banners", to: "/admin/middle-banners", icon: FaFilePen, color: "bg-amber-500" },
                     { label: "Reels", to: "/admin/reels", icon: FaVideo, color: "bg-indigo-500" },
                     { label: "Time Deals", to: "/admin/time-deals", icon: FaFilePen, color: "bg-amber-500" },
@@ -196,7 +197,7 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/reels" icon={FaVideo} label="Manage Reels" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/manage-homepage" icon={FaFilePen} label="Manage Topics" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/banners" icon={FaFilePen} label="Banners" onClick={() => setSidebarOpen(false)} />
-                        <SidebarLink to="/admin/ad-banners" icon={FaFilePen} label="Ad Banners" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/ad-banners" icon={FaFilePen} label="Ad Banners (Slot 1 & 2)" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/middle-banners" icon={FaFilePen} label="Middle Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/grid-banners" icon={FaFilePen} label="Grid Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/navbar-categories" icon={FaFilePen} label="Navbar Categories" onClick={() => setSidebarOpen(false)} />
