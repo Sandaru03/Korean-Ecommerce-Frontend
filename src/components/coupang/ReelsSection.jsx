@@ -35,44 +35,44 @@ export function ReelsSection() {
     if (loading || reels.length === 0) return null;
 
     return (
-        <section className="py-6 md:py-12 bg-white">
-            <div className="mx-auto max-w-[1200px] px-6">
-                <div className="flex items-center justify-between mb-4 md:mb-8">
-                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
-                        Featured Videos
-                    </h2>
-                    <div className="flex gap-2">
-                        <button 
-                            onClick={() => scroll('left')}
-                            className="p-2 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors"
-                        >
-                            <ChevronLeft size={20} />
-                        </button>
-                        <button 
-                            onClick={() => scroll('right')}
-                            className="p-2 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-gray-50 transition-colors"
-                        >
-                            <ChevronRight size={20} />
-                        </button>
-                    </div>
+        <section className="mb-0">
+            <div className="flex items-end justify-between mb-4">
+                <h2 className="text-[18px] md:text-[22px] font-bold text-[#111] tracking-tight">
+                    Featured Videos
+                </h2>
+                <div className="flex gap-2">
+                    <button 
+                        onClick={() => scroll('left')}
+                        className="p-1.5 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                        aria-label="Scroll left"
+                    >
+                        <ChevronLeft size={16} />
+                    </button>
+                    <button 
+                        onClick={() => scroll('right')}
+                        className="p-1.5 rounded-full border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+                        aria-label="Scroll right"
+                    >
+                        <ChevronRight size={16} />
+                    </button>
                 </div>
+            </div>
 
-                {/* Horizontal Scroll Container — shows exactly 4 reels at once */}
-                <div 
-                    ref={scrollRef}
-                    className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -webkit-overflow-scrolling-touch"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                    {reels.map((reel) => (
-                        <div 
-                            key={reel.id} 
-                            className="flex-shrink-0 snap-start w-[calc(44%-6px)] lg:w-[calc(25%-9px)]"
-                            onClick={() => setSelectedReel(reel)}
-                        >
-                            <ReelCard reel={reel} />
-                        </div>
-                    ))}
-                </div>
+            {/* Horizontal Scroll Container */}
+            <div 
+                ref={scrollRef}
+                className="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -webkit-overflow-scrolling-touch"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+                {reels.map((reel) => (
+                    <div 
+                        key={reel.id} 
+                        className="flex-shrink-0 snap-start w-[calc(44%-6px)] md:w-[calc(25%-9px)] lg:w-[calc(25%-9px)]"
+                        onClick={() => setSelectedReel(reel)}
+                    >
+                        <ReelCard reel={reel} />
+                    </div>
+                ))}
             </div>
 
             {/* Reel Popup Modal */}

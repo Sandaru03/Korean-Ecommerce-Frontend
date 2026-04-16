@@ -64,7 +64,7 @@ export function GridBannerSection({ title }) {
     };
 
     return (
-        <section className="mb-2 md:mb-14">
+        <section className="mb-0">
             {title && (
                 <h2 className="text-[22px] font-bold text-[#111] tracking-tight mb-4">{title}</h2>
             )}

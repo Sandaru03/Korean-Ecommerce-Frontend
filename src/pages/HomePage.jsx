@@ -10,6 +10,7 @@ import { AdBannerSlider } from "@/components/coupang/AdBannerSlider"
 import { ReelsSection } from "@/components/coupang/ReelsSection"
 import { GridBannerSection } from "@/components/coupang/GridBannerSection"
 import { TimeDealsSection } from "@/components/coupang/TimeDealsSection"
+import { FeaturedProductStrip } from "@/components/coupang/FeaturedProductStrip"
 
 function resolveImage(p) {
     let imgs = p.images
@@ -27,7 +28,7 @@ import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 // ── Horizontal scrolling topic strip ───────────────────────────
 function TopicStrip({ title, products }) {
     return (
-        <section className="mb-6 md:mb-14">
+        <section className="mb-0">
             <div className="flex items-end justify-between mb-4">
                 <h2 className="text-[22px] font-bold text-[#111] tracking-tight">{title}</h2>
             </div>
@@ -91,7 +92,7 @@ function MiddleBannerSection({ banners }) {
 
     return (
         <section 
-            className="mb-6 md:mb-14 relative group"
+            className="mb-0 relative group"
             style={{ touchAction: 'pan-y' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -201,13 +202,13 @@ export default function HomePage() {
             <Header />
 
             {/* Hero Banner */}
-            <div className="w-full mt-0 md:mt-0 mb-6 md:mb-14">
+            <div className="w-full mt-0 md:mt-0 mb-10 md:mb-14">
                 <HeroBanner />
             </div>
 
             {/* Round Icon Categories */}
             {rootCategories.length > 0 && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-8 md:mb-16">
+                <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
                     <div className="overflow-x-auto no-scrollbar -mx-4 px-4 pb-0">
                         <div className="grid grid-rows-2 grid-flow-col gap-x-1 gap-y-2 min-w-max md:grid md:grid-rows-1 md:grid-cols-10 md:grid-flow-row md:gap-x-2 md:min-w-0">
                             {rootCategories.map((cat, idx) => (
@@ -228,7 +229,7 @@ export default function HomePage() {
 
             {/* ── Topic 1 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[0] && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-8 md:mb-12">
+                <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
                     {activeTopicsWithProducts[0].bannerImages?.length > 0 || activeTopicsWithProducts[0].bannerImage ? (
                         <BannerTopicSection title={activeTopicsWithProducts[0].title} products={activeTopicsWithProducts[0].products} bannerImage={activeTopicsWithProducts[0].bannerImage} bannerImages={activeTopicsWithProducts[0].bannerImages} />
                     ) : (
@@ -238,23 +239,23 @@ export default function HomePage() {
             )}
 
             {/* ── Grid Banners ─────────────────────────────────────── */}
-            <div className="mx-auto max-w-[1040px] px-4 mb-8 md:mb-12">
+            <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
                 <GridBannerSection title={sectionLabels.gridBannerTitle || ""} />
             </div>
 
             {/* ── Time Deals ───────────────────────────────────────── */}
-            <div className="mx-auto max-w-[1040px] px-4 mb-8 md:mb-12">
+            <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
                 <TimeDealsSection />
             </div>
 
             {/* ── Ad Banners ───────────────────────────────────────── */}
-            <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-8 md:mb-14">
+            <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-14 md:mb-16">
                 <AdBannerSlider />
             </div>
 
             {/* ── Topic 2 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[1] && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-8 md:mb-12">
+                <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
                     {activeTopicsWithProducts[1].bannerImages?.length > 0 || activeTopicsWithProducts[1].bannerImage ? (
                         <BannerTopicSection title={activeTopicsWithProducts[1].title} products={activeTopicsWithProducts[1].products} bannerImage={activeTopicsWithProducts[1].bannerImage} bannerImages={activeTopicsWithProducts[1].bannerImages} />
                     ) : (
@@ -264,13 +265,13 @@ export default function HomePage() {
             )}
 
             {/* ── Reels ────────────────────────────────────────────── */}
-            <div className="-mx-0 mb-8 md:mb-14">
+            <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
                 <ReelsSection />
             </div>
 
             {/* ── Topic 3 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[2] && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-8 md:mb-12">
+                <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
                     {activeTopicsWithProducts[2].bannerImages?.length > 0 || activeTopicsWithProducts[2].bannerImage ? (
                         <BannerTopicSection title={activeTopicsWithProducts[2].title} products={activeTopicsWithProducts[2].products} bannerImage={activeTopicsWithProducts[2].bannerImage} bannerImages={activeTopicsWithProducts[2].bannerImages} />
                     ) : (
@@ -281,7 +282,7 @@ export default function HomePage() {
 
             {/* ── Middle Banner ─────────────────────────────────────── */}
             {middleBanners.length > 0 && (
-                <div className="mx-auto max-w-[1040px] px-4 mb-8 md:mb-12">
+                <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
                     {sectionLabels.middleBannerTitle && (
                         <h2 className="text-[22px] font-bold text-[#111] tracking-tight mb-4">
                             {sectionLabels.middleBannerTitle}
@@ -291,29 +292,41 @@ export default function HomePage() {
                 </div>
             )}
 
-            {/* ── Remaining Topics (4th & 5th) ─────────────────────── */}
-            {!topicsLoading && activeTopicsWithProducts.length > 3 && (
-                <div className="mx-auto max-w-[1040px] px-4 space-y-8 md:space-y-12">
-                    {activeTopicsWithProducts.slice(3, 5).map((topic) => (
-                        <div key={topic.id}>
-                            {topic.bannerImages?.length > 0 || topic.bannerImage ? (
-                                <BannerTopicSection title={topic.title} products={topic.products} bannerImage={topic.bannerImage} bannerImages={topic.bannerImages} />
-                            ) : (
-                                <TopicStrip title={topic.title} products={topic.products} />
-                            )}
-                        </div>
-                    ))}
+            {/* ── Topic 4 ─────────────────────────────────────────── */}
+            {!topicsLoading && activeTopicsWithProducts[3] && (
+                <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
+                    {activeTopicsWithProducts[3].bannerImages?.length > 0 || activeTopicsWithProducts[3].bannerImage ? (
+                        <BannerTopicSection title={activeTopicsWithProducts[3].title} products={activeTopicsWithProducts[3].products} bannerImage={activeTopicsWithProducts[3].bannerImage} bannerImages={activeTopicsWithProducts[3].bannerImages} />
+                    ) : (
+                        <TopicStrip title={activeTopicsWithProducts[3].title} products={activeTopicsWithProducts[3].products} />
+                    )}
+                </div>
+            )}
+
+            {/* ── Featured Products Strip (between Topic 4 & 5) ─── */}
+            <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
+                <FeaturedProductStrip />
+            </div>
+
+            {/* ── Topic 5 ─────────────────────────────────────────── */}
+            {!topicsLoading && activeTopicsWithProducts[4] && (
+                <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
+                    {activeTopicsWithProducts[4].bannerImages?.length > 0 || activeTopicsWithProducts[4].bannerImage ? (
+                        <BannerTopicSection title={activeTopicsWithProducts[4].title} products={activeTopicsWithProducts[4].products} bannerImage={activeTopicsWithProducts[4].bannerImage} bannerImages={activeTopicsWithProducts[4].bannerImages} />
+                    ) : (
+                        <TopicStrip title={activeTopicsWithProducts[4].title} products={activeTopicsWithProducts[4].products} />
+                    )}
                 </div>
             )}
 
             {/* ── Ad Banner 2 (after 5th topic) ────────────────────── */}
-            <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-8 md:mb-14">
+            <div className="w-full md:mx-auto md:max-w-[1040px] px-0 md:px-4 mb-14 md:mb-16">
                 <AdBannerSlider slot={2} />
             </div>
 
             {/* ── Remaining Topics (6th onwards) ───────────────────── */}
             {!topicsLoading && activeTopicsWithProducts.length > 5 && (
-                <div className="mx-auto max-w-[1040px] px-4 space-y-8 md:space-y-12">
+                <div className="mx-auto max-w-[1040px] px-4 space-y-24 md:space-y-16">
                     {activeTopicsWithProducts.slice(5).map((topic) => (
                         <div key={topic.id}>
                             {topic.bannerImages?.length > 0 || topic.bannerImage ? (

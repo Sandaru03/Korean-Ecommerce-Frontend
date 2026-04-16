@@ -34,6 +34,7 @@ import ManageNavbarCategories from "./admin/manageNavbarCategories";
 import ManageGridBanners from "./admin/manageGridBanners";
 import ManageTimeDeals from "./admin/ManageTimeDeals";
 import AdminManagementPage from "./admin/AdminManagementPage";
+import ManageFeaturedStrip from "./admin/ManageFeaturedStrip";
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -202,6 +203,7 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/grid-banners" icon={FaFilePen} label="Grid Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/navbar-categories" icon={FaFilePen} label="Navbar Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/time-deals" icon={FaFilePen} label="Time Deals" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/featured-strip" icon={FaFilePen} label="Featured Strip" onClick={() => setSidebarOpen(false)} />
                         
                         <div className="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             Settings & Security
@@ -285,6 +287,7 @@ export default function AdminPage() {
                             <Route path="navbar-categories" element={<ManageNavbarCategories />} />
                             <Route path="reels" element={<ManageReelsPage />} />
                             <Route path="time-deals" element={<ManageTimeDeals />} />
+                            <Route path="featured-strip" element={<ManageFeaturedStrip />} />
                             <Route path="admins" element={<AdminManagementPage />} />
                         </Routes>
                     </div>

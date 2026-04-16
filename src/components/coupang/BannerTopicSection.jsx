@@ -46,7 +46,7 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
     };
 
     return (
-        <section className="mb-6 md:mb-12">
+        <section className="mb-0">
             <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm">
                 {/* Left: Banner Slider */}
                 <div 
