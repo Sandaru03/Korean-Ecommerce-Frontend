@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { useCart } from "@/context/CartContext"
 import toast from "react-hot-toast"
 import axios from "axios"
+import { SkinTypeQuiz } from "@/components/coupang/SkinTypeQuiz"
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -147,6 +148,8 @@ export default function BannerPage1() {
                     <h2 className="text-[24px] font-black mb-4">{DATA.outroTitle}</h2>
                     <p className="text-[15px] text-white/80 leading-relaxed max-w-[720px]">{DATA.outroText}</p>
                 </div>
+
+                <SkinTypeQuiz />
             </div>
             <Footer />
         </div>

@@ -5,6 +5,7 @@ import { Heart, Star, ShoppingCart } from "lucide-react"
 import { useState } from "react"
 import { useCart } from "@/context/CartContext"
 import toast from "react-hot-toast"
+import { SkinTypeQuiz } from "@/components/coupang/SkinTypeQuiz"
 
 const DATA = {
     title: "Healthy Living & Supplements",
@@ -111,6 +112,8 @@ export default function BannerPage5() {
                     <h2 className="text-[24px] font-black mb-4">{DATA.outroTitle}</h2>
                     <p className="text-[15px] text-white/80 leading-relaxed max-w-[720px]">{DATA.outroText}</p>
                 </div>
+
+                <SkinTypeQuiz />
             </div>
             <Footer />
         </div>
