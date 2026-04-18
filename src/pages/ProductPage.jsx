@@ -225,7 +225,7 @@ export default function ProductPage() {
                         {/* Mobile view: Auto scroll & swipeable carousel */}
                         <div className="block lg:hidden">
                             <div 
-                                className="relative aspect-square w-full bg-[#f8f8f8] mb-4 overflow-hidden border border-[#eee] rounded-xl flex snap-x snap-mandatory overflow-x-auto scrollbar-hide"
+                                className="relative aspect-square w-[calc(100%+32px)] -mx-4 bg-[#f8f8f8] mb-4 overflow-hidden flex snap-x snap-mandatory overflow-x-auto scrollbar-hide"
                                 ref={carouselRef}
                                 onTouchStart={stopAutoplay}
                                 onTouchEnd={startAutoplay}

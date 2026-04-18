@@ -191,7 +191,7 @@ function ReelCard({ reel }) {
 
 function ReelModal({ reel, onClose }) {
     const videoRef = useRef(null);
-    const [isMuted, setIsMuted] = useState(true);
+    const [isMuted, setIsMuted] = useState(false);
 
     useEffect(() => {
         // Prevent body scroll when modal is open
