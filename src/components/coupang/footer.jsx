@@ -68,6 +68,7 @@ export function Footer() {
               <h3 className="mb-4 text-sm font-bold text-[#333] uppercase tracking-tight">Quick Links</h3>
               <ul className="flex flex-col gap-2.5">
                 <li><Link to="/" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Home</Link></li>
+                <li><Link to="/about" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">About Us</Link></li>
                 <li><Link to="/search" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Search Products</Link></li>
                 <li><Link to="/cart" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Shopping Cart</Link></li>
                 <li><Link to="/login" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Track Orders</Link></li>

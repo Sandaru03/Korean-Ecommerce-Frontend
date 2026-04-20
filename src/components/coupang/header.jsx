@@ -1,6 +1,6 @@
 "use client"
 
-import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut, LogIn } from "lucide-react"
+import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut, LogIn, CircleHelp } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useCart } from "@/context/CartContext"
@@ -429,10 +429,10 @@ export function Header() {
             <span className="text-[10px] font-medium tracking-tight">Menu</span>
           </button>
           
-          <button onClick={() => window.scrollTo({top:0, behavior: 'smooth'})} className="flex flex-col items-center gap-1 text-black hover:text-primary transition-colors">
-            <Search className="h-6 w-6 stroke-[1.5]" />
-            <span className="text-[10px] font-medium tracking-tight">Search</span>
-          </button>
+          <Link to="/about" className="flex flex-col items-center gap-1 text-black hover:text-primary transition-colors">
+            <CircleHelp className="h-6 w-6 stroke-[1.5]" />
+            <span className="text-[10px] font-medium tracking-tight">About Us</span>
+          </Link>
 
           {/* Spacer for center logo */}
           <div className="w-16"></div>
