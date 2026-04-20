@@ -13,6 +13,7 @@ import BannerPage from "./pages/banners/BannerPage";
 import SearchPage from "./pages/SearchPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Loader from "./components/common/Loader";
+import QuizPage from "./pages/QuizPage";
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/category/:slug" element={<CategoryPage />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/banner/:id" element={<BannerPage />} />
+        <Route path="/quiz" element={<QuizPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>

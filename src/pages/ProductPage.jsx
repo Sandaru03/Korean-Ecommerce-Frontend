@@ -45,6 +45,7 @@ export default function ProductPage() {
     const [selectedItems, setSelectedItems] = useState([]) // Array of { id, name, qty, price }
     const [isTodayDream, setIsTodayDream] = useState(false)
     const [mainImageIdx, setMainImageIdx] = useState(0)
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
 
 
@@ -382,8 +383,21 @@ export default function ProductPage() {
                                 {product.name}
                             </h3>
                             
-                            <div className="text-[16px] text-[#555] leading-[1.8] whitespace-pre-line">
-                                {product.description}
+                            <div className="relative">
+                                <div className={`text-[16px] text-[#555] leading-[1.8] whitespace-pre-line transition-all duration-300 ${isDescriptionExpanded ? "" : "line-clamp-5 overflow-hidden"}`}>
+                                    {product.description}
+                                </div>
+                                {!isDescriptionExpanded && (
+                                    <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+                                )}
+                            </div>
+                            <div className="flex justify-center mt-4">
+                                <button 
+                                    onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                                    className="px-6 py-2.5 border border-[#ccc] rounded-full text-[13px] font-bold text-[#111] bg-white hover:bg-[#f8f8f8] hover:border-[#999] transition-all shadow-sm"
+                                >
+                                    {isDescriptionExpanded ? "Read less" : "Read more"}
+                                </button>
                             </div>
                         </div>
                     </div>

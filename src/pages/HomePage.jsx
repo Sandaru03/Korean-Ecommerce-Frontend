@@ -11,6 +11,8 @@ import { ReelsSection } from "@/components/coupang/ReelsSection"
 import { GridBannerSection } from "@/components/coupang/GridBannerSection"
 import { TimeDealsSection } from "@/components/coupang/TimeDealsSection"
 import { FeaturedProductStrip } from "@/components/coupang/FeaturedProductStrip"
+import { FlashDealsSection } from "@/components/coupang/FlashDealsSection"
+import { QuizBanner } from "@/components/coupang/QuizBanner"
 
 function resolveImage(p) {
     let imgs = p.images
@@ -226,6 +228,16 @@ export default function HomePage() {
                     </div>
                 </div>
             )}
+
+            {/* ── Flash Deals (after Super Categories) ─────────────── */}
+            <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
+                <FlashDealsSection />
+            </div>
+
+            {/* ── Quiz Banner ───────────────────────────────────────── */}
+            <div className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
+                <QuizBanner />
+            </div>
 
             {/* ── Topic 1 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[0] && (

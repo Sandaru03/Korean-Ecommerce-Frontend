@@ -74,6 +74,11 @@ const skinTypeInfo = {
         description:
             "You've won the skin lottery! Your skin is well-balanced — not too oily, not too dry — and rarely reacts to products or weather. Focus on maintenance.",
     },
+    S: {
+        type: "Sensitive Skin",
+        description:
+            "Your skin gets irritated, red, or very dry quite easily, especially with new products or weather changes. Focus on gentle, soothing care with minimalistic formulas designed to protect and repair your skin barrier.",
+    },
 }
 
 function getMajority(answers) {
@@ -92,7 +97,6 @@ export function SkinTypeQuiz() {
     const [selected, setSelected] = useState(null)
     const [animating, setAnimating] = useState(false)
 
-    const isSensitive = answers[5] === "C"
     const currentQ = questions[step - 1]
 
     const handleStart = () => {
@@ -127,7 +131,10 @@ export function SkinTypeQuiz() {
         setSelected(null)
     }
 
-    const resultKey = step === 6 ? getMajority(answers) : null
+    let resultKey = step === 6 ? getMajority(answers) : null
+    if (resultKey && answers[5] === "C") {
+        resultKey = "S"
+    }
     const result = resultKey ? skinTypeInfo[resultKey] : null
 
     return (
@@ -217,14 +224,6 @@ export function SkinTypeQuiz() {
             {step === 6 && result && (
                 <div className="bg-[#111] rounded-2xl p-8 md:p-12 text-white" style={{ opacity: animating ? 0 : 1, transition: "opacity 0.2s ease" }}>
                     <h3 className="text-[36px] font-black mb-4 tracking-tight">{result.type}</h3>
-                    
-                    {isSensitive && (
-                        <div className="mb-6">
-                            <span className="inline-block text-[12px] font-bold text-[#ffd700] bg-white/10 border border-white/20 px-4 py-1.5 rounded-full">
-                                Your skin also shows signs of being Sensitive.
-                            </span>
-                        </div>
-                    )}
 
                     <p className="text-[16px] text-white/80 leading-relaxed max-w-[720px] mb-10">
                         {result.description}

@@ -35,6 +35,7 @@ import ManageGridBanners from "./admin/manageGridBanners";
 import ManageTimeDeals from "./admin/ManageTimeDeals";
 import AdminManagementPage from "./admin/AdminManagementPage";
 import ManageFeaturedStrip from "./admin/ManageFeaturedStrip";
+import ManageFlashDeals from "./admin/ManageFlashDeals";
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -89,6 +90,7 @@ function DashboardHero() {
                     { label: "Middle Banners", to: "/admin/middle-banners", icon: FaFilePen, color: "bg-amber-500" },
                     { label: "Reels", to: "/admin/reels", icon: FaVideo, color: "bg-indigo-500" },
                     { label: "Time Deals", to: "/admin/time-deals", icon: FaFilePen, color: "bg-amber-500" },
+                    { label: "Flash Deals", to: "/admin/flash-deals", icon: FaFilePen, color: "bg-rose-500" },
                     { label: "Admins", to: "/admin/admins", icon: RiAdminFill, color: "bg-slate-900" },
                 ].map((c) => (
                     <NavLink
@@ -203,6 +205,7 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/grid-banners" icon={FaFilePen} label="Grid Banners" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/navbar-categories" icon={FaFilePen} label="Navbar Categories" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/time-deals" icon={FaFilePen} label="Time Deals" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/flash-deals" icon={FaFilePen} label="Flash Deals" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/featured-strip" icon={FaFilePen} label="Featured Strip" onClick={() => setSidebarOpen(false)} />
                         
                         <div className="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -287,6 +290,7 @@ export default function AdminPage() {
                             <Route path="navbar-categories" element={<ManageNavbarCategories />} />
                             <Route path="reels" element={<ManageReelsPage />} />
                             <Route path="time-deals" element={<ManageTimeDeals />} />
+                            <Route path="flash-deals" element={<ManageFlashDeals />} />
                             <Route path="featured-strip" element={<ManageFeaturedStrip />} />
                             <Route path="admins" element={<AdminManagementPage />} />
                         </Routes>
