@@ -9,8 +9,10 @@ const content = {
   en: {
     langLabel: "EN",
     badge: "100% Korean Domestic Grade",
-    heroTagline: "The Authentic Korean Beauty Secret,",
-    heroTagline2: "Delivered to Your Doorstep!",
+    heroLine1: "The Authentic",
+    heroLine2: "Korean Beauty",
+    heroLine3: "Secret,",
+    heroLine4: "Delivered to Your Doorstep!",
     heroIntro:
       "Hello and welcome! We are Samee and Sandu. Having lived in South Korea for several years, we've had the privilege of experiencing firsthand the secrets behind the radiant, healthy skin of the Korean people. Driven by a passion to share these high-quality products with our loved ones in Sri Lanka, we founded",
     heroIntroHighlight: ' "Samee and Sandu K-Beauty Secret."',
@@ -71,8 +73,10 @@ const content = {
   si: {
     langLabel: "සිං",
     badge: "100% කොරියානු දේශීය ශ්රේණිය",
-    heroTagline: "සැබෑ කොරියානු රූපලාවන්ය රහස",
-    heroTagline2: "ඔබේ දෑතට!",
+    heroLine1: "සැබෑ",
+    heroLine2: "කොරියානු රූපලාවන්ය",
+    heroLine3: "රහස",
+    heroLine4: "ඔබේ දෑතට!",
     heroIntro:
       "ආයුබෝවන්! අපි Samee සහ Sandu. වසර කිහිපයක සිට දකුණු කොරියාවේ පදිංචිව සිටින අපට, කොරියානු වැසියන්ගේ නිරෝගී සහ දීප්තිමත් සමේ රහස සමීපව අත්දැකීමට අවස්ථාව ලැබුණා. ඒ සැබෑ අත්දැකීම සහ කොරියාවේ උසස්ම නිෂ්පාදන ලංකාවේ ආදරණීයයන්ට ලබාදීමේ අරමුණින් ආරම්භ කළා",
     heroIntroHighlight: ' "Samee and Sandu K-Beauty Secret."',
@@ -133,8 +137,10 @@ const content = {
   ta: {
     langLabel: "தமிழ்",
     badge: "100% கொரிய உள்நாட்டுத் தரம்",
-    heroTagline: "உண்மையான கொரிய அழகுக் கலை இரகசியம்",
-    heroTagline2: "இப்போது உங்கள் கைகளில்!",
+    heroLine1: "உண்மையான",
+    heroLine2: "கொரிய அழகுக் கலை",
+    heroLine3: "இரகசியம்",
+    heroLine4: "இப்போது உங்கள் கைகளில்!",
     heroIntro:
       "வணக்கம்! நாம் சமி மற்றும் சந்தூ. கடந்த சில வருடங்களாகத் தென்கொரியாவில் வசித்து வரும் எமக்கு, கொரிய மக்களின் ஆரோக்கியமான சருமத்தின் இரகசியத்தை கண்டறியும் வாய்ப்பு கிடைத்தது. அந்த அனுபவத்தை இலங்கையில் உள்ள எமது அன்புக்குரியவர்களிடம் கொண்டு சேர்க்கும் நோக்குடன் ஆரம்பித்தோம்",
     heroIntroHighlight: ' "Samee and Sandu K-Beauty Secret."',
@@ -195,15 +201,16 @@ const content = {
 
 // ─── IMAGES — replace with your Cloudinary URLs ──────────────────────────────
 const GALLERY_IMAGES = [
-  "https://images.unsplash.com/photo-1617897903246-719242758050?w=600&q=80",
-  "https://images.unsplash.com/photo-1596462502278-27bf85033e5a?w=600&q=80",
-  "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=600&q=80",
-  "https://images.unsplash.com/photo-1570194065650-d6faeb2a37fe?w=600&q=80",
-  "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80",
-  "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=600&q=80",
-  "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=600&q=80"
+  "/gallery/Youtube photo.jpg.jpeg",
+  "/gallery/IMG_2117 copy.jpg.jpeg",
+  "/gallery/IMG_2328 copy.jpg.jpeg",
+  "/gallery/IMG_2393 copy.jpg.jpeg",
+  "/gallery/IMG_2514 copy.jpg.jpeg",
+  "/gallery/IMG_2767 copy.jpg.jpeg",
+  "/gallery/IMG_5547.JPG.jpeg",
+  "/gallery/IMG_5550.JPG.jpeg"
 ];
-const HERO_BG_IMAGE   = "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=1600&q=80";
+const HERO_BG_IMAGE   = "/gallery/Youtube photo.jpg.jpeg";
 const VISION_BG_IMAGE = "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1600&q=80";
 
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
@@ -237,17 +244,21 @@ export default function AboutPage() {
         <img
           src={HERO_BG_IMAGE}
           alt="K-Beauty"
-          className="absolute inset-0 w-full h-full object-cover brightness-[0.3]"
+          className="absolute inset-0 w-full h-full object-cover brightness-[0.5]"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-transparent" />
         <div className="relative z-10 max-w-2xl px-8 py-24" style={{ marginLeft: "clamp(1.5rem, 8vw, 8rem)" }}>
           <span className="inline-block px-4 py-1.5 mb-6 rounded-full text-xs tracking-[0.15em] uppercase font-sans font-semibold text-white border border-white/30 bg-[#E4405F]/80">
             {t.badge}
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-light text-white leading-tight mb-6">
-            {t.heroTagline}
+            {t.heroLine1}
             <br />
-            <span className="italic text-[#ffced6]">{t.heroTagline2}</span>
+            {t.heroLine2}
+            <br />
+            {t.heroLine3}
+            <br />
+            <span className="italic text-[#ffced6]">{t.heroLine4}</span>
           </h1>
           <p className="text-base md:text-lg text-white/80 leading-relaxed max-w-xl">
             {t.heroIntro}
