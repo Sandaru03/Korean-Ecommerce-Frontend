@@ -23,11 +23,11 @@ export default function QuizPage() {
                         </p>
                     </div>
                     <div className="flex-1 w-full max-w-[320px] md:max-w-none">
-                        <div className="relative w-full aspect-[4/3] rounded-[32px] overflow-hidden bg-white shadow-2xl p-2 md:p-3 transform md:-rotate-2 transition-transform hover:rotate-0 duration-500">
+                        <div className="relative w-full rounded-[32px] overflow-hidden bg-white shadow-2xl p-2 md:p-3">
                              <img 
-                                src="https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=800&auto=format&fit=crop" 
-                                alt="Skincare Routine" 
-                                className="w-full h-full object-cover rounded-[24px]" 
+                                src="/skin 2.jpg.jpeg" 
+                                alt="Skin Assessment" 
+                                className="w-full h-auto block rounded-[24px]" 
                             />
                             {/* Decorative elements */}
                             <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl -z-10"></div>
