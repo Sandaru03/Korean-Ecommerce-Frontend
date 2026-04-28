@@ -98,13 +98,13 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         }
     }
 
-    async function uploadSlipToCloudinary() {
+    async function uploadSlipToServer() {
         if (!slipFile) return null
         setUploadingSlip(true)
         try {
             const formData = new FormData()
             formData.append("images", slipFile)
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/upload/cloudinary`, formData)
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/upload/local`, formData)
             const url = res.data.urls?.[0]
             if (url) setSlipUrl(url)
             return url
@@ -154,7 +154,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         // Upload slip first if selected but not yet uploaded
         let finalSlipUrl = slipUrl
         if (slipFile && !slipUrl) {
-            finalSlipUrl = await uploadSlipToCloudinary()
+            finalSlipUrl = await uploadSlipToServer()
             if (slipFile && !finalSlipUrl) return // upload failed
         }
 
@@ -208,7 +208,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         // Upload slip first if selected but not yet uploaded
         let finalSlipUrl = slipUrl
         if (slipFile && !slipUrl) {
-            finalSlipUrl = await uploadSlipToCloudinary()
+            finalSlipUrl = await uploadSlipToServer()
             if (slipFile && !finalSlipUrl) return // upload failed
         }
         

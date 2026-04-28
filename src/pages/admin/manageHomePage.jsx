@@ -99,7 +99,7 @@ export default function ManageHomePage() {
 
     try {
       setLoading(true);
-      const uploadRes = await axios.post(`${backendUrl}/upload/cloudinary`, formData);
+      const uploadRes = await axios.post(`${backendUrl}/upload/local`, formData);
       const imageUrl = uploadRes.data.urls[0];
 
       const topic = topics.find(t => t.id === topicId);

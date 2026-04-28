@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import axios from "axios";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
@@ -15,6 +16,18 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import Loader from "./components/common/Loader";
 import QuizPage from "./pages/QuizPage";
 import AboutPage from "./pages/AboutPage";
+
+// Setup global axios interceptor to automatically attach token
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token && config.url.startsWith(import.meta.env.VITE_BACKEND_URL)) {
+    // Only attach if headers don't already have it
+    if (!config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+}, (error) => Promise.reject(error));
 
 export default function App() {
   const [isLoading, setIsLoading] = useState(true);

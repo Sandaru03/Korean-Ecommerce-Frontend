@@ -150,7 +150,7 @@ function BannerEditor({ banner, onBack, onSaveSuccess }) {
             setUploading(true);
             const url = await mediaUpload(file);
             setFormData(prev => ({ ...prev, [fieldName]: url }));
-            toast.success("Image uploaded to Cloudinary!");
+            toast.success("Image uploaded successfully!");
         } catch (error) {
             console.error("Upload failed", error);
             toast.error("Image upload failed");
@@ -239,7 +239,7 @@ function BannerEditor({ banner, onBack, onSaveSuccess }) {
                         <div className="col-span-full">
                             <label className="block text-sm font-semibold text-slate-700 mb-1">Hero Image URL (Home Page Carousel Image)</label>
                             <div className="flex items-center gap-3">
-                                <input name="heroImage" value={formData.heroImage} onChange={handleChange} className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://res.cloudinary.com/..." />
+                                <input name="heroImage" value={formData.heroImage} onChange={handleChange} className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Image URL or upload →" />
                                 <div className="relative">
                                     <input type="file" onChange={(e) => handleImageUpload(e, 'heroImage')} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
                                     <button type="button" disabled={uploadingHero} className="px-4 py-2 bg-slate-100 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-200 flex items-center gap-2 disabled:opacity-50">
@@ -262,7 +262,7 @@ function BannerEditor({ banner, onBack, onSaveSuccess }) {
                         <div className="col-span-full">
                             <label className="block text-sm font-semibold text-slate-700 mb-1">Top Banner Image URL (Full Width Inner Page Header)</label>
                             <div className="flex items-center gap-3">
-                                <input name="topBannerImage" value={formData.topBannerImage} onChange={handleChange} className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://res.cloudinary.com/..." />
+                                <input name="topBannerImage" value={formData.topBannerImage} onChange={handleChange} className="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Image URL or upload →" />
                                 <div className="relative">
                                     <input type="file" onChange={(e) => handleImageUpload(e, 'topBannerImage')} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
                                     <button type="button" disabled={uploadingTop} className="px-4 py-2 bg-slate-100 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-200 flex items-center gap-2 disabled:opacity-50">

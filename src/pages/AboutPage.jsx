@@ -199,7 +199,7 @@ const content = {
   },
 };
 
-// ─── IMAGES — replace with your Cloudinary URLs ──────────────────────────────
+// ─── IMAGES ──────────────────────────────────────────────────────────────────
 const GALLERY_IMAGES = [
   "/gallery/Youtube photo.jpg.jpeg",
   "/gallery/IMG_2117 copy.jpg.jpeg",

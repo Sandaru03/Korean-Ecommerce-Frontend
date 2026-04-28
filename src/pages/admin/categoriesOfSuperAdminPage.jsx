@@ -5,18 +5,18 @@ import toast from "react-hot-toast";
 import { FaPlus, FaEdit, FaTrash, FaArrowLeft, FaLayerGroup } from "react-icons/fa";
 import Loader from "../../components/admin-utils/loader";
 
-// ── Cloudinary upload helper ─────────────────────────────────────────────────
-async function uploadImageToCloudinary(file, backendUrl) {
+// ── Image upload helper ──────────────────────────────────────────────────────
+async function uploadImageToServer(file, backendUrl) {
     const formData = new FormData();
     formData.append("images", file);
-    const res = await axios.post(`${backendUrl}/upload/cloudinary`, formData, {
+    const res = await axios.post(`${backendUrl}/upload/local`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
     });
     return res.data.urls[0];
 }
 
-// ── CloudinaryImagePicker ────────────────────────────────────────────────────
-function CloudinaryImagePicker({ value, onChange, label = "Image", accentColor = "purple" }) {
+// ── ImagePicker ──────────────────────────────────────────────────────────────
+function ImagePicker({ value, onChange, label = "Image", accentColor = "purple" }) {
     const fileRef = useRef(null);
     const [uploading, setUploading] = useState(false);
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
@@ -26,7 +26,7 @@ function CloudinaryImagePicker({ value, onChange, label = "Image", accentColor =
         if (!file) return;
         try {
             setUploading(true);
-            const url = await uploadImageToCloudinary(file, backendUrl);
+            const url = await uploadImageToServer(file, backendUrl);
             onChange(url);
             toast.success("Image uploaded!");
         } catch {
@@ -274,7 +274,7 @@ export default function CategoriesOfSuperAdminPage() {
                                 className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
                             />
                         </div>
-                        <CloudinaryImagePicker
+                        <ImagePicker
                             value={addImage}
                             onChange={setAddImage}
                             label="Category Image"
@@ -334,7 +334,7 @@ export default function CategoriesOfSuperAdminPage() {
                                                 className="w-full border border-blue-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
                                             />
                                         </div>
-                                        <CloudinaryImagePicker
+                                        <ImagePicker
                                             value={editImage}
                                             onChange={setEditImage}
                                             label="Category Image"

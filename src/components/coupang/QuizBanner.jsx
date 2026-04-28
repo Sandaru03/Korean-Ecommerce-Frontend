@@ -7,7 +7,7 @@ export function QuizBanner() {
                 <Link to="/quiz" className="block w-full h-full group/item overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 opacity-60 pointer-events-none" />
                     <img 
-                        src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1200&auto=format&fit=crop" 
+                        src="/Skin.jpg.jpeg" 
                         alt="Skin Type Quiz" 
                         className="w-full h-auto block bg-[#f8f8f8] transition-transform duration-1000 group-hover/item:scale-105" 
                     />

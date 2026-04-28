@@ -7,9 +7,9 @@ export default function mediaUpload(file) {
         }
 
         const formData = new FormData();
-        formData.append("images", file); // Key must match backend uploadCloudinary.array('images')
+        formData.append("images", file); // Key must match backend uploadProductImages.array('images')
 
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}/upload/cloudinary`, formData, {
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}/upload/local`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },

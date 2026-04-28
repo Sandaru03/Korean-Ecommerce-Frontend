@@ -513,7 +513,7 @@ export default function SubCategoryAdminPage() {
                                             value={addImage}
                                             onChange={e => setAddImage(e.target.value)}
                                             className="flex-1 px-5 py-3.5 bg-slate-50 border-none rounded-2xl outline-none font-bold text-slate-800 placeholder:text-slate-300 transition-all"
-                                            placeholder="Cloudinary/Image URL"
+                                            placeholder="Image URL"
                                         />
                                         <label className="p-4 bg-slate-100 rounded-2xl cursor-pointer hover:bg-slate-200 transition-colors flex items-center justify-center aspect-square">
                                             <FaImage className="text-slate-500 w-5 h-5" />

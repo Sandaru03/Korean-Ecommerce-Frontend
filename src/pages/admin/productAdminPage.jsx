@@ -87,12 +87,15 @@ export default function ProductAdminPage() {
                                         <BiTrash
                                             className="bg-red-600 p-2 text-3xl rounded-full text-white shadow cursor-pointer hover:bg-red-700 transition"
                                             onClick={() => {
-                                                // Auth check removed
+                                                const token = localStorage.getItem("token");
                                                 axios
                                                     .delete(
                                                         import.meta.env.VITE_BACKEND_URL +
                                                         "/products/" +
-                                                        product.productId
+                                                        product.productId,
+                                                        {
+                                                            headers: { Authorization: `Bearer ${token}` }
+                                                        }
                                                     )
                                                     .then((res) => {
                                                         toast.success("Product Deleted Successfully");
