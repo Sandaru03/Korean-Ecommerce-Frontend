@@ -201,17 +201,41 @@ const content = {
 
 // ─── IMAGES ──────────────────────────────────────────────────────────────────
 const GALLERY_IMAGES = [
-  "/gallery/Youtube photo.jpg.jpeg",
-  "/gallery/IMG_2117 copy.jpg.jpeg",
-  "/gallery/IMG_2328 copy.jpg.jpeg",
-  "/gallery/IMG_2393 copy.jpg.jpeg",
-  "/gallery/IMG_2514 copy.jpg.jpeg",
-  "/gallery/IMG_2767 copy.jpg.jpeg",
-  "/gallery/IMG_5547.JPG.jpeg",
-  "/gallery/IMG_5550.JPG.jpeg"
+  "/gallery/Youtube photo.jpg.webp",
+  "/gallery/IMG_2117 copy.jpg.webp",
+  "/gallery/IMG_2328 copy.jpg.webp",
+  "/gallery/IMG_2393 copy.jpg.webp",
+  "/gallery/IMG_2514 copy.jpg.webp",
+  "/gallery/IMG_2767 copy.jpg.webp",
+  "/gallery/IMG_5547.JPG.webp",
+  "/gallery/IMG_5550.JPG.webp"
 ];
-const HERO_BG_IMAGE   = "/gallery/Youtube photo.jpg.jpeg";
+const HERO_BG_IMAGE   = "/gallery/Youtube photo.jpg.webp";
 const VISION_BG_IMAGE = "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1600&q=80";
+
+// ─── HELPER COMPONENTS ──────────────────────────────────────────────────────
+function GalleryImage({ src, alt }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="w-full h-full bg-gray-200 relative overflow-hidden">
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        className={`w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      {!loaded && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-[#E4405F]/20 border-t-[#E4405F] rounded-full animate-spin" />
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
 export default function AboutPage() {
@@ -244,6 +268,8 @@ export default function AboutPage() {
         <img
           src={HERO_BG_IMAGE}
           alt="K-Beauty"
+          fetchpriority="high"
+          decoding="async"
           className="absolute inset-0 w-full h-full object-cover brightness-[0.5]"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-transparent" />
@@ -305,8 +331,8 @@ export default function AboutPage() {
             <div className="animate-marquee gap-6 px-3">
               {/* Double the array for seamless looping */}
               {[...GALLERY_IMAGES, ...GALLERY_IMAGES].map((img, idx) => (
-                <div key={idx} className="w-[260px] md:w-[320px] h-[340px] md:h-[420px] flex-shrink-0 rounded-2xl overflow-hidden shadow-sm border border-gray-100 transition-transform duration-500 hover:scale-[1.03] cursor-pointer">
-                  <img src={img} alt="Gallery item" className="w-full h-full object-cover hover:brightness-110 transition-all duration-300" />
+                <div key={idx} className="w-[260px] md:w-[320px] h-[340px] md:h-[420px] flex-shrink-0 rounded-2xl overflow-hidden shadow-sm border border-gray-100 transition-transform duration-500 hover:scale-[1.03] cursor-pointer bg-gray-100">
+                  <GalleryImage src={img} alt="Gallery item" />
                 </div>
               ))}
             </div>

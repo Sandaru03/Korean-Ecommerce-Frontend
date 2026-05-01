@@ -103,14 +103,34 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-[#f5f5f5] bg-gray-50/30">
           <div className="mx-auto flex max-w-[1040px] flex-col md:flex-row items-center justify-between px-4 py-6 gap-4">
-            <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            {/* Left: Motto */}
+            <div className="flex-1 flex justify-center md:justify-start">
               <p className="text-[12px] text-[#888] font-medium">
                 Samee and Sandu Corp. | Your Korean Lifestyle Partner
               </p>
             </div>
-            <p className="text-[11px] text-[#aaa]">
-              &copy; {new Date().getFullYear()} Samee and Sandu. All rights reserved.
-            </p>
+
+            {/* Middle: Developer Credit */}
+            <div className="flex-1 flex justify-center">
+              <p className="text-[10px] text-[#bbb] tracking-wide">
+                Developed by{" "}
+                <a 
+                  href="https://www.syntechcraft.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-[#E4405F] font-semibold hover:text-[#c43650] transition-colors"
+                >
+                  SynTechCraft
+                </a>
+              </p>
+            </div>
+
+            {/* Right: Copyright */}
+            <div className="flex-1 flex justify-center md:justify-end">
+              <p className="text-[11px] text-[#aaa]">
+                &copy; {new Date().getFullYear()} Samee and Sandu. All rights reserved.
+              </p>
+            </div>
           </div>
         </div>
       </div>
