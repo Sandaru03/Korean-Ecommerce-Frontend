@@ -224,7 +224,22 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/app-configs/send-order-email`, {
                 summary: summaryText,
                 email: orderEmail,
-                slipImageUrl: finalSlipUrl || null
+                slipImageUrl: finalSlipUrl || null,
+                orderData: {
+                    name: name || "—",
+                    phone: phone || "—",
+                    address: address || "—",
+                    items: cart.map(item => ({
+                        name: item.name,
+                        image: item.image || null,
+                        price: item.price,
+                        qty: item.qty
+                    })),
+                    subtotal,
+                    deliveryFee,
+                    grandTotal,
+                    totalItems
+                }
             })
             clearCart()
             window.scrollTo({ top: 0, behavior: "instant" })
