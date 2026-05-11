@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
 import { useCart } from "@/context/CartContext"
+import { useCurrency } from "@/context/CurrencyContext"
 import { Minus, Plus, Trash2, ShoppingBag, MessageCircle, Mail, ChevronRight, AlertCircle, Loader2, ImagePlus, X } from "lucide-react"
 import toast from "react-hot-toast"
 import axios from "axios"
@@ -25,6 +26,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
     const [slipUrl, setSlipUrl] = useState(null)
     const [uploadingSlip, setUploadingSlip] = useState(false)
     const { clearCart } = useCart()
+    const { formatPrice } = useCurrency()
 
     // Auto-fill name and phone from the logged-in user's profile
     useEffect(() => {
@@ -52,11 +54,11 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
 
 
     const orderLines = cart.map(item =>
-        `• ${item.name} x${item.qty} — LKR ${fmt(item.price * item.qty)}`
+        `• ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}`
     ).join("\n")
 
     const deliveryLine = deliveryFee > 0
-        ? `\nDelivery Fee: LKR ${fmt(deliveryFee)} (${totalItems} items)`
+        ? `\nDelivery Fee: ${formatPrice(deliveryFee)} (${totalItems} items)`
         : "\nDelivery: Free"
 
     const slipLine = slipUrl ? `\n\n📎 *Payment Slip:* ${slipUrl}` : ""
@@ -68,7 +70,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         `*Address:* ${address || "—"}\n\n` +
         `*Items:*\n${orderLines}\n` +
         `${deliveryLine}\n` +
-        `*Total: LKR ${fmt(grandTotal)}*` +
+        `*Total: ${formatPrice(grandTotal)}*` +
         slipLine
 
     async function saveOrderToDb() {
@@ -167,7 +169,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             `*Address:* ${address || "—"}\n\n` +
             `*Items:*\n${orderLines}\n` +
             `${deliveryLine}\n` +
-            `*Total: LKR ${fmt(grandTotal)}*` +
+            `*Total: ${formatPrice(grandTotal)}*` +
             finalSlipLine
 
         // Clean number for wa.me (numbers only)
@@ -276,23 +278,23 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                         {cart.map(item => (
                             <div key={item.id} className="flex justify-between text-[13px] text-[#555]">
                                 <span className="truncate max-w-[70%]">{item.name} × {item.qty}</span>
-                                <span className="font-semibold text-[#111]">LKR {fmt(item.price * item.qty)}</span>
+                                <span className="font-semibold text-[#111]">{formatPrice(item.price * item.qty)}</span>
                             </div>
                         ))}
                         <div className="border-t border-[#eee] pt-2 mt-2 space-y-1">
                             <div className="flex justify-between text-[13px] text-[#555]">
                                 <span>Subtotal</span>
-                                <span>LKR {fmt(subtotal)}</span>
+                                <span>{formatPrice(subtotal)}</span>
                             </div>
                             {deliveryFee > 0 && (
                                 <div className="flex justify-between text-[13px] text-primary font-semibold">
                                     <span>Delivery Fee ({totalItems} items)</span>
-                                    <span>LKR {fmt(deliveryFee)}</span>
+                                    <span>{formatPrice(deliveryFee)}</span>
                                 </div>
                             )}
                             <div className="flex justify-between text-[16px] font-black text-[#111] pt-1 border-t border-[#ddd]">
                                 <span>Total</span>
-                                <span>LKR {fmt(grandTotal)}</span>
+                                <span>{formatPrice(grandTotal)}</span>
                             </div>
                         </div>
                     </div>
@@ -434,6 +436,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
 export default function CartPage() {
     const navigate = useNavigate()
     const { cart, updateQty, removeFromCart, totalItems, subtotal, deliveryFee, grandTotal } = useCart()
+    const { formatPrice } = useCurrency()
     const [showCheckout, setShowCheckout] = useState(false)
     const [contactNumber, setContactNumber] = useState("")
 
@@ -539,7 +542,7 @@ export default function CartPage() {
                                     {/* Info */}
                                     <div className="flex-1 min-w-0">
                                         <p className="font-bold text-[#111] text-[15px] leading-snug mb-1">{item.name}</p>
-                                        <p className="text-primary font-black text-[18px] mb-3">LKR {fmt(item.price)}</p>
+                                        <p className="text-primary font-black text-[18px] mb-3">{formatPrice(item.price)}</p>
                                         
                                         {/* Qty Controls */}
                                         <div className="flex items-center gap-3">
@@ -570,7 +573,7 @@ export default function CartPage() {
                                     {/* Line Total */}
                                     <div className="shrink-0 md:text-right border-t md:border-t-0 border-[#eee] pt-3 md:pt-0">
                                         <p className="text-[12px] text-[#999]">Item Total</p>
-                                        <p className="font-black text-[20px] text-[#111]">LKR {fmt(item.price * item.qty)}</p>
+                                        <p className="font-black text-[20px] text-[#111]">{formatPrice(item.price * item.qty)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -586,7 +589,7 @@ export default function CartPage() {
                                 <div>
                                     <p className="text-[13px] font-bold text-primary">Delivery Fee Applied</p>
                                     <p className="text-[12px] text-primary/80 mt-0.5">
-                                        Orders with less than 3 items include a LKR 500 delivery charge. Add {3 - totalItems} more {3 - totalItems === 1 ? 'item' : 'items'} for free delivery!
+                                        Orders with less than 3 items include a {formatPrice(400)} delivery charge. Add {3 - totalItems} more {3 - totalItems === 1 ? 'item' : 'items'} for free delivery!
                                     </p>
                                 </div>
                             </div>
@@ -609,12 +612,12 @@ export default function CartPage() {
                             <div className="space-y-2.5 text-[14px]">
                                 <div className="flex justify-between text-[#555]">
                                     <span>Subtotal ({totalItems} items)</span>
-                                    <span className="font-semibold text-[#111]">LKR {fmt(subtotal)}</span>
+                                    <span className="font-semibold text-[#111]">{formatPrice(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between text-[#555]">
                                     <span>Delivery</span>
                                     {deliveryFee > 0 ? (
-                                        <span className="font-semibold text-primary">LKR {fmt(deliveryFee)}</span>
+                                        <span className="font-semibold text-primary">{formatPrice(deliveryFee)}</span>
                                     ) : (
                                         <span className="font-semibold text-[#16a34a]">FREE</span>
                                     )}
@@ -623,8 +626,7 @@ export default function CartPage() {
                             <div className="border-t-2 border-[#111] mt-4 pt-4 flex justify-between items-baseline">
                                 <span className="font-bold text-[#111] text-[15px]">Total</span>
                                 <div className="text-right">
-                                    <p className="text-[11px] text-[#999]">LKR</p>
-                                    <p className="font-black text-[28px] text-[#111] leading-none">LKR {fmt(grandTotal)}</p>
+                                    <p className="font-black text-[28px] text-[#111] leading-none">{formatPrice(grandTotal)}</p>
                                 </div>
                             </div>
 

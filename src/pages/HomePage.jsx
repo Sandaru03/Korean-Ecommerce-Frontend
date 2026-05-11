@@ -13,6 +13,8 @@ import { TimeDealsSection } from "@/components/coupang/TimeDealsSection"
 import { FeaturedProductStrip } from "@/components/coupang/FeaturedProductStrip"
 import { FlashDealsSection } from "@/components/coupang/FlashDealsSection"
 import { QuizBanner } from "@/components/coupang/QuizBanner"
+import ReviewGallery from "@/components/coupang/ReviewGallery"
+
 
 function resolveImage(p) {
     let imgs = p.images
@@ -354,7 +356,11 @@ export default function HomePage() {
             {/* Empty state if no topics at all */}
             {!topicsLoading && activeTopicsWithProducts.length === 0 && <EmptyTopics />}
 
+            {/* Review Gallery */}
+            <ReviewGallery />
+
             <Footer />
+
         </div>
     )
 }

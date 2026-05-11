@@ -63,8 +63,8 @@ export function CartProvider({ children }) {
     const totalItems = cart.reduce((sum, item) => sum + item.qty, 0)
     // Subtotal
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
-    // Delivery fee: 500 LKR if less than 3 items, FREE if 3 or more items
-    const deliveryFee = (totalItems > 0 && totalItems < 3) ? 500 : 0
+    // Delivery fee: 400 LKR if less than 3 items, FREE if 3 or more items
+    const deliveryFee = (totalItems > 0 && totalItems < 3) ? 400 : 0
     // Grand total
     const grandTotal = subtotal + deliveryFee
 

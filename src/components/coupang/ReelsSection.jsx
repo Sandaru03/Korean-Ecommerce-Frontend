@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Volume2, VolumeX, ChevronRight, ChevronLeft, X, Play, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export function ReelsSection() {
     const [reels, setReels] = useState([]);
@@ -91,6 +92,7 @@ export function ReelsSection() {
 
 function ProductOverlay({ product, className = "" }) {
     const navigate = useNavigate();
+    const { formatPrice } = useCurrency();
     
     const resolveImage = (p) => {
         if (!p) return "/default-product.jpg";
@@ -123,7 +125,7 @@ function ProductOverlay({ product, className = "" }) {
                 </p>
                 <div className="flex items-center gap-1.5 sm:gap-2.5">
                     <span className="text-white text-[10px] sm:text-[13px] font-black">
-                        Rs.{product.price.toLocaleString()}
+                        {formatPrice(product.price)}
                     </span>
                 </div>
             </div>

@@ -8,7 +8,7 @@ import { HiMenu, HiX } from "react-icons/hi";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { MdDashboard } from "react-icons/md";
-import { FaFilePen, FaVideo } from "react-icons/fa6";
+import { FaFilePen, FaVideo, FaImages } from "react-icons/fa6";
 import { IoMdHome } from "react-icons/io";
 
 // Pages
@@ -36,6 +36,8 @@ import ManageTimeDeals from "./admin/ManageTimeDeals";
 import AdminManagementPage from "./admin/AdminManagementPage";
 import ManageFeaturedStrip from "./admin/ManageFeaturedStrip";
 import ManageFlashDeals from "./admin/ManageFlashDeals";
+import ManageGalleryReviews from "./admin/ManageGalleryReviews";
+
 
 // Sidebar link
 function SidebarLink({ to, icon: Icon, label, onClick }) {
@@ -91,6 +93,7 @@ function DashboardHero() {
                     { label: "Reels", to: "/admin/reels", icon: FaVideo, color: "bg-indigo-500" },
                     { label: "Time Deals", to: "/admin/time-deals", icon: FaFilePen, color: "bg-amber-500" },
                     { label: "Flash Deals", to: "/admin/flash-deals", icon: FaFilePen, color: "bg-rose-500" },
+                    { label: "Review Gallery", to: "/admin/gallery-reviews", icon: FaImages, color: "bg-indigo-600" },
                     { label: "Admins", to: "/admin/admins", icon: RiAdminFill, color: "bg-slate-900" },
                 ].map((c) => (
                     <NavLink
@@ -207,6 +210,8 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/time-deals" icon={FaFilePen} label="Time Deals" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/flash-deals" icon={FaFilePen} label="Flash Deals" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/featured-strip" icon={FaFilePen} label="Featured Strip" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/gallery-reviews" icon={FaFilePen} label="Review Gallery" onClick={() => setSidebarOpen(false)} />
+
                         
                         <div className="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                             Settings & Security
@@ -292,6 +297,8 @@ export default function AdminPage() {
                             <Route path="time-deals" element={<ManageTimeDeals />} />
                             <Route path="flash-deals" element={<ManageFlashDeals />} />
                             <Route path="featured-strip" element={<ManageFeaturedStrip />} />
+                            <Route path="gallery-reviews" element={<ManageGalleryReviews />} />
+
                             <Route path="admins" element={<AdminManagementPage />} />
                         </Routes>
                     </div>

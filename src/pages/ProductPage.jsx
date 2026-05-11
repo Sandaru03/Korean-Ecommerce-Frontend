@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import axios from "axios"
 import { useCart } from "@/context/CartContext"
+import { useCurrency } from "@/context/CurrencyContext"
 import toast from "react-hot-toast"
 
 // Product details are now fetched directly from the database description field.
@@ -34,6 +35,7 @@ import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 export default function ProductPage() {
     const { id } = useParams()
     const { addToCart } = useCart()
+    const { formatPrice } = useCurrency()
     const navigate = useNavigate()
 
     const [product, setProduct] = useState(null)
@@ -306,18 +308,19 @@ export default function ProductPage() {
 
                         {/* Price Area */}
                         <div className="flex flex-col mb-6">
-                            {product.labellPrice && product.labellPrice > product.price && (
-                                <span className="text-[13px] md:text-[14px] text-[#999] line-through font-medium leading-none mb-2">LKR {Number(product.labellPrice).toLocaleString('en-IN')}</span>
-                            )}
-                            <div className="flex items-baseline gap-2 leading-none">
-                                {discountPct && (
-                                    <span className="text-primary font-bold">{discountPct}%</span>
-                                )}
-                                <span className="text-neutral-dark text-xl md:text-2xl font-bold">
-                                    <span className="text-[18px] md:text-[22px] font-bold mr-0.5">LKR </span>
-                                    {Number(product.price).toLocaleString('en-IN')}
+                            <div className="flex items-baseline gap-2 leading-none mb-1">
+                                <span className="text-neutral-dark text-2xl md:text-3xl font-black">
+                                    {formatPrice(Number(product.price))}
                                 </span>
+                                {discountPct && (
+                                    <span className="text-primary text-lg md:text-xl font-bold">{discountPct}% OFF</span>
+                                )}
                             </div>
+                            {product.labellPrice && product.labellPrice > product.price && (
+                                <span className="text-[14px] md:text-[15px] text-[#999] line-through font-medium ml-1">
+                                    Original: {formatPrice(Number(product.labellPrice))}
+                                </span>
+                            )}
                         </div>
 
                         {/* Badges */}

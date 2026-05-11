@@ -2,11 +2,13 @@
 import { Link } from "react-router-dom"
 import { ShoppingBag } from "lucide-react"
 import { useCart } from "@/context/CartContext"
+import { useCurrency } from "@/context/CurrencyContext"
 import toast from "react-hot-toast"
 
 /* eslint-disable react/prop-types */
 export function CommonProductCard({ product }) {
     const { addToCart } = useCart()
+    const { formatPrice } = useCurrency()
     const brandName = product.name ? product.name.split(" ")[0] : "Brand"
 
     // Robust image handling
@@ -90,21 +92,21 @@ export function CommonProductCard({ product }) {
 
                 {/* Price Section */}
                 <div className="flex flex-col pt-1">
-                    {hasDiscount && (
-                        <p className="text-[12px] text-[#999] line-through font-medium leading-none decoration-[#999]">
-                            LKR {labellPrice.toLocaleString()}
+                    <div className="flex items-center gap-2">
+                        <p className="text-[17px] font-black text-[#111] leading-none">
+                            {formatPrice(price)}
                         </p>
-                    )}
-                    <div className="flex items-center gap-2 mt-1">
                         {hasDiscount && (
-                            <span className="text-[16px] font-black text-[#ff1268]">
+                            <span className="text-[14px] font-bold text-[#ff1268]">
                                 {Math.round(((labellPrice - price) / labellPrice) * 100)}%
                             </span>
                         )}
-                        <p className="text-[16px] font-black text-[#111] leading-none">
-                            LKR {price.toLocaleString()}
-                        </p>
                     </div>
+                    {hasDiscount && (
+                        <p className="text-[11px] text-[#999] line-through font-medium mt-0.5 decoration-[#bbb]">
+                            {formatPrice(labellPrice)}
+                        </p>
+                    )}
                 </div>
             </div>
         </Link>

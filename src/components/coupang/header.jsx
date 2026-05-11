@@ -4,6 +4,7 @@ import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut, LogIn, CircleHel
 import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useCart } from "@/context/CartContext"
+import { useCurrency } from "@/context/CurrencyContext"
 import axios from "axios"
 
 // static NAV_CATEGORIES removed in favor of dynamic fetching
@@ -15,9 +16,13 @@ export function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const userMenuRef = useRef(null)
   const catMenuRef = useRef(null)
+  const currencyMenuRef = useRef(null)
+  const mobileCurrencyMenuRef = useRef(null)
+  const [showCurrencyMenu, setShowCurrencyMenu] = useState(false)
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const navigate = useNavigate()
   const { totalItems } = useCart()
+  const { currency, setCurrency, exchangeRates, formatPrice } = useCurrency()
 
   const [navRowCategories, setNavRowCategories] = useState([])
   const [navDropdownCategories, setNavDropdownCategories] = useState([])
@@ -131,6 +136,10 @@ export function Header() {
       if (catMenuRef.current && !catMenuRef.current.contains(e.target)) {
         setShowCategories(false)
       }
+      if (currencyMenuRef.current && !currencyMenuRef.current.contains(e.target) && 
+          mobileCurrencyMenuRef.current && !mobileCurrencyMenuRef.current.contains(e.target)) {
+        setShowCurrencyMenu(false)
+      }
     }
     document.addEventListener("mousedown", handleClickOutside)
     return () => document.removeEventListener("mousedown", handleClickOutside)
@@ -191,7 +200,7 @@ export function Header() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-[13px] font-medium text-[#111] truncate">{product.name}</div>
-                      <div className="text-[12px] font-bold text-rose-500">LKR {product.price}</div>
+                      <div className="text-[12px] font-bold text-rose-500">{formatPrice(product.price)}</div>
                     </div>
                   </Link>
                 ))}
@@ -267,6 +276,37 @@ export function Header() {
 
           {/* Right Icons */}
           <div className="flex items-center gap-2">
+            {/* Currency Selector */}
+            <div className="relative" ref={currencyMenuRef}>
+              <button
+                onClick={() => setShowCurrencyMenu(!showCurrencyMenu)}
+                className="flex flex-col items-center gap-0.5 px-2 py-1 text-neutral-dark hover:text-primary transition-colors"
+              >
+                <div className="flex items-center gap-1">
+                  <span className="text-[11px] font-black uppercase tracking-tight">{currency}</span>
+                  <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${showCurrencyMenu ? 'rotate-180' : ''}`} />
+                </div>
+                <span className="text-[10px]">Currency</span>
+              </button>
+              
+              {showCurrencyMenu && (
+                <div className="absolute right-0 top-full mt-1 w-32 rounded-xl border border-gray-100 bg-white shadow-xl z-[9999] overflow-hidden py-1">
+                  {['LKR', 'USD', 'EUR', 'GBP', 'AUD', 'KRW', 'JPY'].filter(c => exchangeRates[c] || c === 'LKR').map(c => (
+                    <button
+                      key={c}
+                      onClick={() => { setCurrency(c); setShowCurrencyMenu(false); }}
+                      className={`flex w-full items-center justify-between px-4 py-2 text-sm transition-colors ${
+                        currency === c ? "bg-red-50 text-primary font-bold" : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      {c}
+                      {currency === c && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setShowUserMenu((v) => !v)}
@@ -376,14 +416,31 @@ export function Header() {
                 Samee And Sandu
               </span>
             </Link>
-            <button onClick={handleCartClick} className="relative text-black">
-              <ShoppingCart className="h-6 w-6 stroke-[1.5]" />
-              {totalItems > 0 && (
-                <span className="absolute -top-1 -right-2 bg-[#ff1268] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center">
-                  {totalItems > 9 ? '9+' : totalItems}
-                </span>
+            {/* Mobile Currency Selector - Replacing redundant cart button */}
+            <div className="relative" ref={mobileCurrencyMenuRef}>
+              <button
+                onClick={() => setShowCurrencyMenu(!showCurrencyMenu)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[12px] font-black text-[#111] transition-all shadow-sm active:scale-95"
+              >
+                <span className="uppercase tracking-tight">{currency}</span>
+                <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform ${showCurrencyMenu ? 'rotate-180' : ''}`} />
+              </button>
+              {showCurrencyMenu && (
+                <div className="absolute right-0 top-full mt-2 w-32 rounded-xl border border-gray-100 bg-white shadow-2xl z-[10000] overflow-hidden py-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {['LKR', 'USD', 'EUR', 'GBP', 'AUD', 'KRW', 'JPY'].filter(c => exchangeRates[c] || c === 'LKR').map(c => (
+                    <button
+                      key={`m-curr-${c}`}
+                      onClick={() => { setCurrency(c); setShowCurrencyMenu(false); }}
+                      className={`flex w-full items-center justify-between px-4 py-2.5 text-sm ${
+                        currency === c ? "bg-red-50 text-primary font-bold" : "text-gray-700 active:bg-gray-50"
+                      }`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
               )}
-            </button>
+            </div>
           </div>
           <form onSubmit={handleSearchSubmit} className="relative flex w-full items-center" ref={mobileSearchContainerRef}>
             <input
@@ -401,20 +458,18 @@ export function Header() {
           </form>
 
           {/* Swippable Categories (Full list for mobile) */}
-          {(navRowCategories.length > 0 || navDropdownCategories.length > 0) && (
-            <div className="flex overflow-x-auto gap-2 no-scrollbar pb-0 pt-0">
-              {/* Combine and de-duplicate by ID */}
-              {Array.from(new Map([...navRowCategories, ...navDropdownCategories].map(c => [c.id, c])).values()).map((cat) => (
-                <Link
-                  key={cat.id}
-                  to={`/super-category/${cat.slug}`}
-                  className="whitespace-nowrap px-4 py-2 bg-gray-50 rounded-full text-[14px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors border border-gray-100"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
-          )}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0 pt-0">
+            {/* Combine and de-duplicate by ID */}
+            {Array.from(new Map([...navRowCategories, ...navDropdownCategories].map(c => [c.id, c])).values()).map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/super-category/${cat.slug}`}
+                className="whitespace-nowrap px-4 py-2 bg-gray-50 rounded-full text-[14px] font-semibold text-gray-700 hover:bg-gray-100 transition-colors border border-gray-100"
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
         </div>
       </header>
 
