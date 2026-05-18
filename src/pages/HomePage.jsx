@@ -202,7 +202,7 @@ export default function HomePage() {
     );
 
     return (
-        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white overflow-x-hidden">
+        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white overflow-x-clip">
             <Header />
 
             {/* Hero Banner */}

@@ -142,6 +142,13 @@
     @apply bg-bg-main text-neutral-dark;
     background-color: #ffffff;
   }
+  button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    cursor: pointer;
+  }
 }
 
 @utility perspective-1000 {

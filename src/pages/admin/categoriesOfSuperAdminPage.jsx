@@ -391,13 +391,6 @@ export default function CategoriesOfSuperAdminPage() {
                                         {/* Actions */}
                                         <div className="flex items-center gap-1 shrink-0">
                                             <button
-                                                onClick={() => navigate(`/admin/categories/${cat.id}/products`)}
-                                                className="px-2 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-blue-100"
-                                                title="Manage products"
-                                            >
-                                                Products
-                                            </button>
-                                            <button
                                                 onClick={() => navigate(`/admin/categories/${cat.id}/subcategories`)}
                                                 className="px-2 py-1.5 text-xs font-medium text-purple-600 hover:bg-purple-50 rounded-lg transition-colors border border-purple-100"
                                                 title="Manage subcategories"

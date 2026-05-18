@@ -243,7 +243,7 @@ export default function AboutPage() {
   const t = content[lang];
 
   return (
-    <div className="font-sans bg-gray-50 text-gray-900 overflow-x-hidden">
+    <div className="font-sans bg-gray-50 text-gray-900 overflow-x-clip">
       <Header />
 
       {/* ── LANGUAGE SWITCHER ── */}

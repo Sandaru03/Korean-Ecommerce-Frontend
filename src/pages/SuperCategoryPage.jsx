@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams, Link } from "react-router-dom"
+import { useParams, Link, useLocation } from "react-router-dom"
 import axios from "axios"
 import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
@@ -35,11 +35,11 @@ function CategoryCircles({ categories, selectedId, onSelect, title }) {
                                 className="flex flex-col items-center gap-2 group shrink-0 w-[90px] md:w-[110px]"
                             >
                                 <div className={`w-[85px] h-[85px] md:w-[105px] md:h-[105px] rounded-full flex items-center justify-center transition-all duration-300 ${isActive ? "border-[3px] border-[#ff1268] p-1 shadow-md scale-[1.03]" : "border-[2px] border-transparent p-1 group-hover:border-gray-200 group-hover:shadow-sm group-hover:scale-[1.03]"}`}>
-                                    <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden p-2 md:p-2.5 ${bgColor}`}>
+                                    <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden ${bgColor}`}>
                                         <img
                                             src={cat.image || `https://picsum.photos/seed/${cat.slug}/200`}
                                             alt={cat.name}
-                                            className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
+                                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                                         />
                                     </div>
                                 </div>
@@ -59,6 +59,7 @@ function CategoryCircles({ categories, selectedId, onSelect, title }) {
 // ── Main Page Component ────────────────────────────────────────
 export default function SuperCategoryPage() {
     const { slug } = useParams()
+    const location = useLocation()
 
     const [superCategory, setSuperCategory] = useState(null)   // depth-0
     const [selectedCategory, setSelectedCategory] = useState(null) // depth-1
@@ -78,7 +79,17 @@ export default function SuperCategoryPage() {
                 const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/categories/slug/${slug}`)
                 const cat = res.data.category
                 setSuperCategory(cat)
-                setSelectedCategory(null)
+                
+                const queryParams = new URLSearchParams(location.search)
+                const selectedSlug = queryParams.get('selected')
+                
+                if (selectedSlug && cat.children) {
+                    const match = cat.children.find(c => c.slug === selectedSlug)
+                    setSelectedCategory(match || null)
+                } else {
+                    setSelectedCategory(null)
+                }
+                
                 setSelectedSubName(null)
                 setPage(1)
             } catch (err) {
@@ -89,7 +100,7 @@ export default function SuperCategoryPage() {
             }
         }
         fetch()
-    }, [slug])
+    }, [slug, location.search])
 
 
     // Shuffle utility

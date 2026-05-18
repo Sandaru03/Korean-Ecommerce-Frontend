@@ -68,7 +68,7 @@ function TopPills({ subcategories, currentPath, onNavigate }) {
                     >
                         <div className={`w-[96px] h-[96px] rounded-full overflow-hidden border-[3px] transition-all duration-300 border-transparent hover:ring-2 hover:ring-primary hover:ring-offset-2`}>
                             <div className="w-full h-full bg-[#f8f8f8]">
-                                <img src={sub.image || "https://picsum.photos/seed/cat/200/200"} alt={sub.name} className="w-full h-full object-contain bg-[#f8f8f8] flex shrink-0 group-hover:scale-110 transition-transform duration-500" />
+                                <img src={sub.image || "https://picsum.photos/seed/cat/200/200"} alt={sub.name} className="w-full h-full object-cover bg-[#f8f8f8] flex shrink-0 group-hover:scale-110 transition-transform duration-500" />
                             </div>
                         </div>
                         <span className={`text-[13px] text-[#666] font-medium group-hover:text-primary group-hover:font-bold transition-all`}>{sub.name}</span>

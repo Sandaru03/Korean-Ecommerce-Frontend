@@ -101,13 +101,15 @@ export default function ProductPage() {
                 const maxScrollLeft = scrollWidth - clientWidth
                 let nextScrollLeft = scrollLeft + clientWidth
                 
-                if (nextScrollLeft > maxScrollLeft - 10) {
+                let behavior = 'smooth'
+                if (scrollLeft >= maxScrollLeft - 10) {
                     nextScrollLeft = 0
+                    behavior = 'auto'
                 }
                 
                 carouselRef.current.scrollTo({
                     left: nextScrollLeft,
-                    behavior: 'smooth'
+                    behavior: behavior
                 })
             }
         }, 3000)
@@ -373,15 +375,15 @@ export default function ProductPage() {
                 </div>
 
                 {/* ── Product Description Section ── */}
-                <div className="mt-20 border-t border-[#eee]">
+                <div className="mt-8 lg:mt-12 border-t border-[#eee]">
                     <div className="flex bg-white z-20 border-b border-[#111]">
                         <div className="py-4 px-8 text-[15px] font-bold text-[#111] border-b-[3px] border-[#111] -mb-[1px]">
                             Product Description
                         </div>
                     </div>
 
-                    <div className="py-16 max-w-[800px] mx-auto">
-                        <div className="space-y-12">
+                    <div className="py-4 lg:py-6 max-w-[800px] mx-auto">
+                        <div className="space-y-3 lg:space-y-4">
                             <h3 className="text-[24px] font-black text-[#111] leading-snug tracking-tight text-center">
                                 {product.name}
                             </h3>
@@ -394,7 +396,7 @@ export default function ProductPage() {
                                     <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                                 )}
                             </div>
-                            <div className="flex justify-center mt-4">
+                            <div className="flex justify-center">
                                 <button 
                                     onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
                                     className="px-6 py-2.5 border border-[#ccc] rounded-full text-[13px] font-bold text-[#111] bg-white hover:bg-[#f8f8f8] hover:border-[#999] transition-all shadow-sm"
@@ -409,7 +411,7 @@ export default function ProductPage() {
 
             {/* Suggested Products Section */}
             {suggestedProducts.length > 0 && (
-                <div className="border-t border-[#eee] bg-gray-50/30 py-16">
+                <div className="border-t border-[#eee] bg-gray-50/30 py-6 lg:py-8">
                     <div className="mx-auto max-w-[1040px] px-4">
                         <h2 className="text-[22px] font-bold text-[#111] mb-8 px-2">Suggested for You</h2>
                         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">

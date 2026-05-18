@@ -148,6 +148,11 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             return
         }
 
+        if (!slipFile && !slipUrl) {
+            toast.error("Please upload the payment slip before ordering.")
+            return
+        }
+
         if (!whatsappNumber) {
             toast.error("WhatsApp number is not configured yet.")
             return
@@ -204,6 +209,11 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
     async function handleEmail() {
         if (!name || !phone || !address) {
             toast.error("Please fill in all fields before ordering.")
+            return
+        }
+
+        if (!slipFile && !slipUrl) {
+            toast.error("Please upload the payment slip before ordering.")
             return
         }
 
@@ -373,7 +383,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
 
                     {/* Payment Slip Upload */}
                     <div className="space-y-2">
-                        <p className="font-bold text-[#111] text-[14px]">Payment Slip <span className="text-[12px] font-normal text-[#999]">(optional)</span></p>
+                        <p className="font-bold text-[#111] text-[14px]">Payment Slip <span className="text-primary ml-1">*</span></p>
                         {!slipPreview ? (
                             <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-[#ddd] rounded-xl py-6 cursor-pointer hover:border-primary hover:bg-red-50/30 transition-all group">
                                 <ImagePlus className="h-8 w-8 text-[#bbb] group-hover:text-primary transition-colors" strokeWidth={1.5} />

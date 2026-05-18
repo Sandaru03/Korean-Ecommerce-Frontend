@@ -112,7 +112,7 @@ export function Footer() {
 
             {/* Middle: Developer Credit */}
             <div className="flex-1 flex justify-center">
-              <p className="text-[10px] text-[#bbb] tracking-wide">
+              <p className="text-[13px] text-[#bbb] tracking-wide">
                 Developed by{" "}
                 <a 
                   href="https://www.syntechcraft.com" 

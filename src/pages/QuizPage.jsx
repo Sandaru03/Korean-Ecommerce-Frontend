@@ -4,7 +4,7 @@ import { SkinTypeQuiz } from "@/components/coupang/SkinTypeQuiz";
 
 export default function QuizPage() {
     return (
-        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white overflow-x-hidden">
+        <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white overflow-x-clip">
             <Header />
             
             {/* Custom Hero Section for Quiz Page */}
