@@ -15,6 +15,7 @@ export default function UpdateProductPage() {
     const [labellPrice, setLablePrice] = useState(location.state?.labellPrice || "");
     const [price, setPrice] = useState(location.state?.price || "");
     const [images, setImages] = useState([]);
+    const [existingImages, setExistingImages] = useState(location.state?.images || []);
     const [description, setDescription] = useState(location.state?.description || "");
     const [miniDescription, setMiniDescription] = useState(location.state?.miniDescription || "");
 
@@ -37,13 +38,9 @@ export default function UpdateProductPage() {
             altNames: altNamesInArray,
             labellPrice: labellPrice,
             price: price,
-            images: responses,
+            images: [...existingImages, ...responses],
             description: description,
             miniDescription: miniDescription
-        }
-
-        if (responses.length == 0) {
-            productData.images = location.state.images
         }
 
         const token = localStorage.getItem("token");
@@ -110,22 +107,47 @@ export default function UpdateProductPage() {
                 <div className="flex flex-col gap-1">
                     <label className="text-sm font-semibold">Images</label>
                     
-                    {/* Show existing images if any */}
-                    {location.state?.images && location.state.images.length > 0 && images.length === 0 && (
-                        <div className="flex gap-2 mb-2 overflow-x-auto pb-2">
-                            {location.state.images.map((img, idx) => (
-                                <img key={idx} src={img === "/defult-product.jpg" ? "/default-product.jpg" : (img || "/default-product.jpg")} alt={`Existing ${idx + 1}`} className="w-16 h-16 object-cover rounded-md border border-gray-300" />
-                            ))}
-                        </div>
-                    )}
-                    {location.state?.images && location.state.images.length > 0 && (
-                        <p className="text-xs text-orange-600 mb-1 font-medium">Selecting new images will replace all existing ones ({location.state.images.length} currently uploaded).</p>
-                    )}
-
                     <input multiple type="file" onChange={(e) => {
                         const files = Array.from(e.target.files);
                         setImages((prevImages) => [...prevImages, ...files])
-                    }} className="w-full border-[2px] h-[40px] rounded-md px-2" />
+                    }} className="w-full border-[2px] h-[40px] rounded-md px-2 mb-2" />
+
+                    {(existingImages.length > 0 || images.length > 0) && (
+                        <div className="flex gap-2 mt-2 overflow-x-auto pb-2 flex-wrap">
+                            {existingImages.map((img, idx) => (
+                                <div key={`existing-${idx}`} className="relative mt-2 mr-2">
+                                    <img src={img === "/defult-product.jpg" ? "/default-product.jpg" : (img || "/default-product.jpg")} alt={`Existing ${idx + 1}`} className="w-20 h-20 object-cover rounded-md border border-gray-300" />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newExisting = [...existingImages];
+                                            newExisting.splice(idx, 1);
+                                            setExistingImages(newExisting);
+                                        }}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            ))}
+                            {images.map((img, idx) => (
+                                <div key={`new-${idx}`} className="relative mt-2 mr-2">
+                                    <img src={URL.createObjectURL(img)} alt={`New ${idx + 1}`} className="w-20 h-20 object-cover rounded-md border border-gray-300" />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newImages = [...images];
+                                            newImages.splice(idx, 1);
+                                            setImages(newImages);
+                                        }}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex flex-col gap-1">

@@ -112,6 +112,26 @@ export default function AddProductPage() {
                         const files = Array.from(e.target.files);
                         setImages((prevImages) => [...prevImages, ...files])
                     }} className="w-full border-[2px] h-[40px] rounded-md px-2" />
+                    {images.length > 0 && (
+                        <div className="flex gap-2 mt-2 overflow-x-auto pb-2 flex-wrap">
+                            {images.map((img, idx) => (
+                                <div key={idx} className="relative mt-2 mr-2">
+                                    <img src={URL.createObjectURL(img)} alt={`New ${idx + 1}`} className="w-20 h-20 object-cover rounded-md border border-gray-300" />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newImages = [...images];
+                                            newImages.splice(idx, 1);
+                                            setImages(newImages);
+                                        }}
+                                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex flex-col gap-1">
