@@ -50,30 +50,30 @@ export function AdBannerSlider({ slot = 1 }) {
 
     return (
         <div 
-            className="relative w-full overflow-hidden rounded-none group aspect-[4/1] md:aspect-[6/1] transition-all duration-700 isolate bg-[#f8f8f8]"
+            className="relative w-full overflow-hidden rounded-none group aspect-auto md:aspect-[6/1] transition-all duration-700 isolate bg-[#f8f8f8]"
             style={{ touchAction: 'pan-y' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
         >
             <div 
-                className="flex h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu backface-hidden will-change-transform"
+                className="flex h-auto md:h-full w-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu backface-hidden will-change-transform"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
                 {banners.map((banner) => (
-                    <div key={banner.id} className="w-full h-full flex-none overflow-hidden">
+                    <div key={banner.id} className="w-full h-auto md:h-full flex-none overflow-hidden relative">
                         {banner.link ? (
                             <Link to={banner.link} className="block w-full h-full group/item">
                                 <img 
                                     src={banner.image} 
                                     alt="Ad Banner" 
-                                    className="w-full h-full object-contain block transition-transform duration-1000 group-hover/item:scale-105" 
+                                    className="w-full h-auto md:h-full object-contain block transition-transform duration-1000 group-hover/item:scale-105" 
                                 />
                             </Link>
                         ) : (
                             <img 
                                 src={banner.image} 
                                 alt="Ad Banner" 
-                                className="w-full h-full object-contain block" 
+                                className="w-full h-auto md:h-full object-contain block" 
                             />
                         )}
                     </div>

@@ -155,7 +155,7 @@ export default function SignupPage() {
                 </div>
 
                 <div className="mt-8 text-center text-xs text-gray-400">
-                    <p>© 2024 Samee and Sandu. All rights reserved.</p>
+                    <p>© {new Date().getFullYear()} Samee and Sandu. All rights reserved.</p>
                 </div>
             </div>
         </div>

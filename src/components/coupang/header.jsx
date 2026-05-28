@@ -363,7 +363,7 @@ export function Header() {
               <div className="absolute top-full left-[-1px] w-[220px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <ul className="py-2 relative">
                   {navDropdownCategories.map(cat => (
-                    <li key={cat.id} className="relative group/supercat">
+                    <li key={cat.id} className="group/supercat">
                       <Link to={`/super-category/${cat.slug}`} className="flex justify-between items-center px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-primary transition-colors">
                         {cat.name}
                         {cat.children && cat.children.length > 0 && <ChevronDown className="-rotate-90 h-3.5 w-3.5 text-gray-400" />}
@@ -371,25 +371,27 @@ export function Header() {
                       
                       {/* Submenu for categories and subcategories */}
                       {cat.children && cat.children.length > 0 && (
-                        <div className="absolute top-0 left-full ml-[-1px] min-w-[500px] max-w-[800px] min-h-full bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover/supercat:opacity-100 group-hover/supercat:visible transition-all duration-200 z-50 p-6 flex gap-8 flex-wrap content-start">
-                          {cat.children.map(child => (
-                            <div key={child.id} className="flex flex-col gap-2 w-[160px]">
-                              <Link to={`/super-category/${cat.slug}?selected=${child.slug}`} className="font-bold text-[14px] text-[#111] hover:text-primary border-b border-[#eee] pb-1 mb-1">
-                                {child.name}
-                              </Link>
-                              {child.children && child.children.length > 0 && (
-                                <ul className="flex flex-col gap-1.5">
-                                  {child.children.map(sub => (
-                                    <li key={sub.id}>
-                                      <Link to={`/super-category/${cat.slug}?selected=${child.slug}`} className="text-[13px] text-[#555] hover:text-primary transition-colors block py-0.5">
-                                        {sub.name}
-                                      </Link>
-                                    </li>
-                                  ))}
-                                </ul>
-                              )}
-                            </div>
-                          ))}
+                        <div className="absolute top-0 left-full ml-[-1px] min-w-[500px] max-w-[800px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover/supercat:opacity-100 group-hover/supercat:visible transition-all duration-200 z-50 overflow-y-auto" style={{maxHeight: 'calc(100vh - 200px)'}}>
+                          <div className="p-6 flex gap-8 flex-wrap content-start">
+                            {cat.children.map(child => (
+                              <div key={child.id} className="flex flex-col gap-2 w-[160px]">
+                                <Link to={`/super-category/${cat.slug}?selected=${child.slug}`} className="font-bold text-[14px] text-[#111] hover:text-primary border-b border-[#eee] pb-1 mb-1">
+                                  {child.name}
+                                </Link>
+                                {child.children && child.children.length > 0 && (
+                                  <ul className="flex flex-col gap-1.5">
+                                    {child.children.map(sub => (
+                                      <li key={sub.id}>
+                                        <Link to={`/super-category/${cat.slug}?selected=${child.slug}`} className="text-[13px] text-[#555] hover:text-primary transition-colors block py-0.5">
+                                          {sub.name}
+                                        </Link>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </li>
@@ -481,7 +483,7 @@ export function Header() {
           </form>
 
           {/* Swippable Categories (Full list for mobile) */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0 pt-0">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 pt-1">
             {/* Combine and de-duplicate by ID */}
             {Array.from(new Map([...navRowCategories, ...navDropdownCategories].map(c => [c.id, c])).values()).map((cat) => (
               <Link

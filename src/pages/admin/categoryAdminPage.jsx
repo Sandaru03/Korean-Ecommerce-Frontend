@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { FaPlus, FaEdit, FaTrash, FaLayerGroup } from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaLayerGroup, FaChevronRight, FaChevronDown } from "react-icons/fa";
 import { Package } from "lucide-react";
 import Loader from "../../components/admin-utils/loader";
 
 export default function CategoryAdminPage() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [expandedCategories, setExpandedCategories] = useState({});
     const navigate = useNavigate();
 
     // Only attach Authorization header if a real token is stored
@@ -29,18 +30,7 @@ export default function CategoryAdminPage() {
                 headers: getHeaders()
             });
             
-            // Flatten the tree for table display with depth indicator
-            const flat = [];
-            const flatten = (items, depth = 0) => {
-                items.forEach(item => {
-                    flat.push({ ...item, depth });
-                    if (item.children && item.children.length > 0) {
-                        flatten(item.children, depth + 1);
-                    }
-                });
-            };
-            flatten(res.data.categories || []);
-            setCategories(flat);
+            setCategories(res.data.categories || []);
         } catch (error) {
             console.error("Error fetching categories:", error);
             toast.error("Failed to load categories.");
@@ -64,6 +54,27 @@ export default function CategoryAdminPage() {
             toast.error("Failed to delete category");
         }
     };
+
+    const toggleExpand = (id) => {
+        setExpandedCategories(prev => ({
+            ...prev,
+            [id]: !prev[id]
+        }));
+    };
+
+    // Flatten the tree for table display, skipping collapsed children
+    const flat = [];
+    const flatten = (items, depth = 0, parentVisible = true) => {
+        items.forEach(item => {
+            if (!parentVisible) return;
+            flat.push({ ...item, depth });
+            if (item.children && item.children.length > 0) {
+                const isExpanded = !!expandedCategories[item.id];
+                flatten(item.children, depth + 1, isExpanded);
+            }
+        });
+    };
+    flatten(categories);
 
     if (loading) return <Loader />;
 
@@ -92,28 +103,21 @@ export default function CategoryAdminPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-200">
-                        {categories.length === 0 ? (
+                        {flat.length === 0 ? (
                             <tr>
                                 <td colSpan="3" className="p-8 text-center text-slate-500">
                                     No categories found. Click "Add Category" to create one.
                                 </td>
                             </tr>
                         ) : (
-                            categories.map(category => (
+                            flat.map(category => (
                                 <tr key={category.id} className="hover:bg-slate-50 transition-colors">
-                                    <td className="p-4">
+                                    <td className="p-4 w-24">
                                         <div className="w-12 h-12 rounded bg-slate-100 flex items-center justify-center overflow-hidden border border-slate-200">
-                                            {/* Hide images for leaf subcategories (depth 2) */}
-                                            {category.depth < 2 ? (
-                                                category.image ? (
-                                                    <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <span className="text-xs text-slate-400">N/A</span>
-                                                )
+                                            {category.image ? (
+                                                <img src={category.image} alt={category.name} className="w-full h-full object-cover" />
                                             ) : (
-                                                <div className="w-full h-full bg-slate-50 flex items-center justify-center">
-                                                    <span className="text-[10px] text-slate-300 font-bold">SUB</span>
-                                                </div>
+                                                <span className="text-xs text-slate-400">N/A</span>
                                             )}
                                         </div>
                                     </td>
@@ -122,6 +126,19 @@ export default function CategoryAdminPage() {
                                             {[...Array(category.depth)].map((_, i) => (
                                                 <div key={i} className="w-4 border-l border-slate-300 h-8 ml-2 -mt-4"></div>
                                             ))}
+                                            
+                                            {category.children && category.children.length > 0 ? (
+                                                <button 
+                                                    onClick={() => toggleExpand(category.id)}
+                                                    className="w-5 h-5 flex items-center justify-center rounded hover:bg-slate-200 text-slate-500 transition-colors"
+                                                    title={expandedCategories[category.id] ? "Collapse" : "Expand"}
+                                                >
+                                                    {expandedCategories[category.id] ? <FaChevronDown className="text-[10px]" /> : <FaChevronRight className="text-[10px]" />}
+                                                </button>
+                                            ) : (
+                                                <div className="w-5 h-5"></div>
+                                            )}
+                                            
                                             <span className={`font-medium ${category.depth > 0 ? 'text-slate-600' : 'text-slate-800'}`}>
                                                 {category.name}
                                             </span>

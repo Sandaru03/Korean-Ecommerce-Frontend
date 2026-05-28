@@ -10,7 +10,7 @@ import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 
 
 // ── Large circle icons for categories ─────────────────────────
-function CategoryCircles({ categories, selectedId, onSelect, title }) {
+function CategoryCircles({ categories, selectedId, onSelect }) {
     if (!categories || categories.length === 0) return null
     
     // Subtle pastel backgrounds matching Olive Young style
@@ -18,10 +18,6 @@ function CategoryCircles({ categories, selectedId, onSelect, title }) {
 
     return (
         <div className="w-full pt-0">
-            <div className="text-center mb-2 md:mb-4">
-                <h2 className="text-[18px] md:text-[22px] font-black text-[#111] tracking-tight">{title}</h2>
-            </div>
-            
             <div className="w-full overflow-x-auto overflow-y-visible scrollbar-hide pt-1">
                 <div className="flex justify-center gap-2.5 md:gap-8 min-w-max mx-auto px-4 pb-2">
                     {categories.map((cat, idx) => {
@@ -56,6 +52,48 @@ function CategoryCircles({ categories, selectedId, onSelect, title }) {
 }
 
 
+// ── Smaller circle icons for subcategories ────────────────────
+function SubCategoryCircles({ subcategories, selectedId, onSelect }) {
+    if (!subcategories || subcategories.length === 0) return null
+    
+    const pastels = ['bg-[#f3f0ff]', 'bg-[#fff0f6]', 'bg-[#e8f5e9]', 'bg-[#fff3e0]', 'bg-[#e3f2fd]']
+
+    return (
+        <div className="w-full">
+            <div className="w-full overflow-x-auto overflow-y-visible scrollbar-hide">
+                <div className="flex justify-center gap-2 md:gap-5 min-w-max mx-auto px-4 pt-3 pb-2">
+                    {subcategories.map((sub, idx) => {
+                        const isActive = selectedId === sub.id
+                        const bgColor = pastels[idx % pastels.length]
+                        
+                        return (
+                            <button
+                                key={sub.id}
+                                onClick={() => onSelect(sub)}
+                                className="flex flex-col items-center gap-1.5 group shrink-0 w-[65px] md:w-[80px]"
+                            >
+                                <div className={`w-[55px] h-[55px] md:w-[70px] md:h-[70px] rounded-full flex items-center justify-center transition-all duration-300 ${isActive ? "border-[2.5px] border-[#ff1268] p-0.5 shadow-md scale-[1.03]" : "border-[2px] border-transparent p-0.5 group-hover:border-gray-200 group-hover:shadow-sm group-hover:scale-[1.03]"}`}>
+                                    <div className={`w-full h-full rounded-full flex items-center justify-center overflow-hidden ${bgColor}`}>
+                                        <img
+                                            src={sub.image || `https://picsum.photos/seed/${sub.slug}/150`}
+                                            alt={sub.name}
+                                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    </div>
+                                </div>
+                                <span className={`text-[10px] md:text-[11px] text-center leading-tight transition-all font-medium ${isActive ? "text-[#ff1268] font-black" : "text-[#777] group-hover:text-[#111] font-bold"}`}>
+                                    {sub.name}
+                                </span>
+                            </button>
+                        )
+                    })}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+
 // ── Main Page Component ────────────────────────────────────────
 export default function SuperCategoryPage() {
     const { slug } = useParams()
@@ -63,7 +101,7 @@ export default function SuperCategoryPage() {
 
     const [superCategory, setSuperCategory] = useState(null)   // depth-0
     const [selectedCategory, setSelectedCategory] = useState(null) // depth-1
-    const [selectedSubName, setSelectedSubName] = useState(null)   // depth-2 name
+    const [selectedSub, setSelectedSub] = useState(null)   // depth-2 object
     const [products, setProducts] = useState([])
     const [groupedProducts, setGroupedProducts] = useState({}) // Added for grouped view
     const [loading, setLoading] = useState(true)
@@ -90,7 +128,7 @@ export default function SuperCategoryPage() {
                     setSelectedCategory(null)
                 }
                 
-                setSelectedSubName(null)
+                setSelectedSub(null)
                 setPage(1)
             } catch (err) {
                 console.error("Failed to fetch super category:", err)
@@ -166,20 +204,31 @@ export default function SuperCategoryPage() {
 
     const handleSelectCategory = (cat) => {
         if (selectedCategory?.id === cat.id) {
-            // Toggle off
             setSelectedCategory(null)
-            setSelectedSubName(null)
+            setSelectedSub(null)
         } else {
             setSelectedCategory(cat)
-            setSelectedSubName(null)
+            setSelectedSub(null)
         }
+    }
+
+    const handleSelectSub = (sub) => {
+        if (sub === null) {
+            setSelectedSub(null)
+        } else if (selectedSub?.id === sub.id) {
+            setSelectedSub(null)
+        } else {
+            setSelectedSub(sub)
+        }
+        setPage(1)
     }
 
     const categories = superCategory?.children || []  // depth-1
     const subCategories = selectedCategory?.children || []  // depth-2
 
-    const totalPages = Math.ceil(products.length / pageSize)
-    const paginatedProducts = products.slice((page - 1) * pageSize, page * pageSize)
+    const displayProducts = selectedSub ? (groupedProducts[selectedSub.name] || []) : products
+    const totalPages = Math.ceil(displayProducts.length / pageSize)
+    const paginatedProducts = displayProducts.slice((page - 1) * pageSize, page * pageSize)
 
     // ── Loading states ──────────────────────────────────────────
     if (loading) {
@@ -212,7 +261,7 @@ export default function SuperCategoryPage() {
             <Header />
 
             {/* ── Hero banner for the super category ── */}
-            <div className="w-full bg-white pt-0 md:pt-6 pb-0">
+            <div className="w-full bg-white pt-5 md:pt-6 pb-0">
                 <div className="mx-auto max-w-[1200px] px-6">
                     <h1 className="text-[28px] md:text-[34px] font-black text-[#111] tracking-tight leading-none uppercase">{superCategory.name}</h1>
                     <div className="flex items-center gap-3 mt-2">
@@ -234,10 +283,20 @@ export default function SuperCategoryPage() {
                             categories={categories}
                             selectedId={selectedCategory?.id}
                             onSelect={handleSelectCategory}
-                            title={`Trending ${superCategory.name} BEST`}
                         />
                     ) : (
                         <p className="text-center text-[#aaa] text-sm">No categories yet.</p>
+                    )}
+                    
+                    {/* ── Subcategory circles (shown when category has children) ── */}
+                    {selectedCategory && subCategories.length > 0 && (
+                        <div className="border-t border-[#f0f0f0] mt-3 pt-3">
+                            <SubCategoryCircles
+                                subcategories={subCategories}
+                                selectedId={selectedSub?.id}
+                                onSelect={handleSelectSub}
+                            />
+                        </div>
                     )}
                 </div>
             </div>
@@ -258,10 +317,10 @@ export default function SuperCategoryPage() {
                             </button>
                         </>
                     )}
-                    {selectedSubName && (
+                    {selectedSub && (
                         <>
                             <ChevronRight className="h-3 w-3" />
-                            <span className="text-[#ff1268]">{selectedSubName}</span>
+                            <span className="text-[#ff1268]">{selectedSub.name}</span>
                         </>
                     )}
                 </div>
@@ -274,7 +333,7 @@ export default function SuperCategoryPage() {
                         </h2>
                         <div className="space-y-1">
                             <button
-                                onClick={() => { setSelectedCategory(null); setSelectedSubName(null) }}
+                                onClick={() => { setSelectedCategory(null); setSelectedSub(null) }}
                                 className={`text-left w-full py-1.5 text-[14px] transition-colors ${!selectedCategory ? "font-bold text-[#ff1268]" : "text-[#666] hover:text-[#111]"}`}
                             >
                                 All {superCategory.name}
@@ -297,10 +356,10 @@ export default function SuperCategoryPage() {
                         {/* Section heading */}
                         <div className="flex items-end justify-between mb-8 pb-3 border-b-2 border-[#111]">
                             <h3 className="text-[20px] font-bold text-[#111]">
-                                {selectedSubName || selectedCategory?.name || superCategory.name} Products
+                                {selectedSub?.name || selectedCategory?.name || superCategory.name} Products
                             </h3>
                             <span className="text-[13px] text-[#777] font-medium block pb-0.5">
-                                Total <strong className="text-[#111]">{products.length}</strong>
+                                Total <strong className="text-[#111]">{displayProducts.length}</strong>
                             </span>
                         </div>
 
@@ -309,7 +368,7 @@ export default function SuperCategoryPage() {
                             <div className="flex items-center justify-center py-20">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ff1268]"></div>
                             </div>
-                        ) : selectedCategory && (selectedCategory.children || []).length > 0 ? (
+                        ) : !selectedSub && selectedCategory && (selectedCategory.children || []).length > 0 ? (
                             /* ── Grouped by Subcategory (Korean e-commerce style) ── */
                             <div className="space-y-7 md:space-y-12 mb-14 md:mb-20">
                                 {(selectedCategory.children || []).map(sub => {

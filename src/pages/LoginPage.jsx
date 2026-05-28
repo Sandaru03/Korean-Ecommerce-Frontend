@@ -92,7 +92,7 @@ export default function LoginPage() {
                 </div>
 
                 <div className="mt-8 text-center">
-                    <p className="text-xs text-gray-400">© 2024 Samee and Sandu. All rights reserved.</p>
+                    <p className="text-xs text-gray-400">© {new Date().getFullYear()} Samee and Sandu. All rights reserved.</p>
                 </div>
             </div>
         </div>

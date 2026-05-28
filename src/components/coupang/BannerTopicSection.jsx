@@ -50,39 +50,27 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
             <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm">
                 {/* Left: Banner Slider */}
                 <div 
-                    className="w-full md:w-[38%] relative overflow-hidden aspect-[4/5] md:aspect-auto bg-[#fafafa]"
+                    className="w-full md:w-[38%] relative overflow-hidden aspect-[3/5] md:aspect-auto bg-[#fafafa]"
                     style={{ touchAction: 'pan-y' }}
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                 >
                     {images.length > 0 ? (
                         <div className="absolute inset-0 w-full h-full group">
-                            {/* Ambient Blurred Background to Fill Empty Space */}
-                            {images.map((img, idx) => (
-                                <img 
-                                    key={`blur-${idx}`}
-                                    src={img} 
-                                    alt="" 
-                                    className={`absolute inset-0 w-full h-full object-cover blur-2xl transition-all duration-1000 transform-gpu backface-hidden will-change-transform ${
-                                        idx === currentIndex ? "opacity-40 scale-110" : "opacity-0 scale-125"
-                                    }`}
-                                />
-                            ))}
-
-                            {/* Main non-cropped Image */}
+                            {/* Main image */}
                             {images.map((img, idx) => (
                                 <img 
                                     key={`main-${idx}`}
                                     src={img} 
                                     alt={`${title} banner ${idx + 1}`} 
-                                    className={`absolute inset-0 w-full h-full object-contain z-10 transition-all duration-1000 transform-gpu backface-hidden will-change-transform ${
+                                    className={`absolute inset-0 w-full h-full object-cover z-10 transition-all duration-1000 transform-gpu backface-hidden will-change-transform ${
                                         idx === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
                                     }`}
                                 />
                             ))}
                             {/* Slide indicators if more than one image */}
                             {images.length > 1 && (
-                                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+                                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
                                     {images.map((_, idx) => (
                                         <div 
                                             key={idx}
