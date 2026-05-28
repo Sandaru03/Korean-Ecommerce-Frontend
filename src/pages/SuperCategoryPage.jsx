@@ -162,7 +162,7 @@ export default function SuperCategoryPage() {
                     const children = selectedCategory.children || []
                     if (children.length > 0) {
                         const requests = children.map(sub =>
-                            axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?subCategory=${encodeURIComponent(sub.name)}`)
+                            axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?category=${encodeURIComponent(selectedCategory.name)}&subCategory=${encodeURIComponent(sub.name)}`)
                                 .then(r => ({ name: sub.name, products: Array.isArray(r.data) ? r.data : [] }))
                                 .catch(() => ({ name: sub.name, products: [] }))
                         )

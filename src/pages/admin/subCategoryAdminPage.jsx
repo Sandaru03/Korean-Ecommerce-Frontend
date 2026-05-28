@@ -32,7 +32,9 @@ function SubCategoryProductManager({ sub, parentName, rootName, token }) {
     const fetchCategoryProducts = async () => {
         try {
             setLoadingProducts(true);
-            const { data } = await axios.get(`${backendUrl}/products?subCategory=${encodeURIComponent(sub.name)}&includeUnavailable=true`, { headers: getHeaders() });
+            let url = `${backendUrl}/products?subCategory=${encodeURIComponent(sub.name)}&includeUnavailable=true`;
+            if (parentName) url += `&category=${encodeURIComponent(parentName)}`;
+            const { data } = await axios.get(url, { headers: getHeaders() });
             // API returns a plain array
             const list = Array.isArray(data) ? data : (data.products || []);
             setProducts(list);

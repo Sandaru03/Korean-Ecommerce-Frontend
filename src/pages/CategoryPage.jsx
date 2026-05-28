@@ -121,7 +121,7 @@ export default function CategoryPage() {
                 if (currentPath.length > 0) {
                     // Filtered view: fetch only this specific subcategory
                     const subName = currentPath[currentPath.length - 1]
-                    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?subCategory=${encodeURIComponent(subName)}`)
+                    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?category=${encodeURIComponent(categoryData.name)}&subCategory=${encodeURIComponent(subName)}`)
                     setProducts(Array.isArray(res.data) ? res.data : [])
                     setGroupedProducts({})
                 } else {
@@ -129,7 +129,7 @@ export default function CategoryPage() {
                     const children = categoryData.children || []
                     if (children.length > 0) {
                         const requests = children.map(sub =>
-                            axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?subCategory=${encodeURIComponent(sub.name)}`)
+                            axios.get(`${import.meta.env.VITE_BACKEND_URL}/products?category=${encodeURIComponent(categoryData.name)}&subCategory=${encodeURIComponent(sub.name)}`)
                                 .then(r => ({ name: sub.name, products: Array.isArray(r.data) ? r.data : [] }))
                                 .catch(() => ({ name: sub.name, products: [] }))
                         )
