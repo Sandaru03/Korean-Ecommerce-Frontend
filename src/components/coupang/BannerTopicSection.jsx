@@ -63,7 +63,7 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
                                     key={`main-${idx}`}
                                     src={img} 
                                     alt={`${title} banner ${idx + 1}`} 
-                                    className={`absolute inset-0 w-full h-full object-cover z-10 transition-all duration-1000 transform-gpu backface-hidden will-change-transform ${
+                                    className={`absolute inset-0 w-full h-full object-cover md:object-contain z-10 transition-all duration-1000 transform-gpu backface-hidden will-change-transform ${
                                         idx === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
                                     }`}
                                 />

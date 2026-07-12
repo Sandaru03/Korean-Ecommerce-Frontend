@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useParams, Link, useLocation } from "react-router-dom"
 import axios from "axios"
 import { Header } from "@/components/coupang/header"
@@ -11,15 +11,32 @@ import { CommonProductCard } from "@/components/coupang/CommonProductCard"
 
 // ── Large circle icons for categories ─────────────────────────
 function CategoryCircles({ categories, selectedId, onSelect }) {
+    const scrollRef = useRef(null)
     if (!categories || categories.length === 0) return null
     
     // Subtle pastel backgrounds matching Olive Young style
     const pastels = ['bg-[#eef2f5]', 'bg-[#fff1f1]', 'bg-[#f0f5ff]', 'bg-[#fff8ea]', 'bg-[#fcf0f5]']
 
+    const scroll = (direction) => {
+        if (scrollRef.current) {
+            const amount = direction === 'left' ? -400 : 400
+            scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' })
+        }
+    }
+
     return (
-        <div className="w-full pt-0">
-            <div className="w-full overflow-x-auto overflow-y-visible scrollbar-hide pt-1">
-                <div className="flex justify-center gap-2.5 md:gap-8 min-w-max mx-auto px-4 pb-2">
+        <div className="w-full pt-0 relative group">
+            {/* Desktop Scroll Left Button */}
+            <button 
+                onClick={() => scroll('left')}
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -ml-2 z-10 w-10 h-10 bg-white rounded-full shadow-md items-center justify-center text-gray-600 hover:text-[#111] hover:shadow-lg transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0"
+                aria-label="Scroll left"
+            >
+                <ChevronLeft className="h-6 w-6" />
+            </button>
+
+            <div ref={scrollRef} className="w-full overflow-x-auto overflow-y-visible scrollbar-hide pt-1 scroll-smooth relative">
+                <div className="flex gap-2.5 md:gap-8 w-max min-w-full px-4 md:px-8 pb-2 before:content-[''] before:m-auto after:content-[''] after:m-auto">
                     {categories.map((cat, idx) => {
                         const isActive = selectedId === cat.id
                         const bgColor = pastels[idx % pastels.length]
@@ -47,6 +64,15 @@ function CategoryCircles({ categories, selectedId, onSelect }) {
                     })}
                 </div>
             </div>
+
+            {/* Desktop Scroll Right Button */}
+            <button 
+                onClick={() => scroll('right')}
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 -mr-2 z-10 w-10 h-10 bg-white rounded-full shadow-md items-center justify-center text-gray-600 hover:text-[#111] hover:shadow-lg transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0"
+                aria-label="Scroll right"
+            >
+                <ChevronRight className="h-6 w-6" />
+            </button>
         </div>
     )
 }
@@ -54,14 +80,31 @@ function CategoryCircles({ categories, selectedId, onSelect }) {
 
 // ── Smaller circle icons for subcategories ────────────────────
 function SubCategoryCircles({ subcategories, selectedId, onSelect }) {
+    const scrollRef = useRef(null)
     if (!subcategories || subcategories.length === 0) return null
     
     const pastels = ['bg-[#f3f0ff]', 'bg-[#fff0f6]', 'bg-[#e8f5e9]', 'bg-[#fff3e0]', 'bg-[#e3f2fd]']
 
+    const scroll = (direction) => {
+        if (scrollRef.current) {
+            const amount = direction === 'left' ? -300 : 300
+            scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' })
+        }
+    }
+
     return (
-        <div className="w-full">
-            <div className="w-full overflow-x-auto overflow-y-visible scrollbar-hide">
-                <div className="flex justify-center gap-2 md:gap-5 min-w-max mx-auto px-4 pt-3 pb-2">
+        <div className="w-full relative group">
+            {/* Desktop Scroll Left Button */}
+            <button 
+                onClick={() => scroll('left')}
+                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -ml-2 z-10 w-8 h-8 bg-white rounded-full shadow-md items-center justify-center text-gray-600 hover:text-[#111] hover:shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                aria-label="Scroll left"
+            >
+                <ChevronLeft className="h-5 w-5" />
+            </button>
+
+            <div ref={scrollRef} className="w-full overflow-x-auto overflow-y-visible scrollbar-hide scroll-smooth relative">
+                <div className="flex gap-2 md:gap-5 w-max min-w-full px-4 md:px-8 pt-3 pb-2 before:content-[''] before:m-auto after:content-[''] after:m-auto">
                     {subcategories.map((sub, idx) => {
                         const isActive = selectedId === sub.id
                         const bgColor = pastels[idx % pastels.length]
@@ -89,6 +132,15 @@ function SubCategoryCircles({ subcategories, selectedId, onSelect }) {
                     })}
                 </div>
             </div>
+
+            {/* Desktop Scroll Right Button */}
+            <button 
+                onClick={() => scroll('right')}
+                className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 -mr-2 z-10 w-8 h-8 bg-white rounded-full shadow-md items-center justify-center text-gray-600 hover:text-[#111] hover:shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                aria-label="Scroll right"
+            >
+                <ChevronRight className="h-5 w-5" />
+            </button>
         </div>
     )
 }
