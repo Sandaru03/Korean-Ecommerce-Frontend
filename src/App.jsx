@@ -16,6 +16,7 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import Loader from "./components/common/Loader";
 import QuizPage from "./pages/QuizPage";
 import AboutPage from "./pages/AboutPage";
+import ProductRequestPage from "./pages/ProductRequestPage";
 
 // Setup global axios interceptor to automatically attach token
 axios.interceptors.request.use((config) => {
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/request-product" element={<ProductRequestPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>
     </>

@@ -72,6 +72,7 @@ export function Footer() {
                 <li><Link to="/search" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Search Products</Link></li>
                 <li><Link to="/cart" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Shopping Cart</Link></li>
                 <li><Link to="/login" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Track Orders</Link></li>
+                <li><Link to="/request-product" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Request a Product</Link></li>
               </ul>
             </div>
 

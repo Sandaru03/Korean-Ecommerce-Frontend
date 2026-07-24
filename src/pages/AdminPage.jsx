@@ -37,6 +37,7 @@ import AdminManagementPage from "./admin/AdminManagementPage";
 import ManageFeaturedStrip from "./admin/ManageFeaturedStrip";
 import ManageFlashDeals from "./admin/ManageFlashDeals";
 import ManageGalleryReviews from "./admin/ManageGalleryReviews";
+import ManageProductRequests from "./admin/ManageProductRequests";
 
 
 // Sidebar link
@@ -94,6 +95,7 @@ function DashboardHero() {
                     { label: "Time Deals", to: "/admin/time-deals", icon: FaFilePen, color: "bg-amber-500" },
                     { label: "Flash Deals", to: "/admin/flash-deals", icon: FaFilePen, color: "bg-rose-500" },
                     { label: "Review Gallery", to: "/admin/gallery-reviews", icon: FaImages, color: "bg-indigo-600" },
+                    { label: "Product Requests", to: "/admin/product-requests", icon: FaFilePen, color: "bg-emerald-600" },
                     { label: "Admins", to: "/admin/admins", icon: RiAdminFill, color: "bg-slate-900" },
                 ].map((c) => (
                     <NavLink
@@ -211,6 +213,7 @@ export default function AdminPage() {
                         <SidebarLink to="/admin/flash-deals" icon={FaFilePen} label="Flash Deals" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/featured-strip" icon={FaFilePen} label="Featured Strip" onClick={() => setSidebarOpen(false)} />
                         <SidebarLink to="/admin/gallery-reviews" icon={FaFilePen} label="Review Gallery" onClick={() => setSidebarOpen(false)} />
+                        <SidebarLink to="/admin/product-requests" icon={FaFilePen} label="Product Requests" onClick={() => setSidebarOpen(false)} />
 
                         
                         <div className="px-3 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -298,6 +301,7 @@ export default function AdminPage() {
                             <Route path="flash-deals" element={<ManageFlashDeals />} />
                             <Route path="featured-strip" element={<ManageFeaturedStrip />} />
                             <Route path="gallery-reviews" element={<ManageGalleryReviews />} />
+                            <Route path="product-requests" element={<ManageProductRequests />} />
 
                             <Route path="admins" element={<AdminManagementPage />} />
                         </Routes>
