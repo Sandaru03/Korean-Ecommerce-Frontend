@@ -426,7 +426,7 @@ function BannerCategoriesManager({ bannerId, bannerTitle }) {
             const { data } = await axios.put(`${backendUrl}/banner-sections/${sectionId}`, { products: updatedIds });
             if (data.success) {
                 setSections(prev => prev.map(s => s.id === sectionId ? { ...s, products: [...s.products, product] } : s));
-                setSearchQuery(""); setSearchResults([]); setSearchingSectionId(null);
+                setSearchResults(prev => prev.filter(p => p.id !== product.id));
                 toast.success("Product added!");
             }
         } catch (err) { toast.error("Failed to add product"); }

@@ -173,9 +173,7 @@ export default function ManageHomePage() {
       if (data.success) {
          setTopics(topics.map(t => t.id === topicId ? { ...t, products: [...t.products, product] } : t));
          // Clean up search
-         setSearchQuery("");
-         setSearchResults([]);
-         setSelectedTopicId(null);
+         setSearchResults(prev => prev.filter(p => p.id !== product.id));
       }
     } catch (error) {
       console.error("Error adding product to topic:", error);

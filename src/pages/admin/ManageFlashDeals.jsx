@@ -77,8 +77,7 @@ export default function ManageFlashDeals() {
             return;
         }
         setSelectedProducts(prev => [...prev, product]);
-        setSearchQuery("");
-        setSearchResults([]);
+        setSearchResults(prev => prev.filter(p => p.id !== product.id));
     };
 
     const removeProduct = (productId) => {

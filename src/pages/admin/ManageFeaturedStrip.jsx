@@ -98,9 +98,7 @@ export default function ManageFeaturedStrip() {
             const { data } = await axios.put(`${backendUrl}/featured-strip`, { products: newIds });
             if (data.success) {
                 setStrip(s => ({ ...s, products: [...s.products, product] }));
-                setSearchQuery("");
-                setSearchResults([]);
-                setSearchOpen(false);
+                setSearchResults(prev => prev.filter(p => p.id !== product.id));
                 toast.success(`"${product.name}" added`);
             }
         } catch (err) {

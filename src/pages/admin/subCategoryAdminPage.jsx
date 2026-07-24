@@ -85,9 +85,7 @@ function SubCategoryProductManager({ sub, parentName, rootName, token }) {
             );
             if (res.status === 200) {
                 setProducts(prev => [...prev, product]);
-                setSearchQuery("");
-                setSearchResults([]);
-                setSearchOpen(false);
+                setSearchResults(prev => prev.filter(p => p.id !== product.id));
                 toast.success(`"${product.name}" assigned to ${sub.name}!`);
             }
         } catch (err) {
