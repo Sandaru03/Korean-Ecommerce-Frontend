@@ -1,8 +1,28 @@
 import { Header } from "@/components/coupang/header";
 import { Footer } from "@/components/coupang/footer";
 import { SkinTypeQuiz } from "@/components/coupang/SkinTypeQuiz";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 export default function QuizPage() {
+    const [heroImage, setHeroImage] = useState("/skin 2.jpg.jpeg");
+
+    useEffect(() => {
+        const fetchBanner = async () => {
+            try {
+                const { data } = await axios.get(`${backendUrl}/quiz-banner`);
+                if (data.success && data.banner && data.banner.quizPageImage) {
+                    setHeroImage(data.banner.quizPageImage);
+                }
+            } catch (err) {
+                console.error("Error fetching quiz banner config:", err);
+            }
+        };
+        fetchBanner();
+    }, []);
+
     return (
         <div className="min-h-screen bg-white font-sans selection:bg-primary selection:text-white overflow-x-clip">
             <Header />
@@ -25,9 +45,9 @@ export default function QuizPage() {
                     <div className="flex-1 w-full max-w-[320px] md:max-w-none">
                         <div className="relative w-full rounded-[32px] overflow-hidden bg-white shadow-2xl p-2 md:p-3">
                              <img 
-                                src="/skin 2.jpg.jpeg" 
+                                src={heroImage} 
                                 alt="Skin Assessment" 
-                                className="w-full h-auto block rounded-[24px]" 
+                                className="w-full h-auto block rounded-[24px] shadow-lg" 
                             />
                             {/* Decorative elements */}
                             <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-primary/10 rounded-full blur-2xl -z-10"></div>

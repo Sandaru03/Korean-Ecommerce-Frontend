@@ -7,6 +7,7 @@ import Loader from "../../components/admin-utils/loader";
 export default function ManageProductRequests() {
     const [requests, setRequests] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [expandedMsgs, setExpandedMsgs] = useState({});
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
@@ -43,6 +44,10 @@ export default function ManageProductRequests() {
             console.error("Error deleting request:", error);
             toast.error("Failed to delete request");
         }
+    };
+
+    const toggleMsg = (id) => {
+        setExpandedMsgs((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
     if (loading) return <Loader />;
@@ -93,8 +98,24 @@ export default function ManageProductRequests() {
                                                 </a>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 max-w-xs truncate" title={req.message}>
-                                            {req.message || <span className="text-gray-400 italic">No message</span>}
+                                        <td className="px-6 py-4 max-w-xs break-words">
+                                            {req.message ? (
+                                                <div>
+                                                    <div className={expandedMsgs[req.id] ? "whitespace-pre-wrap" : "truncate"}>
+                                                        {req.message}
+                                                    </div>
+                                                    {req.message.length > 50 && (
+                                                        <button 
+                                                            onClick={() => toggleMsg(req.id)}
+                                                            className="text-blue-600 hover:underline text-xs mt-1 font-medium"
+                                                        >
+                                                            {expandedMsgs[req.id] ? "Show Less" : "Read More"}
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <span className="text-gray-400 italic">No message</span>
+                                            )}
                                         </td>
                                         <td className="px-6 py-4 text-right whitespace-nowrap">
                                             <button

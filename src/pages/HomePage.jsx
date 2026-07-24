@@ -13,6 +13,7 @@ import { TimeDealsSection } from "@/components/coupang/TimeDealsSection"
 import { FeaturedProductStrip } from "@/components/coupang/FeaturedProductStrip"
 import { FlashDealsSection } from "@/components/coupang/FlashDealsSection"
 import { QuizBanner } from "@/components/coupang/QuizBanner"
+import { RequestProductCTA } from "@/components/coupang/RequestProductCTA"
 import ReviewGallery from "@/components/coupang/ReviewGallery"
 
 
@@ -355,6 +356,9 @@ export default function HomePage() {
 
             {/* Empty state if no topics at all */}
             {!topicsLoading && activeTopicsWithProducts.length === 0 && <EmptyTopics />}
+
+            {/* Request a Product CTA */}
+            <RequestProductCTA />
 
             {/* Review Gallery */}
             <ReviewGallery />
