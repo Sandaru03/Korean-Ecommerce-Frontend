@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react"
 const CartContext = createContext(null)
 
 export function CartProvider({ children }) {
+    const [isCartOpen, setIsCartOpen] = useState(false)
     const [cart, setCart] = useState(() => {
         try {
             const saved = localStorage.getItem("cart")
@@ -71,7 +72,8 @@ export function CartProvider({ children }) {
     return (
         <CartContext.Provider value={{
             cart, addToCart, updateQty, removeFromCart, clearCart,
-            totalItems, subtotal, deliveryFee, grandTotal
+            totalItems, subtotal, deliveryFee, grandTotal,
+            isCartOpen, setIsCartOpen
         }}>
             {children}
         </CartContext.Provider>

@@ -21,7 +21,7 @@ export function Header() {
   const [showCurrencyMenu, setShowCurrencyMenu] = useState(false)
   const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const navigate = useNavigate()
-  const { totalItems } = useCart()
+  const { totalItems, setIsCartOpen } = useCart()
   const { currency, setCurrency, exchangeRates, formatPrice } = useCurrency()
 
   const [navRowCategories, setNavRowCategories] = useState([])
@@ -145,7 +145,7 @@ export function Header() {
 
   function handleCartClick() {
     if (!isLoggedIn) navigate("/login")
-    else navigate("/cart")
+    else setIsCartOpen(true)
   }
 
   function handleLogout() {

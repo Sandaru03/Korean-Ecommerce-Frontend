@@ -261,7 +261,7 @@ export default function CheckoutPage() {
         try {
             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/app-configs/send-order-email`, {
                 summary: summaryText,
-                email: orderEmail,
+                email: null,
                 slipImageUrl: finalSlipUrl || null,
                 orderData: {
                     name: buildFullName(),
@@ -595,6 +595,7 @@ export default function CheckoutPage() {
                             {/* Checkout Buttons */}
                             {paymentMethod === 'bank' ? (
                                 <div className="space-y-3">
+                                    <p className="font-bold text-[#111] text-[13px] text-center mb-1">Place Your Order Via</p>
                                     <button
                                         onClick={handleWhatsApp}
                                         disabled={isSavingOrder || sendingEmail}
@@ -605,7 +606,19 @@ export default function CheckoutPage() {
                                         ) : (
                                             <MessageCircle className="h-5 w-5" />
                                         )}
-                                        {isSavingOrder && !sendingEmail ? "Processing..." : "Place Order via WhatsApp"}
+                                        {isSavingOrder && !sendingEmail ? "Processing..." : "Order via WhatsApp"}
+                                    </button>
+                                    <button
+                                        onClick={handleEmail}
+                                        disabled={isSavingOrder || sendingEmail}
+                                        className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#4285F4] hover:bg-[#3367D6] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-blue-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    >
+                                        {isSavingOrder || sendingEmail ? (
+                                            <Loader2 className="h-5 w-5 animate-spin" />
+                                        ) : (
+                                            <Mail className="h-5 w-5" />
+                                        )}
+                                        {isSavingOrder ? "Processing..." : (sendingEmail ? "Sending Email..." : "Order via Email")}
                                     </button>
                                 </div>
                             ) : (

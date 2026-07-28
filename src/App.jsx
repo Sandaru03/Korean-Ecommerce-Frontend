@@ -15,6 +15,7 @@ import BannerPage from "./pages/banners/BannerPage";
 import SearchPage from "./pages/SearchPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Loader from "./components/common/Loader";
+import SideCart from "./components/common/SideCart";
 import QuizPage from "./pages/QuizPage";
 import AboutPage from "./pages/AboutPage";
 import ProductRequestPage from "./pages/ProductRequestPage";
@@ -51,6 +52,7 @@ export default function App() {
     <>
       {isLoading && <Loader onFinished={() => setIsLoading(false)} />}
       <ScrollToTop />
+      <SideCart />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
