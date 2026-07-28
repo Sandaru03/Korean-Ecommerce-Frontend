@@ -54,7 +54,7 @@ export function CommonProductCard({ product }) {
     return (
         <Link to={`/product/${product.id}`} className="group block w-full">
             {/* Image Section */}
-            <div className="relative aspect-square overflow-hidden rounded-md bg-[#f5f5f5] mb-3 transition-colors border border-[#eee] group-hover:border-[#ddd]">
+            <div className="relative aspect-square overflow-hidden rounded-md bg-[#f5f5f5] mb-3 transition-colors shadow-[inset_0_0_0_1px_#eee] group-hover:shadow-[inset_0_0_0_1px_#ddd] transform-gpu">
                 <img
                     src={imageUrl}
                     alt={product.name}

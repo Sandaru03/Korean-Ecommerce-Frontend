@@ -13,7 +13,13 @@ createRoot(document.getElementById('root')).render(
       <CurrencyProvider>
         <CartProvider>
           <App />
-          <Toaster position="top-right" />
+          <Toaster 
+            position="top-center" 
+            toastOptions={{
+              duration: 3000,
+              className: 'pointer-events-none sm:pointer-events-auto'
+            }} 
+          />
         </CartProvider>
       </CurrencyProvider>
     </BrowserRouter>

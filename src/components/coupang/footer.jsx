@@ -27,8 +27,8 @@ export function Footer() {
     <footer>
       {/* Main Footer */}
       <div className="bg-white border-t border-[#e5e5e5]">
-        <div className="mx-auto max-w-[1040px] px-4 py-12">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3">
+        <div className="mx-auto max-w-[1040px] px-4 py-8 md:py-12">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-8 md:gap-y-12 md:grid-cols-4">
             {/* Company Info */}
             <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
               <Link to="/" className="flex items-center gap-1 mb-4">
@@ -68,9 +68,8 @@ export function Footer() {
               <h3 className="mb-4 text-sm font-bold text-[#333] uppercase tracking-tight">Quick Links</h3>
               <ul className="flex flex-col gap-2.5">
                 <li><Link to="/" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Home</Link></li>
-                <li><Link to="/about" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">About Us</Link></li>
-                <li><Link to="/search" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Search Products</Link></li>
-                <li><Link to="/cart" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Shopping Cart</Link></li>
+                <li className="hidden md:block"><Link to="/about" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">About Us</Link></li>
+                <li><Link to="/contact" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Contact Us</Link></li>
                 <li><Link to="/login" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Track Orders</Link></li>
                 <li><Link to="/request-product" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Request a Product</Link></li>
               </ul>
@@ -98,12 +97,22 @@ export function Footer() {
               </ul>
             </div>
 
+            {/* Policies */}
+            <div className="col-span-2 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
+              <h3 className="mb-4 text-sm font-bold text-[#333] uppercase tracking-tight">Policies</h3>
+              <ul className="flex flex-col gap-2.5">
+                <li><Link to="/privacy-policy" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/refund-policy" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Refund Policy</Link></li>
+                <li><Link to="/terms-and-conditions" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Terms & Conditions</Link></li>
+              </ul>
+            </div>
+
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-[#f5f5f5] bg-gray-50/30">
-          <div className="mx-auto flex max-w-[1040px] flex-col md:flex-row items-center justify-between px-4 py-6 gap-4">
+          <div className="mx-auto flex max-w-[1040px] flex-col md:flex-row items-center justify-between px-4 pt-6 pb-16 md:py-6 gap-4">
             {/* Left: Motto */}
             <div className="flex-1 flex justify-center md:justify-start">
               <p className="text-[12px] text-[#888] font-medium">

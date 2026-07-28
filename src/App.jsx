@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import AdminPage from "./pages/AdminPage";
 import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
 import ProfilePage from "./pages/ProfilePage";
 import CategoryPage from "./pages/CategoryPage";
 import SuperCategoryPage from "./pages/SuperCategoryPage";
@@ -17,6 +18,10 @@ import Loader from "./components/common/Loader";
 import QuizPage from "./pages/QuizPage";
 import AboutPage from "./pages/AboutPage";
 import ProductRequestPage from "./pages/ProductRequestPage";
+import ContactUsPage from "./pages/ContactUsPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import RefundPolicyPage from "./pages/RefundPolicyPage";
+import TermsAndConditionsPage from "./pages/TermsAndConditionsPage";
 
 // Setup global axios interceptor to automatically attach token
 axios.interceptors.request.use((config) => {
@@ -51,6 +56,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/super-category/:slug" element={<SuperCategoryPage />} />
         <Route path="/category/:slug" element={<CategoryPage />} />
@@ -59,6 +65,10 @@ export default function App() {
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactUsPage />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="/refund-policy" element={<RefundPolicyPage />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditionsPage />} />
         <Route path="/request-product" element={<ProductRequestPage />} />
         <Route path="/admin/*" element={<AdminPage />} />
       </Routes>

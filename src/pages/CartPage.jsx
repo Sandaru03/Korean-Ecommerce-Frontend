@@ -187,7 +187,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         setIsSavingOrder(true)
         const order = await saveOrderToDb()
         setIsSavingOrder(false)
-        
+
         if (!order) {
             if (waWindow) waWindow.close()
             return
@@ -223,14 +223,14 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             finalSlipUrl = await uploadSlipToServer()
             if (slipFile && !finalSlipUrl) return // upload failed
         }
-        
+
         setIsSavingOrder(true)
         const order = await saveOrderToDb()
         if (!order) {
             setIsSavingOrder(false)
             return
         }
-        
+
         setSendingEmail(true)
         try {
             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/app-configs/send-order-email`, {
@@ -447,7 +447,6 @@ export default function CartPage() {
     const navigate = useNavigate()
     const { cart, updateQty, removeFromCart, totalItems, subtotal, deliveryFee, grandTotal } = useCart()
     const { formatPrice } = useCurrency()
-    const [showCheckout, setShowCheckout] = useState(false)
     const [contactNumber, setContactNumber] = useState("")
 
     useEffect(() => {
@@ -462,20 +461,8 @@ export default function CartPage() {
         <div className="min-h-screen bg-[#f8f8f8] flex flex-col">
             <Header />
 
-            {showCheckout && (
-                <CheckoutModal
-                    onClose={() => setShowCheckout(false)}
-                    cart={cart}
-                    subtotal={subtotal}
-                    deliveryFee={deliveryFee}
-                    grandTotal={grandTotal}
-                    totalItems={totalItems}
-                    whatsappNumber={contactNumber}
-                />
-            )}
-
             {/* Floating WhatsApp Button - Upgraded Premium Version - Always Visible */}
-            <a 
+            <a
                 href={contactNumber ? `https://wa.me/${contactNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(cart.length > 0 ? "Hi! I have some questions about the items in my cart." : "Hi! I'm browsing your store and have some questions.")}` : "#"}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -490,15 +477,15 @@ export default function CartPage() {
                 <div className="relative">
                     {/* Subtle Ping Animation */}
                     <div className="absolute inset-0 bg-[#25D366] rounded-full animate-ping opacity-20" />
-                    
+
                     {/* Main Button with Gradient and Authentic WhatsApp Icon */}
                     <div className="relative bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white p-4.5 rounded-full shadow-[0_20px_40px_-10px_rgba(37,211,102,0.5)] hover:shadow-[0_25px_50px_-12px_rgba(37,211,102,0.6)] hover:scale-110 transition-all duration-500 active:scale-95 ring-4 ring-white flex items-center justify-center">
-                        <svg 
-                            viewBox="0 0 24 24" 
+                        <svg
+                            viewBox="0 0 24 24"
                             className="h-9 w-9 fill-current"
                             xmlns="http://www.w3.org/2000/svg"
                         >
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                         </svg>
                     </div>
                 </div>
@@ -519,144 +506,144 @@ export default function CartPage() {
             ) : (
                 <>
 
-            {/* Breadcrumb */}
-            <div className="bg-white border-b border-[#eee]">
-                <div className="mx-auto max-w-[1040px] px-4 py-3 flex items-center gap-2 text-[12px] text-[#777]">
-                    <Link to="/" className="hover:text-[#111] transition">Home</Link>
-                    <ChevronRight className="h-3 w-3 text-[#ccc]" />
-                    <span className="text-[#333] font-medium">Shopping Cart</span>
-                </div>
-            </div>
-
-            <div className="mx-auto max-w-[1040px] px-4 py-10 w-full">
-                <h1 className="text-[28px] font-black text-[#111] mb-8">Shopping Cart <span className="text-[18px] font-normal text-[#999]">({totalItems} items)</span></h1>
-
-                <div className="flex flex-col lg:flex-row gap-8 items-start">
-                    {/* Cart Items */}
-                    <div className="flex-1 space-y-4">
-                        {cart.map(item => (
-                            <div key={item.id} className="bg-white border border-[#eee] rounded-xl p-5 flex gap-5 items-start shadow-sm hover:shadow-md transition-shadow">
-                                {/* Image */}
-                                <div className="w-[90px] h-[90px] shrink-0 rounded-lg overflow-hidden border border-[#eee] bg-[#f8f8f8]">
-                                    {item.image ? (
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-contain bg-[#f8f8f8]" />
-                                    ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-[#ccc]">
-                                            <ShoppingBag className="h-8 w-8" />
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* Info and Price Column */}
-                                <div className="flex-1 min-w-0 flex flex-col md:flex-row gap-4">
-                                    {/* Info */}
-                                    <div className="flex-1 min-w-0">
-                                        <p className="font-bold text-[#111] text-[15px] leading-snug mb-1">{item.name}</p>
-                                        <p className="text-primary font-black text-[18px] mb-3">{formatPrice(item.price)}</p>
-                                        
-                                        {/* Qty Controls */}
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex items-center border border-[#ddd] rounded-lg overflow-hidden">
-                                                <button
-                                                    onClick={() => updateQty(item.id, item.qty - 1)}
-                                                    className="w-9 h-9 flex items-center justify-center text-[#555] hover:bg-[#f5f5f5] transition"
-                                                >
-                                                    <Minus className="h-4 w-4" />
-                                                </button>
-                                                <span className="w-10 text-center text-[14px] font-bold text-[#111]">{item.qty}</span>
-                                                <button
-                                                    onClick={() => updateQty(item.id, item.qty + 1)}
-                                                    className="w-9 h-9 flex items-center justify-center text-[#555] hover:bg-[#f5f5f5] transition"
-                                                >
-                                                    <Plus className="h-4 w-4" />
-                                                </button>
-                                            </div>
-                                            <button
-                                                onClick={() => { removeFromCart(item.id); toast.success("Item removed") }}
-                                                className="flex items-center gap-1 text-[13px] text-primary hover:underline"
-                                            >
-                                                <Trash2 className="h-4 w-4" /> Remove
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Line Total */}
-                                    <div className="shrink-0 md:text-right border-t md:border-t-0 border-[#eee] pt-3 md:pt-0">
-                                        <p className="text-[12px] text-[#999]">Item Total</p>
-                                        <p className="font-black text-[20px] text-[#111]">{formatPrice(item.price * item.qty)}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Order Summary Sidebar */}
-                    <div className="w-full lg:w-[320px] shrink-0 sticky top-6 space-y-4">
-                        {/* Delivery Fee Notice */}
-                        {totalItems > 0 && totalItems < 3 && (
-                            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3 items-start">
-                                <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                                <div>
-                                    <p className="text-[13px] font-bold text-primary">Delivery Fee Applied</p>
-                                    <p className="text-[12px] text-primary/80 mt-0.5">
-                                        Orders with less than 3 items include a {formatPrice(400)} delivery charge. Add {3 - totalItems} more {3 - totalItems === 1 ? 'item' : 'items'} for free delivery!
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-                        {totalItems >= 3 && (
-                            <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-4 flex gap-3 items-start">
-                                <AlertCircle className="h-5 w-5 text-[#16a34a] shrink-0 mt-0.5" />
-                                <div>
-                                    <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery!</p>
-                                    <p className="text-[12px] text-[#16a34a]/80 mt-0.5">
-                                        You've unlocked free delivery for ordering 3 or more items!
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Price Summary */}
-                        <div className="bg-white rounded-xl border border-[#eee] p-5 shadow-sm">
-                            <h3 className="font-bold text-[#111] text-[16px] mb-4 pb-3 border-b border-[#eee]">Order Summary</h3>
-                            <div className="space-y-2.5 text-[14px]">
-                                <div className="flex justify-between text-[#555]">
-                                    <span>Subtotal ({totalItems} items)</span>
-                                    <span className="font-semibold text-[#111]">{formatPrice(subtotal)}</span>
-                                </div>
-                                <div className="flex justify-between text-[#555]">
-                                    <span>Delivery</span>
-                                    {deliveryFee > 0 ? (
-                                        <span className="font-semibold text-primary">{formatPrice(deliveryFee)}</span>
-                                    ) : (
-                                        <span className="font-semibold text-[#16a34a]">FREE</span>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="border-t-2 border-[#111] mt-4 pt-4 flex justify-between items-baseline">
-                                <span className="font-bold text-[#111] text-[15px]">Total</span>
-                                <div className="text-right">
-                                    <p className="font-black text-[28px] text-[#111] leading-none">{formatPrice(grandTotal)}</p>
-                                </div>
-                            </div>
-
-                            <button
-                                onClick={() => setShowCheckout(true)}
-                                className="w-full mt-5 h-[52px] bg-primary hover:bg-red-800 text-white font-bold text-[16px] rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-200/50"
-                            >
-                                Proceed to Checkout
-                                <ChevronRight className="h-5 w-5" />
-                            </button>
-                            <Link
-                                to="/"
-                                className="w-full mt-3 h-[44px] border border-[#ddd] text-[#555] font-semibold text-[14px] rounded-xl hover:bg-[#f5f5f5] transition flex items-center justify-center"
-                            >
-                                Continue Shopping
-                            </Link>
+                    {/* Breadcrumb */}
+                    <div className="bg-white border-b border-[#eee]">
+                        <div className="mx-auto max-w-[1040px] px-4 py-3 flex items-center gap-2 text-[12px] text-[#777]">
+                            <Link to="/" className="hover:text-[#111] transition">Home</Link>
+                            <ChevronRight className="h-3 w-3 text-[#ccc]" />
+                            <span className="text-[#333] font-medium">Shopping Cart</span>
                         </div>
                     </div>
-                </div>
-            </div>
+
+                    <div className="mx-auto max-w-[1040px] px-4 py-10 w-full">
+                        <h1 className="text-[28px] font-black text-[#111] mb-8">Shopping Cart <span className="text-[18px] font-normal text-[#999]">({totalItems} items)</span></h1>
+
+                        <div className="flex flex-col lg:flex-row gap-8 items-start">
+                            {/* Cart Items */}
+                            <div className="flex-1 space-y-4">
+                                {cart.map(item => (
+                                    <div key={item.id} className="bg-white border border-[#eee] rounded-xl p-5 flex gap-5 items-start shadow-sm hover:shadow-md transition-shadow">
+                                        {/* Image */}
+                                        <div className="w-[90px] h-[90px] shrink-0 rounded-lg overflow-hidden border border-[#eee] bg-[#f8f8f8]">
+                                            {item.image ? (
+                                                <img src={item.image} alt={item.name} className="w-full h-full object-contain bg-[#f8f8f8]" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-[#ccc]">
+                                                    <ShoppingBag className="h-8 w-8" />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Info and Price Column */}
+                                        <div className="flex-1 min-w-0 flex flex-col md:flex-row gap-4">
+                                            {/* Info */}
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-bold text-[#111] text-[15px] leading-snug mb-1">{item.name}</p>
+                                                <p className="text-primary font-black text-[18px] mb-3">{formatPrice(item.price)}</p>
+
+                                                {/* Qty Controls */}
+                                                <div className="flex items-center gap-3">
+                                                    <div className="flex items-center border border-[#ddd] rounded-lg overflow-hidden">
+                                                        <button
+                                                            onClick={() => updateQty(item.id, item.qty - 1)}
+                                                            className="w-9 h-9 flex items-center justify-center text-[#555] hover:bg-[#f5f5f5] transition"
+                                                        >
+                                                            <Minus className="h-4 w-4" />
+                                                        </button>
+                                                        <span className="w-10 text-center text-[14px] font-bold text-[#111]">{item.qty}</span>
+                                                        <button
+                                                            onClick={() => updateQty(item.id, item.qty + 1)}
+                                                            className="w-9 h-9 flex items-center justify-center text-[#555] hover:bg-[#f5f5f5] transition"
+                                                        >
+                                                            <Plus className="h-4 w-4" />
+                                                        </button>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => { removeFromCart(item.id); toast.success("Item removed") }}
+                                                        className="flex items-center gap-1 text-[13px] text-primary hover:underline"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" /> Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Line Total */}
+                                            <div className="shrink-0 md:text-right border-t md:border-t-0 border-[#eee] pt-3 md:pt-0">
+                                                <p className="text-[12px] text-[#999]">Item Total</p>
+                                                <p className="font-black text-[20px] text-[#111]">{formatPrice(item.price * item.qty)}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Order Summary Sidebar */}
+                            <div className="w-full lg:w-[320px] shrink-0 sticky top-6 space-y-4">
+                                {/* Delivery Fee Notice */}
+                                {totalItems > 0 && totalItems < 3 && (
+                                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3 items-start">
+                                        <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="text-[13px] font-bold text-primary">Delivery Fee Applied</p>
+                                            <p className="text-[12px] text-primary/80 mt-0.5">
+                                                Orders with less than 3 items include a {formatPrice(400)} delivery charge. Add {3 - totalItems} more {3 - totalItems === 1 ? 'item' : 'items'} for free delivery!
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                                {totalItems >= 3 && (
+                                    <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-4 flex gap-3 items-start">
+                                        <AlertCircle className="h-5 w-5 text-[#16a34a] shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery!</p>
+                                            <p className="text-[12px] text-[#16a34a]/80 mt-0.5">
+                                                You've unlocked free delivery for ordering 3 or more items!
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Price Summary */}
+                                <div className="bg-white rounded-xl border border-[#eee] p-5 shadow-sm">
+                                    <h3 className="font-bold text-[#111] text-[16px] mb-4 pb-3 border-b border-[#eee]">Order Summary</h3>
+                                    <div className="space-y-2.5 text-[14px]">
+                                        <div className="flex justify-between text-[#555]">
+                                            <span>Subtotal ({totalItems} items)</span>
+                                            <span className="font-semibold text-[#111]">{formatPrice(subtotal)}</span>
+                                        </div>
+                                        <div className="flex justify-between text-[#555]">
+                                            <span>Delivery</span>
+                                            {deliveryFee > 0 ? (
+                                                <span className="font-semibold text-primary">{formatPrice(deliveryFee)}</span>
+                                            ) : (
+                                                <span className="font-semibold text-[#16a34a]">FREE</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="border-t-2 border-[#111] mt-4 pt-4 flex justify-between items-baseline">
+                                        <span className="font-bold text-[#111] text-[15px]">Total</span>
+                                        <div className="text-right">
+                                            <p className="font-black text-[28px] text-[#111] leading-none">{formatPrice(grandTotal)}</p>
+                                        </div>
+                                    </div>
+
+                                    <Link
+                                        to="/checkout"
+                                        className="w-full mt-5 h-[52px] bg-primary hover:bg-red-800 text-white font-bold text-[16px] rounded-xl transition-colors flex items-center justify-center gap-2 shadow-lg shadow-red-200/50"
+                                    >
+                                        Proceed to Checkout
+                                        <ChevronRight className="h-5 w-5" />
+                                    </Link>
+                                    <Link
+                                        to="/"
+                                        className="w-full mt-3 h-[44px] border border-[#ddd] text-[#555] font-semibold text-[14px] rounded-xl hover:bg-[#f5f5f5] transition flex items-center justify-center"
+                                    >
+                                        Continue Shopping
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </>
             )}
 

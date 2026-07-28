@@ -7,8 +7,18 @@ import { CommonProductCard } from "./CommonProductCard"
 // Removed local resolveImage and GridCard as they're now shared as CommonProductCard
 
 export function BannerTopicSection({ title, products, bannerImage, bannerImages }) {
-    // Show only 6 products in a 3x2 grid
-    const displayProducts = products.slice(0, 6)
+    // Distribute products into multiple rows for horizontal scrolling
+    const distributeProducts = (arr, numRows) => {
+        if (!arr || !Array.isArray(arr)) return Array.from({ length: numRows }, () => []);
+        const rows = Array.from({ length: numRows }, () => []);
+        arr.forEach((item, idx) => {
+            rows[idx % numRows].push(item);
+        });
+        return rows;
+    };
+
+    const mobileRows = distributeProducts(products, 3);
+    const desktopRows = distributeProducts(products, 2);
     
     // Normalize images: use bannerImages array, or fallback to bannerImage string
     const images = (Array.isArray(bannerImages) && bannerImages.filter(Boolean).length > 0)
@@ -43,6 +53,56 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
                 setCurrentIndex(prev => (prev - 1 + images.length) % images.length);
             }
         }
+    };
+
+    // Smooth Desktop Drag-to-Scroll Logic
+    const onMouseDown = (e) => {
+        const slider = e.currentTarget;
+        slider.isDown = true;
+        slider.didDrag = false; 
+        slider.startX = e.pageX - slider.offsetLeft;
+        slider.scrollLeftStart = slider.scrollLeft;
+        slider.style.scrollSnapType = 'none'; // Temporarily disable snap for buttery smooth drag
+    };
+    const onMouseMove = (e) => {
+        const slider = e.currentTarget;
+        if (!slider.isDown) return;
+        
+        // If the user released the mouse outside the container, cancel the drag
+        if (e.buttons !== 1) {
+            slider.isDown = false;
+            slider.style.scrollSnapType = 'x mandatory';
+            return;
+        }
+
+        e.preventDefault(); // Stop text/image highlighting
+        const x = e.pageX - slider.offsetLeft;
+        const walk = (x - slider.startX) * 1.5; // Scroll speed multiplier
+        if (Math.abs(walk) > 5) {
+            slider.didDrag = true; // Mark as dragged to prevent accidental clicks
+        }
+        slider.scrollLeft = slider.scrollLeftStart - walk;
+    };
+    const onMouseUpOrLeave = (e) => {
+        const slider = e.currentTarget;
+        slider.isDown = false;
+        slider.style.scrollSnapType = 'x mandatory'; // Restore snapping
+    };
+    const onClickCapture = (e) => {
+        if (e.currentTarget.didDrag) {
+            e.stopPropagation();
+            e.preventDefault();
+            e.currentTarget.didDrag = false;
+        }
+    };
+
+    const dragEvents = {
+        onMouseDown,
+        onMouseLeave: onMouseUpOrLeave,
+        onMouseUp: onMouseUpOrLeave,
+        onMouseMove,
+        onClickCapture,
+        onDragStart: (e) => e.preventDefault() // Stop native browser image dragging
     };
 
     return (
@@ -89,15 +149,35 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
                     )}
                 </div>
 
-                {/* Right: Product Grid (3x2) */}
-                <div className="flex-1 p-4 bg-white">
+                {/* Right: Scrollable Product Rows */}
+                <div className="flex-1 p-4 bg-white overflow-hidden min-w-0">
                     <div className="flex justify-between items-center mb-4 border-b border-[#f0f0f0] pb-2">
                         <h2 className="text-xl font-bold text-neutral-dark">{title}</h2>
                     </div>
                     
-                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                        {displayProducts.map(p => (
-                            <CommonProductCard key={p.id} product={p} />
+                    {/* Mobile View (3 rows) */}
+                    <div className="md:hidden flex flex-col gap-4">
+                        {mobileRows.map((row, i) => (
+                            <div key={`mobile-row-${i}`} {...dragEvents} className="flex gap-3 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
+                                {row.map(p => (
+                                    <div key={p.id} className="snap-start w-[140px] shrink-0">
+                                        <CommonProductCard product={p} />
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Desktop View (2 rows) */}
+                    <div className="hidden md:flex flex-col gap-5">
+                        {desktopRows.map((row, i) => (
+                            <div key={`desktop-row-${i}`} {...dragEvents} className="flex gap-4 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
+                                {row.map(p => (
+                                    <div key={p.id} className="snap-start w-[180px] lg:w-[200px] xl:w-[220px] shrink-0">
+                                        <CommonProductCard product={p} />
+                                    </div>
+                                ))}
+                            </div>
                         ))}
                     </div>
                 </div>
