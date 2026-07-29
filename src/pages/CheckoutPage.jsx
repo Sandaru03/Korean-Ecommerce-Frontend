@@ -96,7 +96,11 @@ export default function CheckoutPage() {
             const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/orders`, {
                 items: cart.map(item => ({ productId: item.productId, qty: item.qty })),
                 address: buildFullAddress(),
-                phone
+                phone,
+                paymentMethod,
+                email,
+                firstName,
+                lastName
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             })
