@@ -1,6 +1,6 @@
 "use client"
 
-import { Search, ShoppingCart, User, Menu, ChevronDown, LogOut, LogIn, CircleHelp } from "lucide-react"
+import { Search, ShoppingCart, User, Menu, ChevronDown, ChevronLeft, ChevronRight, LogOut, LogIn, CircleHelp } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useCart } from "@/context/CartContext"
@@ -26,6 +26,118 @@ export function Header() {
 
   const [navRowCategories, setNavRowCategories] = useState([])
   const [navDropdownCategories, setNavDropdownCategories] = useState([])
+  const [hoveredCategory, setHoveredCategory] = useState(null)
+  const navScrollRef = useRef(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStartX, setDragStartX] = useState(0)
+  const [dragScrollLeft, setDragScrollLeft] = useState(0)
+  const hasDragged = useRef(false)
+
+  const checkNavScroll = () => {
+    if (navScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = navScrollRef.current
+      setCanScrollLeft(scrollLeft > 6)
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6)
+    }
+  }
+
+  const handleNavScroll = (direction) => {
+    if (navScrollRef.current) {
+      const amount = 320
+      navScrollRef.current.scrollBy({
+        left: direction === "left" ? -amount : amount,
+        behavior: "smooth",
+      })
+    }
+  }
+
+  // Mouse drag-to-slide handlers (horizontal navbar)
+  const handleMouseDown = (e) => {
+    if (e.button !== 0 || !navScrollRef.current) return
+    const el = navScrollRef.current
+    const startX = e.pageX
+    const startScroll = el.scrollLeft
+    setIsDragging(true)
+    hasDragged.current = false
+
+    const onMouseMove = (moveEvent) => {
+      const delta = moveEvent.pageX - startX
+      if (Math.abs(delta) > 5) {
+        hasDragged.current = true
+      }
+      el.scrollLeft = startScroll - delta
+      checkNavScroll()
+    }
+
+    const onMouseUp = () => {
+      setIsDragging(false)
+      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("mouseup", onMouseUp)
+    }
+
+    window.addEventListener("mousemove", onMouseMove)
+    window.addEventListener("mouseup", onMouseUp)
+  }
+
+  // Mouse drag-to-scroll handler (vertical category dropdown)
+  const catScrollRef = useRef(null)
+  const [isCatDragging, setIsCatDragging] = useState(false)
+  const hasCatDragged = useRef(false)
+
+  const handleCatMouseDown = (e) => {
+    if (e.button !== 0 || !catScrollRef.current) return
+    const el = catScrollRef.current
+    const startY = e.pageY
+    const startScrollTop = el.scrollTop
+    setIsCatDragging(true)
+    hasCatDragged.current = false
+
+    const onMouseMove = (moveEvent) => {
+      const delta = moveEvent.pageY - startY
+      if (Math.abs(delta) > 5) {
+        hasCatDragged.current = true
+      }
+      el.scrollTop = startScrollTop - delta
+    }
+
+    const onMouseUp = () => {
+      setIsCatDragging(false)
+      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("mouseup", onMouseUp)
+    }
+
+    window.addEventListener("mousemove", onMouseMove)
+    window.addEventListener("mouseup", onMouseUp)
+  }
+
+  // Horizontal mouse wheel sliding
+  useEffect(() => {
+    const el = navScrollRef.current
+    if (!el) return
+    const onWheel = (e) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault()
+        el.scrollLeft += e.deltaY
+        checkNavScroll()
+      }
+    }
+    el.addEventListener("wheel", onWheel, { passive: false })
+    return () => el.removeEventListener("wheel", onWheel)
+  }, [])
+
+  useEffect(() => {
+    checkNavScroll()
+    const timer1 = setTimeout(checkNavScroll, 100)
+    const timer2 = setTimeout(checkNavScroll, 400)
+    window.addEventListener("resize", checkNavScroll)
+    return () => {
+      clearTimeout(timer1)
+      clearTimeout(timer2)
+      window.removeEventListener("resize", checkNavScroll)
+    }
+  }, [navRowCategories])
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -104,9 +216,8 @@ export function Header() {
         if (data.categories) {
           const allSuperCats = data.categories;
           const flaggedSuperCats = allSuperCats.filter(c => c.showInNavbar);
-          // Top row: first 10 that are flagged
-          const row = flaggedSuperCats.slice(0, 10);
-          setNavRowCategories(row);
+          // Top row: include ALL categories enabled in Admin panel
+          setNavRowCategories(flaggedSuperCats);
           // Dropdown: show ALL super categories
           setNavDropdownCategories(allSuperCats);
         }
@@ -355,57 +466,142 @@ export function Header() {
         {/* Desktop Category Nav */}
         <div className="border-b border-[#eee] bg-white relative z-50 hidden md:block">
           <div className="mx-auto max-w-[1040px] px-4 flex">
-            <div className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group" ref={catMenuRef}>
+            {/* Category Menu & Flyout */}
+            <div 
+              className="w-[180px] shrink-0 border-r border-l border-[#eee] relative group" 
+              ref={catMenuRef}
+              onMouseLeave={() => setHoveredCategory(null)}
+            >
               <button className="w-full py-4.5 px-4 text-[17px] font-bold text-[#111] flex items-center gap-2 group-hover:text-primary transition-colors">
                 <Menu className="h-5 w-5" />
                 Category
               </button>
-              <div className="absolute top-full left-[-1px] w-[220px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                <ul className="py-2 relative">
+
+              {/* Dropdown Container */}
+              <div className="absolute top-full left-[-1px] flex bg-white border border-[#eee] shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 rounded-b-lg">
+                {/* Left Column: Vertically scrollable & draggable list of all super categories */}
+                <div 
+                  ref={catScrollRef}
+                  onMouseDown={handleCatMouseDown}
+                  className={`w-[230px] max-h-[min(580px,calc(100vh-170px))] overflow-y-auto py-2 divide-y-0 divide-[#f5f5f5] [scrollbar-width:thin] select-none ${
+                    isCatDragging ? "cursor-grabbing" : "cursor-grab"
+                  }`}
+                >
                   {navDropdownCategories.map(cat => (
-                    <li key={cat.id} className="group/supercat">
-                      <Link to={`/super-category/${cat.slug}`} className="flex justify-between items-center px-6 py-2.5 text-[14px] text-[#333] font-medium hover:bg-[#f8f9fa] hover:text-primary transition-colors">
-                        {cat.name}
-                        {cat.children && cat.children.length > 0 && <ChevronDown className="-rotate-90 h-3.5 w-3.5 text-gray-400" />}
+                    <div 
+                      key={cat.id} 
+                      onMouseEnter={() => setHoveredCategory(cat)}
+                    >
+                      <Link 
+                        to={`/super-category/${cat.slug}`} 
+                        onClick={(e) => {
+                          if (hasCatDragged.current) {
+                            e.preventDefault();
+                          }
+                        }}
+                        className={`flex justify-between items-center px-5 py-2.5 text-[14px] font-medium transition-colors ${
+                          hoveredCategory?.id === cat.id 
+                            ? "bg-[#f8f9fa] text-primary font-semibold" 
+                            : "text-[#333] hover:bg-[#f8f9fa] hover:text-primary"
+                        }`}
+                      >
+                        <span className="truncate pr-2">{cat.name}</span>
+                        {cat.children && cat.children.length > 0 && (
+                          <ChevronRight className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                        )}
                       </Link>
-                      
-                      {/* Submenu for categories and subcategories */}
-                      {cat.children && cat.children.length > 0 && (
-                        <div className="absolute top-0 left-full ml-[-1px] min-w-[500px] max-w-[800px] bg-white border border-[#eee] shadow-xl opacity-0 invisible group-hover/supercat:opacity-100 group-hover/supercat:visible transition-all duration-200 z-50 overflow-y-auto" style={{maxHeight: 'calc(100vh - 200px)'}}>
-                          <div className="p-6 flex gap-8 flex-wrap content-start">
-                            {cat.children.map(child => (
-                              <div key={child.id} className="flex flex-col gap-2 w-[160px]">
-                                <Link to={`/super-category/${cat.slug}?selected=${child.slug}`} className="font-bold text-[14px] text-[#111] hover:text-primary border-b border-[#eee] pb-1 mb-1">
-                                  {child.name}
-                                </Link>
-                                {child.children && child.children.length > 0 && (
-                                  <ul className="flex flex-col gap-1.5">
-                                    {child.children.map(sub => (
-                                      <li key={sub.id}>
-                                        <Link to={`/super-category/${cat.slug}?selected=${child.slug}`} className="text-[13px] text-[#555] hover:text-primary transition-colors block py-0.5">
-                                          {sub.name}
-                                        </Link>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
+
+                {/* Right Column: Flyout Subcategories */}
+                {hoveredCategory && hoveredCategory.children && hoveredCategory.children.length > 0 && (
+                  <div className="w-[540px] max-h-[min(580px,calc(100vh-170px))] overflow-y-auto border-l border-[#eee] p-6 bg-white [scrollbar-width:thin] animate-in fade-in duration-150">
+                    <div className="flex gap-8 flex-wrap content-start">
+                      {hoveredCategory.children.map(child => (
+                        <div key={child.id} className="flex flex-col gap-2 w-[150px]">
+                          <Link 
+                            to={`/super-category/${hoveredCategory.slug}?selected=${child.slug}`} 
+                            className="font-bold text-[14px] text-[#111] hover:text-primary border-b border-[#eee] pb-1 mb-1 block"
+                          >
+                            {child.name}
+                          </Link>
+                          {child.children && child.children.length > 0 && (
+                            <ul className="flex flex-col gap-1.5">
+                              {child.children.map(sub => (
+                                <li key={sub.id}>
+                                  <Link 
+                                    to={`/super-category/${hoveredCategory.slug}?selected=${child.slug}`} 
+                                    className="text-[13px] text-[#555] hover:text-primary transition-colors block py-0.5"
+                                  >
+                                    {sub.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="flex-1 flex gap-8 items-center px-8 text-[17px] font-bold text-[#111]">
-              {navRowCategories.map((cat) => (
-                <Link key={cat.id} to={`/super-category/${cat.slug}`} className="hover:text-primary transition uppercase whitespace-nowrap">
-                  {cat.name}
-                </Link>
-              ))}
+            {/* Horizontal Navbar Categories Strip with smooth scrolling, drag-to-slide & chevrons */}
+            <div className="relative flex-1 flex items-center min-w-0 pl-4 pr-1 overflow-hidden">
+              {/* Left Arrow with gradient mask */}
+              {canScrollLeft && (
+                <div className="absolute left-0 top-0 bottom-0 flex items-center pl-1 pr-6 bg-gradient-to-r from-white via-white/95 to-transparent z-20 pointer-events-none">
+                  <button
+                    type="button"
+                    onClick={() => handleNavScroll("left")}
+                    className="pointer-events-auto w-8 h-8 bg-white rounded-full shadow-md border border-gray-200 flex items-center justify-center text-gray-800 hover:text-primary hover:scale-110 active:scale-95 transition-all"
+                    aria-label="Scroll categories left"
+                  >
+                    <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                  </button>
+                </div>
+              )}
+
+              {/* Scrollable & Drag-Slideable Container */}
+              <div 
+                ref={navScrollRef}
+                onScroll={checkNavScroll}
+                onMouseDown={handleMouseDown}
+                className={`flex-1 flex gap-7 items-center overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden text-[17px] font-bold text-[#111] py-4.5 select-none ${
+                  isDragging ? "cursor-grabbing" : "cursor-grab"
+                }`}
+              >
+                {navRowCategories.map((cat) => (
+                  <Link 
+                    key={cat.id} 
+                    to={`/super-category/${cat.slug}`}
+                    onClick={(e) => {
+                      if (hasDragged.current) {
+                        e.preventDefault()
+                      }
+                    }}
+                    className="hover:text-primary transition uppercase whitespace-nowrap shrink-0 hover:scale-105 active:scale-95 transform transition-transform"
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Right Arrow with gradient mask */}
+              {canScrollRight && (
+                <div className="absolute right-0 top-0 bottom-0 flex items-center pr-1 pl-6 bg-gradient-to-l from-white via-white/95 to-transparent z-20 pointer-events-none">
+                  <button
+                    type="button"
+                    onClick={() => handleNavScroll("right")}
+                    className="pointer-events-auto w-8 h-8 bg-white rounded-full shadow-md border border-gray-200 flex items-center justify-center text-gray-800 hover:text-primary hover:scale-110 active:scale-95 transition-all"
+                    aria-label="Scroll categories right"
+                  >
+                    <ChevronRight className="w-5 h-5 stroke-[2.5]" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

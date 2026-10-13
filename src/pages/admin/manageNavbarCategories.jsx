@@ -31,9 +31,12 @@ export default function ManageNavbarCategories() {
 
   const toggleNavbarVisibility = async (categoryId, currentStatus) => {
     try {
-      const { data } = await axios.put(`${backendUrl}/categories/${categoryId}`, {
-        showInNavbar: !currentStatus
-      });
+      const token = localStorage.getItem("token");
+      const { data } = await axios.put(
+        `${backendUrl}/categories/${categoryId}`,
+        { showInNavbar: !currentStatus },
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+      );
       if (data.message === "Category updated successfully") {
         setCategories(categories.map(cat => 
           cat.id === categoryId ? { ...cat, showInNavbar: !currentStatus } : cat
@@ -42,7 +45,7 @@ export default function ManageNavbarCategories() {
       }
     } catch (error) {
       console.error("Error updating category:", error);
-      toast.error("Failed to update status");
+      toast.error(error.response?.data?.message || "Failed to update status");
     }
   };
 

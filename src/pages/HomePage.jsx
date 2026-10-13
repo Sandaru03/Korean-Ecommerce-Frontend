@@ -5,7 +5,7 @@ import { Footer } from "@/components/coupang/footer"
 import { BannerTopicSection } from "@/components/coupang/BannerTopicSection"
 import { ChevronLeft, ChevronRight, Heart, ShoppingBag } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { AdBannerSlider } from "@/components/coupang/AdBannerSlider"
 import { ReelsSection } from "@/components/coupang/ReelsSection"
 import { GridBannerSection } from "@/components/coupang/GridBannerSection"
@@ -61,18 +61,75 @@ function EmptyTopics() {
 
 // ── Middle Banner Section ─────────────────────────────────────
 function MiddleBannerSection({ banners }) {
-    const [currentIndex, setCurrentIndex] = useState(0);
+    if (!banners || banners.length === 0) return null;
 
-    const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % banners.length);
-    const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + banners.length) % banners.length);
+    // Single banner fallback: no loop or controls needed
+    if (banners.length === 1) {
+        return (
+            <section className="mb-0 relative">
+                <Link to={banners[0].link || '#'} className="block w-full">
+                    <img 
+                        src={banners[0].image} 
+                        alt="Promotion" 
+                        className="w-full h-[220px] md:h-[420px] object-contain block bg-[#f8f8f8]" 
+                    />
+                </Link>
+            </section>
+        );
+    }
 
+    // Extended array: [Last, ...Originals, First]
+    const slides = useMemo(() => {
+        return [banners[banners.length - 1], ...banners, banners[0]];
+    }, [banners]);
+
+    const [currentIndex, setCurrentIndex] = useState(1);
+    const [enableTransition, setEnableTransition] = useState(true);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+
+    // Reset when banners change
     useEffect(() => {
-        if (banners.length <= 1) return;
+        setCurrentIndex(1);
+        setEnableTransition(false);
+        setIsAnimating(false);
+    }, [banners]);
+
+    const nextSlide = useCallback(() => {
+        if (isAnimating) return;
+        setIsAnimating(true);
+        setEnableTransition(true);
+        setCurrentIndex((prev) => prev + 1);
+    }, [isAnimating]);
+
+    const prevSlide = useCallback(() => {
+        if (isAnimating) return;
+        setIsAnimating(true);
+        setEnableTransition(true);
+        setCurrentIndex((prev) => prev - 1);
+    }, [isAnimating]);
+
+    const handleTransitionEnd = () => {
+        setIsAnimating(false);
+        if (currentIndex === slides.length - 1) {
+            // Reached clone of first slide at end -> snap silently to real first slide (index 1)
+            setEnableTransition(false);
+            setCurrentIndex(1);
+        } else if (currentIndex === 0) {
+            // Reached clone of last slide at start -> snap silently to real last slide (index slides.length - 2)
+            setEnableTransition(false);
+            setCurrentIndex(slides.length - 2);
+        }
+    };
+
+    // Auto-advance every 6s unless hovered
+    useEffect(() => {
+        if (isPaused) return;
         const interval = setInterval(() => {
-            setCurrentIndex(prev => (prev + 1) % banners.length);
+            nextSlide();
         }, 6000);
         return () => clearInterval(interval);
-    }, [banners.length]);
+    }, [isPaused, nextSlide]);
 
     const [touchStartX, setTouchStartX] = useState(0);
 
@@ -93,7 +150,7 @@ function MiddleBannerSection({ banners }) {
         }
     };
 
-    if (!banners || banners.length === 0) return null;
+    const activeDot = (currentIndex - 1 + banners.length) % banners.length;
 
     return (
         <section 
@@ -101,14 +158,21 @@ function MiddleBannerSection({ banners }) {
             style={{ touchAction: 'pan-y' }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
         >
             <div className="overflow-hidden">
                 <div 
-                    className="flex transition-transform duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] transform-gpu backface-hidden will-change-transform"
+                    className={`flex transform-gpu will-change-transform ${
+                        enableTransition 
+                            ? "transition-transform duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]" 
+                            : ""
+                    }`}
                     style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+                    onTransitionEnd={handleTransitionEnd}
                 >
-                    {banners.map((banner) => (
-                        <div key={banner.id} className="min-w-full shrink-0 relative">
+                    {slides.map((banner, idx) => (
+                        <div key={`${banner.id || idx}-${idx}`} className="min-w-full shrink-0 relative">
                             <Link to={banner.link || '#'} className="block w-full h-full group/item">
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 opacity-60" />
                                 <img 
@@ -125,37 +189,40 @@ function MiddleBannerSection({ banners }) {
                 </div>
             </div>
 
-            {banners.length > 1 && (
-                <>
-                    <button 
-                        onClick={prevSlide}
-                        className="absolute -left-6 top-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-2xl text-slate-900 border border-slate-100 opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white scale-75 group-hover:scale-100 z-30 hidden lg:flex"
-                    >
-                        <ChevronLeft className="w-6 h-6" />
-                    </button>
-                    <button 
-                        onClick={nextSlide}
-                        className="absolute -right-6 top-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-2xl text-slate-900 border border-slate-100 opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white scale-75 group-hover:scale-100 z-30 hidden lg:flex"
-                    >
-                        <ChevronRight className="w-6 h-6" />
-                    </button>
-                    
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
-                        {banners.map((_, idx) => (
-                            <button
-                                key={idx}
-                                onClick={() => setCurrentIndex(idx)}
-                                className={`transition-all duration-500 rounded-full ${
-                                    idx === currentIndex 
-                                    ? "bg-black w-10 h-2" 
-                                    : "bg-slate-300 w-2 h-2 hover:bg-slate-400"
-                                }`}
-                                aria-label={`Go to slide ${idx + 1}`}
-                            />
-                        ))}
-                    </div>
-                </>
-            )}
+            <button 
+                onClick={prevSlide}
+                className="absolute -left-6 top-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-2xl text-slate-900 border border-slate-100 opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white scale-75 group-hover:scale-100 z-30 hidden lg:flex"
+                aria-label="Previous banner"
+            >
+                <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button 
+                onClick={nextSlide}
+                className="absolute -right-6 top-1/2 -translate-y-1/2 bg-white p-4 rounded-full shadow-2xl text-slate-900 border border-slate-100 opacity-0 group-hover:opacity-100 transition-all hover:bg-black hover:text-white scale-75 group-hover:scale-100 z-30 hidden lg:flex"
+                aria-label="Next banner"
+            >
+                <ChevronRight className="w-6 h-6" />
+            </button>
+            
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+                {banners.map((_, idx) => (
+                    <button
+                        key={idx}
+                        onClick={() => {
+                            if (isAnimating) return;
+                            setIsAnimating(true);
+                            setEnableTransition(true);
+                            setCurrentIndex(idx + 1);
+                        }}
+                        className={`transition-all duration-500 rounded-full ${
+                            idx === activeDot 
+                            ? "bg-black w-10 h-2" 
+                            : "bg-slate-300 w-2 h-2 hover:bg-slate-400"
+                        }`}
+                        aria-label={`Go to slide ${idx + 1}`}
+                    />
+                ))}
+            </div>
         </section>
     );
 }
