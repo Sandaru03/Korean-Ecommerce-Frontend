@@ -6,7 +6,7 @@ import { CommonProductCard } from "./CommonProductCard"
 
 // Removed local resolveImage and GridCard as they're now shared as CommonProductCard
 
-export function BannerTopicSection({ title, products, bannerImage, bannerImages }) {
+export function BannerTopicSection({ title, products, bannerImage, bannerImages, mobileBannerImages }) {
     // Distribute products into multiple rows for horizontal scrolling
     const distributeProducts = (arr, numRows) => {
         if (!arr || !Array.isArray(arr)) return Array.from({ length: numRows }, () => []);
@@ -20,21 +20,23 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
     const mobileRows = distributeProducts(products, 3);
     const desktopRows = distributeProducts(products, 2);
     
-    // Normalize images: use bannerImages array, or fallback to bannerImage string
+    // Normalize unified images (supports bannerImages, fallback to mobileBannerImages or legacy bannerImage)
     const images = (Array.isArray(bannerImages) && bannerImages.filter(Boolean).length > 0)
         ? bannerImages.filter(Boolean)
-        : (bannerImage ? [bannerImage] : [])
+        : (Array.isArray(mobileBannerImages) && mobileBannerImages.filter(Boolean).length > 0)
+            ? mobileBannerImages.filter(Boolean)
+            : (bannerImage ? [bannerImage] : []);
 
-    const [currentIndex, setCurrentIndex] = useState(0)
+    const [currentIndex, setCurrentIndex] = useState(0);
 
     // Auto-slide every 5 seconds if there's more than 1 image
     useEffect(() => {
-        if (images.length <= 1) return
+        if (images.length <= 1) return;
         const timer = setInterval(() => {
-            setCurrentIndex(prev => (prev + 1) % images.length)
-        }, 5000)
-        return () => clearInterval(timer)
-    }, [images.length])
+            setCurrentIndex(prev => (prev + 1) % images.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, [images.length]);
 
     const [touchStartX, setTouchStartX] = useState(0);
 
@@ -107,24 +109,24 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
 
     return (
         <section className="mb-0">
-            <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm">
-                {/* Left: Banner Slider */}
+            <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm items-stretch">
+                {/* Left: Banner Slider (Unified 3:5 Aspect Ratio for 100% Zero Crop & Zero Space) */}
                 <div 
-                    className="w-full md:w-[38%] relative overflow-hidden aspect-[3/5] md:aspect-auto bg-[#fafafa]"
+                    className="w-full md:w-[420px] lg:w-[430px] shrink-0 relative overflow-hidden aspect-[3/5] bg-[#fafafa]"
                     style={{ touchAction: 'pan-y' }}
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                 >
                     {images.length > 0 ? (
                         <div className="absolute inset-0 w-full h-full group">
-                            {/* Main image */}
+                            {/* Unified 3:5 images */}
                             {images.map((img, idx) => (
                                 <img 
-                                    key={`main-${idx}`}
+                                    key={`banner-${idx}`}
                                     src={img} 
                                     alt={`${title} banner ${idx + 1}`} 
-                                    className={`absolute inset-0 w-full h-full object-cover md:object-contain z-10 transition-all duration-1000 transform-gpu backface-hidden will-change-transform ${
-                                        idx === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-105"
+                                    className={`absolute inset-0 w-full h-full object-cover object-center z-10 transition-all duration-1000 transform-gpu backface-hidden will-change-transform ${
+                                        idx === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
                                     }`}
                                 />
                             ))}
@@ -135,7 +137,7 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages 
                                         <div 
                                             key={idx}
                                             className={`h-1 rounded-full transition-all duration-300 ${
-                                                idx === currentIndex ? "w-4 bg-white" : "w-1.5 bg-white/50"
+                                                idx === currentIndex ? "w-4 bg-white shadow-sm" : "w-1.5 bg-white/60"
                                             }`}
                                         />
                                     ))}

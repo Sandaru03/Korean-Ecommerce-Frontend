@@ -90,8 +90,7 @@ export default function ManageHomePage() {
   };
 
   const handleSaveBanner = async (topicId, index) => {
-    const topicPreviews = bannerPreviews[topicId];
-    const preview = topicPreviews?.[index];
+    const preview = bannerPreviews[topicId]?.[index];
     if (!preview) return;
 
     const formData = new FormData();
@@ -104,6 +103,7 @@ export default function ManageHomePage() {
 
       const topic = topics.find(t => t.id === topicId);
       const currentImages = Array.isArray(topic.bannerImages) ? [...topic.bannerImages] : [];
+      
       // Ensure the array has enough slots
       while (currentImages.length <= index) {
         currentImages.push(null);
@@ -118,7 +118,7 @@ export default function ManageHomePage() {
         setTopics(topics.map(t => t.id === topicId ? { ...t, bannerImages: currentImages } : t));
         setBannerPreviews(prev => {
           const next = { ...prev };
-          const topicNext = { ...next[topicId] };
+          const topicNext = { ...(next[topicId] || {}) };
           delete topicNext[index];
           if (Object.keys(topicNext).length === 0) {
             delete next[topicId];
@@ -127,11 +127,38 @@ export default function ManageHomePage() {
           }
           return next;
         });
-        toast.success(`Banner slot ${index + 1} saved successfully!`);
+        toast.success(`Banner slot ${index + 1} saved successfully! (750×1250 px)`);
       }
     } catch (error) {
       console.error("Error saving banner:", error);
       toast.error("Failed to save banner");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveBanner = async (topicId, index) => {
+    if (!window.confirm(`Remove banner from slot ${index + 1}?`)) return;
+    const topic = topics.find(t => t.id === topicId);
+    if (!topic) return;
+
+    const currentImages = Array.isArray(topic.bannerImages) ? [...topic.bannerImages] : [];
+    if (index < currentImages.length) {
+      currentImages[index] = null;
+    }
+
+    try {
+      setLoading(true);
+      const { data } = await axios.put(`${backendUrl}/homepage-topics/${topicId}`, {
+        bannerImages: currentImages
+      });
+      if (data.success) {
+        setTopics(topics.map(t => t.id === topicId ? { ...t, bannerImages: currentImages } : t));
+        toast.success(`Removed banner from slot ${index + 1}`);
+      }
+    } catch (error) {
+      console.error("Error removing banner:", error);
+      toast.error("Failed to remove banner");
     } finally {
       setLoading(false);
     }
@@ -230,68 +257,113 @@ export default function ManageHomePage() {
           {topics.map(topic => (
             <div key={topic.id} className="bg-white rounded-lg shadow-sm border border-gray-100">
               {/* Topic Header */}
-              <div className="bg-gray-50 px-6 py-4 flex items-center justify-between border-b border-gray-100">
-                <div className="flex items-center gap-6">
-                  <div className="flex gap-3">
-                    {[0, 1, 2].map((idx) => (
-                      <div key={idx} className="flex flex-col items-center gap-2">
-                        <div className="relative group/banner w-24 h-16 bg-gray-200 rounded overflow-hidden border border-gray-300 flex items-center justify-center shrink-0 shadow-inner">
-                          {bannerPreviews[topic.id]?.[idx] ? (
-                            <img src={bannerPreviews[topic.id][idx].url} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover ring-2 ring-primary ring-inset" />
-                          ) : (topic.bannerImages && topic.bannerImages[idx]) ? (
-                            <img src={topic.bannerImages[idx]} alt={`Banner ${idx + 1}`} className="w-full h-full object-cover" />
-                          ) : (idx === 0 && topic.bannerImage) ? (
-                            <img src={topic.bannerImage} alt={`Legacy Banner`} className="w-full h-full object-cover opacity-50" title="Legacy Banner" />
-                          ) : (
-                            <div className="flex flex-col items-center text-gray-400">
-                              <ImageIcon className="w-4 h-4" />
-                              <span className="text-[8px]">Slot {idx + 1}</span>
-                              <span className="text-[7px] font-bold text-blue-500">1000x1000</span>
-                            </div>
-                          )}
-                          <label className="absolute inset-0 bg-black/40 opacity-0 group-hover/banner:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                            <Upload className="w-4 h-4 text-white" />
-                            <input 
-                              type="file" 
-                              className="hidden" 
-                              accept="image/*"
-                              onChange={(e) => handleBannerSelect(topic.id, idx, e.target.files[0])}
-                            />
-                          </label>
-                        </div>
-                        {bannerPreviews[topic.id]?.[idx] && (
-                          <button 
-                            onClick={() => handleSaveBanner(topic.id, idx)}
-                            disabled={loading}
-                            className="w-full py-1 bg-primary text-white text-[9px] font-bold rounded hover:opacity-90 disabled:opacity-50 shadow-sm"
-                          >
-                            {loading ? "..." : "SAVE"}
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  <div>
+              <div className="bg-gray-50 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100">
+                <div>
+                  <div className="flex items-center gap-3">
                     <h2 className="text-xl font-bold text-gray-900">{topic.title}</h2>
-                    <div className="flex items-center gap-2 mt-1">
-                      <button 
-                        onClick={() => handleToggleActive(topic)}
-                        className={`px-3 py-1 text-xs font-semibold rounded-full ${topic.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'}`}
-                      >
-                        {topic.active ? 'Active' : 'Hidden'}
-                      </button>
-                      <span className="text-[11px] text-gray-400 italic">
-                        {topic.bannerImages?.length > 0 ? "Slider active" : topic.bannerImage ? "Legacy banner active" : "Horizontal strip active"}
-                      </span>
-                    </div>
+                    <button 
+                      onClick={() => handleToggleActive(topic)}
+                      className={`px-3 py-1 text-xs font-semibold rounded-full ${topic.active ? 'bg-green-100 text-green-800' : 'bg-gray-200 text-gray-600'}`}
+                    >
+                      {topic.active ? 'Active' : 'Hidden'}
+                    </button>
                   </div>
+                  <p className="text-[12px] text-gray-500 mt-1">
+                    Upload 1 image per slot (Recommended: <strong className="text-gray-800 font-bold">750 × 1250 px</strong>). Unified 3:5 ratio fits both Windows and Mobile with <strong>Zero Crop</strong> and <strong>Zero Blank Spaces</strong>!
+                  </p>
                 </div>
                 <button 
                   onClick={() => handleDeleteTopic(topic.id)}
-                  className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                  className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors self-start sm:self-center"
+                  title="Delete Topic"
                 >
                   <Trash2 className="w-5 h-5" />
                 </button>
+              </div>
+
+              {/* Topic Banners: 3 Slider Slots with Unified 3:5 Aspect Ratio */}
+              <div className="bg-slate-50/70 border-b border-gray-100 px-6 py-4">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    Slider Banners (Unified 3:5 Ratio — Fits Windows & Mobile)
+                  </span>
+                  <span className="text-[11px] text-gray-400 italic">
+                    {topic.bannerImages?.filter(Boolean).length > 0 || topic.bannerImage
+                      ? "Slider active (changes every 5s)"
+                      : "Horizontal strip active"}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {[0, 1, 2].map((idx) => {
+                    const savedImg = topic.bannerImages?.[idx] || (idx === 0 ? topic.bannerImage : null) || topic.mobileBannerImages?.[idx];
+                    const preview = bannerPreviews[topic.id]?.[idx];
+
+                    return (
+                      <div key={idx} className="bg-white border border-gray-200 rounded-xl p-3 shadow-sm flex flex-col gap-2.5">
+                        <div className="flex justify-between items-center pb-1.5 border-b border-gray-100">
+                          <span className="text-xs font-black text-gray-800">Slot {idx + 1}</span>
+                          {savedImg ? (
+                            <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                              ✓ Active
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Empty</span>
+                          )}
+                        </div>
+
+                        {/* Unified 3:5 Thumbnail Uploader */}
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="relative group/banner w-full aspect-[3/5] max-h-48 bg-gray-50 rounded-lg overflow-hidden border border-gray-300 flex items-center justify-center shadow-inner">
+                            {preview ? (
+                              <img src={preview.url} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover ring-2 ring-primary ring-inset" />
+                            ) : savedImg ? (
+                              <>
+                                <img src={savedImg} alt={`Banner ${idx + 1}`} className="w-full h-full object-cover" />
+                                <button
+                                  onClick={() => handleRemoveBanner(topic.id, idx)}
+                                  className="absolute top-2 right-2 p-1.5 bg-red-600/90 hover:bg-red-700 text-white rounded-md opacity-0 group-hover/banner:opacity-100 transition-opacity shadow-md"
+                                  title="Remove image"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </>
+                            ) : (
+                              <div className="flex flex-col items-center text-gray-400 p-2 text-center">
+                                <ImageIcon className="w-6 h-6 mb-1 text-gray-300" />
+                                <span className="text-[11px] font-bold text-gray-600">Upload Banner</span>
+                                <span className="text-[9.5px] font-bold text-blue-600 mt-0.5">750 × 1250 px</span>
+                                <span className="text-[8px] text-gray-400 mt-0.5">Unified 3:5 Ratio</span>
+                              </div>
+                            )}
+                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover/banner:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 cursor-pointer">
+                              <Upload className="w-5 h-5 text-white" />
+                              <span className="text-[11px] font-bold text-white">Change Image</span>
+                              <input 
+                                type="file" 
+                                className="hidden" 
+                                accept="image/*"
+                                onChange={(e) => handleBannerSelect(topic.id, idx, e.target.files[0])}
+                              />
+                            </label>
+                          </div>
+
+                          {preview ? (
+                            <button 
+                              onClick={() => handleSaveBanner(topic.id, idx)}
+                              disabled={loading}
+                              className="w-full py-2 bg-primary hover:opacity-90 text-white text-xs font-bold rounded-lg shadow-sm disabled:opacity-50"
+                            >
+                              {loading ? "Saving..." : "SAVE BANNER"}
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-gray-500 font-semibold">750 × 1250 px (Unified)</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Topic Products */}

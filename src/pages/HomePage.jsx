@@ -266,7 +266,7 @@ export default function HomePage() {
 
     // Active topics de-duplicated by ID
     const activeTopicsWithProducts = Array.from(
-        new Map(topics.filter(t => t.active && (t.products?.length > 0 || t.bannerImage)).map(t => [t.id, t])).values()
+        new Map(topics.filter(t => t.active && (t.products?.length > 0 || t.bannerImage || t.bannerImages?.length > 0 || t.mobileBannerImages?.length > 0)).map(t => [t.id, t])).values()
     );
 
     return (
@@ -312,8 +312,14 @@ export default function HomePage() {
             {/* ── Topic 1 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[0] && (
                 <div className="mx-auto max-w-[1040px] px-4 mb-6 md:mb-10">
-                    {activeTopicsWithProducts[0].bannerImages?.length > 0 || activeTopicsWithProducts[0].bannerImage ? (
-                        <BannerTopicSection title={activeTopicsWithProducts[0].title} products={activeTopicsWithProducts[0].products} bannerImage={activeTopicsWithProducts[0].bannerImage} bannerImages={activeTopicsWithProducts[0].bannerImages} />
+                    {activeTopicsWithProducts[0].bannerImages?.length > 0 || activeTopicsWithProducts[0].mobileBannerImages?.length > 0 || activeTopicsWithProducts[0].bannerImage ? (
+                        <BannerTopicSection 
+                            title={activeTopicsWithProducts[0].title} 
+                            products={activeTopicsWithProducts[0].products} 
+                            bannerImage={activeTopicsWithProducts[0].bannerImage} 
+                            bannerImages={activeTopicsWithProducts[0].bannerImages} 
+                            mobileBannerImages={activeTopicsWithProducts[0].mobileBannerImages}
+                        />
                     ) : (
                         <TopicStrip title={activeTopicsWithProducts[0].title} products={activeTopicsWithProducts[0].products} />
                     )}
@@ -338,8 +344,14 @@ export default function HomePage() {
             {/* ── Topic 2 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[1] && (
                 <div className="mx-auto max-w-[1040px] px-4 mb-6 md:mb-10">
-                    {activeTopicsWithProducts[1].bannerImages?.length > 0 || activeTopicsWithProducts[1].bannerImage ? (
-                        <BannerTopicSection title={activeTopicsWithProducts[1].title} products={activeTopicsWithProducts[1].products} bannerImage={activeTopicsWithProducts[1].bannerImage} bannerImages={activeTopicsWithProducts[1].bannerImages} />
+                    {activeTopicsWithProducts[1].bannerImages?.length > 0 || activeTopicsWithProducts[1].mobileBannerImages?.length > 0 || activeTopicsWithProducts[1].bannerImage ? (
+                        <BannerTopicSection 
+                            title={activeTopicsWithProducts[1].title} 
+                            products={activeTopicsWithProducts[1].products} 
+                            bannerImage={activeTopicsWithProducts[1].bannerImage} 
+                            bannerImages={activeTopicsWithProducts[1].bannerImages} 
+                            mobileBannerImages={activeTopicsWithProducts[1].mobileBannerImages}
+                        />
                     ) : (
                         <TopicStrip title={activeTopicsWithProducts[1].title} products={activeTopicsWithProducts[1].products} />
                     )}
@@ -354,8 +366,14 @@ export default function HomePage() {
             {/* ── Topic 3 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[2] && (
                 <div className="mx-auto max-w-[1040px] px-4 mb-6 md:mb-10">
-                    {activeTopicsWithProducts[2].bannerImages?.length > 0 || activeTopicsWithProducts[2].bannerImage ? (
-                        <BannerTopicSection title={activeTopicsWithProducts[2].title} products={activeTopicsWithProducts[2].products} bannerImage={activeTopicsWithProducts[2].bannerImage} bannerImages={activeTopicsWithProducts[2].bannerImages} />
+                    {activeTopicsWithProducts[2].bannerImages?.length > 0 || activeTopicsWithProducts[2].mobileBannerImages?.length > 0 || activeTopicsWithProducts[2].bannerImage ? (
+                        <BannerTopicSection 
+                            title={activeTopicsWithProducts[2].title} 
+                            products={activeTopicsWithProducts[2].products} 
+                            bannerImage={activeTopicsWithProducts[2].bannerImage} 
+                            bannerImages={activeTopicsWithProducts[2].bannerImages} 
+                            mobileBannerImages={activeTopicsWithProducts[2].mobileBannerImages}
+                        />
                     ) : (
                         <TopicStrip title={activeTopicsWithProducts[2].title} products={activeTopicsWithProducts[2].products} />
                     )}
@@ -377,8 +395,14 @@ export default function HomePage() {
             {/* ── Topic 4 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[3] && (
                 <div className="mx-auto max-w-[1040px] px-4 mb-6 md:mb-10">
-                    {activeTopicsWithProducts[3].bannerImages?.length > 0 || activeTopicsWithProducts[3].bannerImage ? (
-                        <BannerTopicSection title={activeTopicsWithProducts[3].title} products={activeTopicsWithProducts[3].products} bannerImage={activeTopicsWithProducts[3].bannerImage} bannerImages={activeTopicsWithProducts[3].bannerImages} />
+                    {activeTopicsWithProducts[3].bannerImages?.length > 0 || activeTopicsWithProducts[3].mobileBannerImages?.length > 0 || activeTopicsWithProducts[3].bannerImage ? (
+                        <BannerTopicSection 
+                            title={activeTopicsWithProducts[3].title} 
+                            products={activeTopicsWithProducts[3].products} 
+                            bannerImage={activeTopicsWithProducts[3].bannerImage} 
+                            bannerImages={activeTopicsWithProducts[3].bannerImages} 
+                            mobileBannerImages={activeTopicsWithProducts[3].mobileBannerImages}
+                        />
                     ) : (
                         <TopicStrip title={activeTopicsWithProducts[3].title} products={activeTopicsWithProducts[3].products} />
                     )}
@@ -393,8 +417,14 @@ export default function HomePage() {
             {/* ── Topic 5 ─────────────────────────────────────────── */}
             {!topicsLoading && activeTopicsWithProducts[4] && (
                 <div className="mx-auto max-w-[1040px] px-4 mb-6 md:mb-10">
-                    {activeTopicsWithProducts[4].bannerImages?.length > 0 || activeTopicsWithProducts[4].bannerImage ? (
-                        <BannerTopicSection title={activeTopicsWithProducts[4].title} products={activeTopicsWithProducts[4].products} bannerImage={activeTopicsWithProducts[4].bannerImage} bannerImages={activeTopicsWithProducts[4].bannerImages} />
+                    {activeTopicsWithProducts[4].bannerImages?.length > 0 || activeTopicsWithProducts[4].mobileBannerImages?.length > 0 || activeTopicsWithProducts[4].bannerImage ? (
+                        <BannerTopicSection 
+                            title={activeTopicsWithProducts[4].title} 
+                            products={activeTopicsWithProducts[4].products} 
+                            bannerImage={activeTopicsWithProducts[4].bannerImage} 
+                            bannerImages={activeTopicsWithProducts[4].bannerImages} 
+                            mobileBannerImages={activeTopicsWithProducts[4].mobileBannerImages}
+                        />
                     ) : (
                         <TopicStrip title={activeTopicsWithProducts[4].title} products={activeTopicsWithProducts[4].products} />
                     )}
@@ -411,8 +441,14 @@ export default function HomePage() {
                 <div className="mx-auto max-w-[1040px] px-4 space-y-6 md:space-y-10">
                     {activeTopicsWithProducts.slice(5).map((topic) => (
                         <div key={topic.id}>
-                            {topic.bannerImages?.length > 0 || topic.bannerImage ? (
-                                <BannerTopicSection title={topic.title} products={topic.products} bannerImage={topic.bannerImage} bannerImages={topic.bannerImages} />
+                            {topic.bannerImages?.length > 0 || topic.mobileBannerImages?.length > 0 || topic.bannerImage ? (
+                                <BannerTopicSection 
+                                    title={topic.title} 
+                                    products={topic.products} 
+                                    bannerImage={topic.bannerImage} 
+                                    bannerImages={topic.bannerImages} 
+                                    mobileBannerImages={topic.mobileBannerImages}
+                                />
                             ) : (
                                 <TopicStrip title={topic.title} products={topic.products} />
                             )}
