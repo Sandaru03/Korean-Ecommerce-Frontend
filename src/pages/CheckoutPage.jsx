@@ -22,6 +22,7 @@ export default function CheckoutPage() {
     const [city, setCity] = useState("")
     const [postalCode, setPostalCode] = useState("")
     const [phone, setPhone] = useState("")
+    const [secondaryPhone, setSecondaryPhone] = useState("")
     const [saveInfo, setSaveInfo] = useState(false)
 
     const [orderEmail, setOrderEmail] = useState("orders@yourbusiness.com")
@@ -57,6 +58,7 @@ export default function CheckoutPage() {
                 if (lastName && lastName !== "Not Provided") setLastName(lastName)
                 if (userEmail && userEmail !== "Not Provided") setEmail(userEmail)
                 if (userPhone && userPhone !== "Not Given" && userPhone !== "Not Provided") setPhone(userPhone)
+                if (res.data.secondaryPhone && res.data.secondaryPhone !== "Not Given" && res.data.secondaryPhone !== "Not Provided") setSecondaryPhone(res.data.secondaryPhone)
                 if (uAddress) setAddressLine(uAddress)
                 if (uApartment) setApartment(uApartment)
                 if (uCity) setCity(uCity)
@@ -79,7 +81,7 @@ export default function CheckoutPage() {
     ).join("\n")
 
     const deliveryLine = deliveryFee > 0
-        ? `\nDelivery Fee: ${formatPrice(deliveryFee)} (${totalItems} items)`
+        ? `\nDelivery Fee: ${formatPrice(deliveryFee)}`
         : "\nDelivery: Free"
         
     const buildFullName = () => `${firstName} ${lastName}`.trim()
@@ -97,6 +99,7 @@ export default function CheckoutPage() {
                 items: cart.map(item => ({ productId: item.productId, qty: item.qty })),
                 address: buildFullAddress(),
                 phone,
+                secondaryPhone,
                 paymentMethod,
                 email,
                 firstName,
@@ -108,7 +111,7 @@ export default function CheckoutPage() {
             if (saveInfo) {
                 try {
                     await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/users`, {
-                        firstName, lastName, phone, addressLine, apartment, city, postalCode, country
+                        firstName, lastName, phone, secondaryPhone, addressLine, apartment, city, postalCode, country
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     })
@@ -197,10 +200,14 @@ export default function CheckoutPage() {
         }
 
         const finalSlipLine = finalSlipUrl ? `\n\n📎 *Payment Slip:* ${finalSlipUrl}` : ""
+        const phoneLine = secondaryPhone 
+            ? `*Primary Phone:* ${phone}\n*Secondary Phone:* ${secondaryPhone}` 
+            : `*Phone:* ${phone}`
+
         const finalSummary =
             `🛒 *New Order*\n\n` +
             `*Name:* ${buildFullName()}\n` +
-            `*Phone:* ${phone}\n` +
+            `${phoneLine}\n` +
             `*Email:* ${email}\n` +
             `*Address:* ${buildFullAddress()}\n\n` +
             `*Items:*\n${orderLines}\n` +
@@ -251,10 +258,14 @@ export default function CheckoutPage() {
         
         setSendingEmail(true)
         
+        const phoneLine = secondaryPhone 
+            ? `*Primary Phone:* ${phone}\n*Secondary Phone:* ${secondaryPhone}` 
+            : `*Phone:* ${phone}`
+
         const summaryText =
             `🛒 *New Order*\n\n` +
             `*Name:* ${buildFullName()}\n` +
-            `*Phone:* ${phone}\n` +
+            `${phoneLine}\n` +
             `*Email:* ${email}\n` +
             `*Address:* ${buildFullAddress()}\n\n` +
             `*Items:*\n${orderLines}\n` +
@@ -270,6 +281,7 @@ export default function CheckoutPage() {
                 orderData: {
                     name: buildFullName(),
                     phone,
+                    secondaryPhone,
                     email,
                     address: buildFullAddress(),
                     items: cart.map(item => ({
@@ -408,13 +420,26 @@ export default function CheckoutPage() {
                                             />
                                         </div>
 
-                                        <input
-                                            type="tel"
-                                            placeholder="Phone"
-                                            value={phone}
-                                            onChange={e => setPhone(e.target.value)}
-                                            className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
-                                        />
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            <div>
+                                                <input
+                                                    type="tel"
+                                                    placeholder="Primary Phone *"
+                                                    value={phone}
+                                                    onChange={e => setPhone(e.target.value)}
+                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                />
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="tel"
+                                                    placeholder="Secondary Phone (optional)"
+                                                    value={secondaryPhone}
+                                                    onChange={e => setSecondaryPhone(e.target.value)}
+                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                />
+                                            </div>
+                                        </div>
 
                                         <label className="flex items-center gap-3 mt-4 cursor-pointer">
                                             <input

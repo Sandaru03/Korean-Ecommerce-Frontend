@@ -472,9 +472,15 @@ export default function OrdersPageAdmin() {
                                             </div>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div>
-                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Phone</p>
+                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Primary Phone</p>
                                                     <p className="font-bold text-gray-800">{clickOrder.phone}</p>
                                                 </div>
+                                                {clickOrder.secondaryPhone && (
+                                                    <div>
+                                                        <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Secondary Phone</p>
+                                                        <p className="font-bold text-gray-800">{clickOrder.secondaryPhone}</p>
+                                                    </div>
+                                                )}
                                             </div>
                                             <div>
                                                 <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Delivery Address</p>

@@ -14,7 +14,10 @@ export default function SideCart() {
         subtotal, 
         deliveryFee,
         grandTotal,
-        totalItems
+        totalItems,
+        isFreeDelivery,
+        freeDeliveryRemaining,
+        freeDeliveryThreshold
     } = useCart()
     const { formatPrice } = useCurrency()
     const navigate = useNavigate()
@@ -115,21 +118,41 @@ export default function SideCart() {
                 {/* Footer / Summary */}
                 {cart.length > 0 && (
                     <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0 space-y-4">
+                        {/* Free Delivery Bar */}
+                        {!isFreeDelivery && subtotal > 0 && (
+                            <div className="bg-red-50 border border-red-100 rounded-xl p-3 text-xs text-primary shadow-sm">
+                                <div className="flex justify-between items-center mb-1.5 font-bold">
+                                    <span>Free Delivery Goal</span>
+                                    <span>{Math.round(Math.min(100, (subtotal / freeDeliveryThreshold) * 100))}%</span>
+                                </div>
+                                <div className="w-full bg-red-200/60 h-1.5 rounded-full overflow-hidden mb-1.5">
+                                    <div 
+                                        className="bg-primary h-full transition-all duration-300 rounded-full"
+                                        style={{ width: `${Math.min(100, Math.max(0, (subtotal / freeDeliveryThreshold) * 100))}%` }}
+                                    />
+                                </div>
+                                <p className="text-[11px] text-primary/80">
+                                    Add <span className="font-bold underline">{formatPrice(freeDeliveryRemaining)}</span> for FREE delivery!
+                                </p>
+                            </div>
+                        )}
+                        {isFreeDelivery && subtotal > 0 && (
+                            <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-2.5 text-xs text-[#16a34a] font-bold flex items-center justify-between shadow-sm">
+                                <span>🎉 FREE Delivery Unlocked!</span>
+                                <span className="text-[10px] bg-[#16a34a] text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Unlocked</span>
+                            </div>
+                        )}
+
                         <div className="space-y-2">
                             <div className="flex justify-between text-sm text-gray-500">
                                 <span>Subtotal</span>
                                 <span>{formatPrice(subtotal)}</span>
                             </div>
                             <div className="flex justify-between text-sm text-gray-500">
-                                <span className="flex items-center">
-                                    Delivery
-                                    {totalItems > 0 && totalItems < 3 && (
-                                        <span className="text-primary text-[11px] ml-2 font-medium bg-red-50 px-2 py-0.5 rounded-full">
-                                            Add {3 - totalItems} more {3 - totalItems === 1 ? 'item' : 'items'} for FREE
-                                        </span>
-                                    )}
+                                <span>Delivery</span>
+                                <span className={deliveryFee > 0 ? "font-semibold text-primary" : "font-semibold text-[#16a34a]"}>
+                                    {deliveryFee > 0 ? formatPrice(deliveryFee) : "FREE"}
                                 </span>
-                                <span>{deliveryFee > 0 ? formatPrice(deliveryFee) : "FREE"}</span>
                             </div>
                             <div className="flex justify-between font-black text-lg text-gray-900 pt-2 border-t border-gray-200">
                                 <span>Total:</span>

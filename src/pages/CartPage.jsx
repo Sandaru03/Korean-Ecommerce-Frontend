@@ -16,6 +16,7 @@ function fmt(num) {
 function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, totalItems, whatsappNumber }) {
     const [name, setName] = useState("")
     const [phone, setPhone] = useState("")
+    const [secondaryPhone, setSecondaryPhone] = useState("")
     const [address, setAddress] = useState("")
     const [orderEmail, setOrderEmail] = useState("orders@yourbusiness.com")
     const [loadingUser, setLoadingUser] = useState(true)
@@ -37,9 +38,10 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(res => {
-                const { firstName, lastName, phone: userPhone } = res.data
+                const { firstName, lastName, phone: userPhone, secondaryPhone: userSecPhone } = res.data
                 if (firstName || lastName) setName([firstName, lastName].filter(Boolean).join(" "))
                 if (userPhone && userPhone !== "Not Given") setPhone(userPhone)
+                if (userSecPhone && userSecPhone !== "Not Given") setSecondaryPhone(userSecPhone)
             })
             .catch(() => { /* silently ignore — user can fill manually */ })
             .finally(() => setLoadingUser(false))
@@ -58,15 +60,19 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
     ).join("\n")
 
     const deliveryLine = deliveryFee > 0
-        ? `\nDelivery Fee: ${formatPrice(deliveryFee)} (${totalItems} items)`
+        ? `\nDelivery Fee: ${formatPrice(deliveryFee)}`
         : "\nDelivery: Free"
 
     const slipLine = slipUrl ? `\n\n📎 *Payment Slip:* ${slipUrl}` : ""
 
+    const phoneLine = secondaryPhone 
+        ? `*Primary Phone:* ${phone || "—"}\n*Secondary Phone:* ${secondaryPhone}` 
+        : `*Phone:* ${phone || "—"}`
+
     const summaryText =
         `🛒 *New Order*\n\n` +
         `*Name:* ${name || "—"}\n` +
-        `*Phone:* ${phone || "—"}\n` +
+        `${phoneLine}\n` +
         `*Address:* ${address || "—"}\n\n` +
         `*Items:*\n${orderLines}\n` +
         `${deliveryLine}\n` +
@@ -84,7 +90,8 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/orders`, {
                 items: cart.map(item => ({ productId: item.productId, qty: item.qty })),
                 address,
-                phone
+                phone,
+                secondaryPhone
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -240,6 +247,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                 orderData: {
                     name: name || "—",
                     phone: phone || "—",
+                    secondaryPhone: secondaryPhone || null,
                     address: address || "—",
                     items: cart.map(item => ({
                         name: item.name,
@@ -296,10 +304,15 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                                 <span>Subtotal</span>
                                 <span>{formatPrice(subtotal)}</span>
                             </div>
-                            {deliveryFee > 0 && (
+                            {deliveryFee > 0 ? (
                                 <div className="flex justify-between text-[13px] text-primary font-semibold">
-                                    <span>Delivery Fee ({totalItems} items)</span>
+                                    <span>Delivery Fee</span>
                                     <span>{formatPrice(deliveryFee)}</span>
+                                </div>
+                            ) : (
+                                <div className="flex justify-between text-[13px] text-[#16a34a] font-semibold">
+                                    <span>Delivery</span>
+                                    <span>FREE</span>
                                 </div>
                             )}
                             <div className="flex justify-between text-[16px] font-black text-[#111] pt-1 border-t border-[#ddd]">
@@ -333,19 +346,30 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                                 </span>
                             )}
                         </div>
-                        <div className="relative">
-                            <input
-                                type="tel"
-                                placeholder="Phone Number *"
-                                value={phone}
-                                onChange={e => setPhone(e.target.value)}
-                                className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-primary outline-none pr-24"
-                            />
-                            {phone && (
-                                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-[#f0fff4] text-[#16a34a] font-bold px-2 py-0.5 rounded-full border border-[#b2f5cb]">
-                                    From account
-                                </span>
-                            )}
+                        <div className="space-y-3">
+                            <div className="relative">
+                                <input
+                                    type="tel"
+                                    placeholder="Primary Phone Number *"
+                                    value={phone}
+                                    onChange={e => setPhone(e.target.value)}
+                                    className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-primary outline-none pr-24"
+                                />
+                                {phone && (
+                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-[#f0fff4] text-[#16a34a] font-bold px-2 py-0.5 rounded-full border border-[#b2f5cb]">
+                                        From account
+                                    </span>
+                                )}
+                            </div>
+                            <div className="relative">
+                                <input
+                                    type="tel"
+                                    placeholder="Secondary Phone Number (optional)"
+                                    value={secondaryPhone}
+                                    onChange={e => setSecondaryPhone(e.target.value)}
+                                    className="w-full border border-[#ddd] rounded-lg px-4 py-3 text-[14px] focus:border-primary outline-none"
+                                />
+                            </div>
                         </div>
                         <textarea
                             placeholder="Delivery Address *"
@@ -445,7 +469,10 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
 
 export default function CartPage() {
     const navigate = useNavigate()
-    const { cart, updateQty, removeFromCart, totalItems, subtotal, deliveryFee, grandTotal } = useCart()
+    const { 
+        cart, updateQty, removeFromCart, totalItems, subtotal, deliveryFee, grandTotal,
+        isFreeDelivery, freeDeliveryRemaining, freeDeliveryThreshold, standardDeliveryFee
+    } = useCart()
     const { formatPrice } = useCurrency()
     const [contactNumber, setContactNumber] = useState("")
 
@@ -580,25 +607,36 @@ export default function CartPage() {
                             {/* Order Summary Sidebar */}
                             <div className="w-full lg:w-[320px] shrink-0 sticky top-6 space-y-4">
                                 {/* Delivery Fee Notice */}
-                                {totalItems > 0 && totalItems < 3 && (
-                                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3 items-start">
+                                {!isFreeDelivery && subtotal > 0 && (
+                                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3 items-start shadow-sm">
                                         <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                                        <div>
+                                        <div className="flex-1">
                                             <p className="text-[13px] font-bold text-primary">Delivery Fee Applied</p>
-                                            <p className="text-[12px] text-primary/80 mt-0.5">
-                                                Orders with less than 3 items include a {formatPrice(400)} delivery charge. Add {3 - totalItems} more {3 - totalItems === 1 ? 'item' : 'items'} for free delivery!
+                                            <p className="text-[12px] text-primary/80 mt-0.5 leading-relaxed">
+                                                Orders under {formatPrice(freeDeliveryThreshold)} include a {formatPrice(standardDeliveryFee)} delivery charge. Add <span className="font-bold underline">{formatPrice(freeDeliveryRemaining)}</span> more for free delivery!
                                             </p>
+                                            {/* Free Delivery Progress Bar */}
+                                            <div className="w-full bg-red-200/60 h-2 rounded-full overflow-hidden mt-2.5">
+                                                <div 
+                                                    className="bg-primary h-full transition-all duration-500 rounded-full"
+                                                    style={{ width: `${Math.min(100, Math.max(0, (subtotal / freeDeliveryThreshold) * 100))}%` }}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 )}
-                                {totalItems >= 3 && (
-                                    <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-4 flex gap-3 items-start">
+                                {isFreeDelivery && subtotal > 0 && (
+                                    <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-4 flex gap-3 items-start shadow-sm">
                                         <AlertCircle className="h-5 w-5 text-[#16a34a] shrink-0 mt-0.5" />
-                                        <div>
-                                            <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery!</p>
-                                            <p className="text-[12px] text-[#16a34a]/80 mt-0.5">
-                                                You've unlocked free delivery for ordering 3 or more items!
+                                        <div className="flex-1">
+                                            <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery Unlocked! 🎉</p>
+                                            <p className="text-[12px] text-[#16a34a]/80 mt-0.5 leading-relaxed">
+                                                You've unlocked free delivery for ordering over {formatPrice(freeDeliveryThreshold)}!
                                             </p>
+                                            {/* 100% Progress Bar */}
+                                            <div className="w-full bg-[#b2f5cb] h-2 rounded-full overflow-hidden mt-2.5">
+                                                <div className="bg-[#16a34a] h-full w-full rounded-full" />
+                                            </div>
                                         </div>
                                     </div>
                                 )}

@@ -2,6 +2,9 @@ import { createContext, useContext, useState, useEffect } from "react"
 
 const CartContext = createContext(null)
 
+export const FREE_DELIVERY_THRESHOLD = 20000 // Free delivery threshold in LKR
+export const STANDARD_DELIVERY_FEE = 400     // Standard delivery fee in LKR
+
 export function CartProvider({ children }) {
     const [isCartOpen, setIsCartOpen] = useState(false)
     const [cart, setCart] = useState(() => {
@@ -62,10 +65,13 @@ export function CartProvider({ children }) {
 
     // Total item count (sum of all quantities)
     const totalItems = cart.reduce((sum, item) => sum + item.qty, 0)
-    // Subtotal
+    // Subtotal in LKR
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
-    // Delivery fee: 400 LKR if less than 3 items, FREE if 3 or more items
-    const deliveryFee = (totalItems > 0 && totalItems < 3) ? 400 : 0
+    // Free delivery check (subtotal >= 20000 LKR)
+    const isFreeDelivery = subtotal >= FREE_DELIVERY_THRESHOLD
+    const freeDeliveryRemaining = Math.max(0, FREE_DELIVERY_THRESHOLD - subtotal)
+    // Delivery fee: 400 LKR if subtotal < 20000 LKR, FREE (0) if 20000 LKR or more
+    const deliveryFee = (subtotal > 0 && !isFreeDelivery) ? STANDARD_DELIVERY_FEE : 0
     // Grand total
     const grandTotal = subtotal + deliveryFee
 
@@ -73,6 +79,9 @@ export function CartProvider({ children }) {
         <CartContext.Provider value={{
             cart, addToCart, updateQty, removeFromCart, clearCart,
             totalItems, subtotal, deliveryFee, grandTotal,
+            isFreeDelivery, freeDeliveryRemaining,
+            freeDeliveryThreshold: FREE_DELIVERY_THRESHOLD,
+            standardDeliveryFee: STANDARD_DELIVERY_FEE,
             isCartOpen, setIsCartOpen
         }}>
             {children}

@@ -70,7 +70,8 @@ export default function ProfilePage() {
                 setEditForm({
                     firstName: res.data.firstName || "",
                     lastName: res.data.lastName || "",
-                    phone: res.data.phone || ""
+                    phone: res.data.phone || "",
+                    secondaryPhone: res.data.secondaryPhone || ""
                 });
                 setLoading(false);
             })
@@ -190,7 +191,10 @@ export default function ProfilePage() {
                                     <InfoItem label="First Name" value={user.firstName} />
                                     <InfoItem label="Last Name" value={user.lastName} />
                                     <InfoItem label="Email Address" value={user.email} />
-                                    <InfoItem label="Phone Number" value={user.phone || "Not provided"} />
+                                    <InfoItem label="Primary Phone" value={user.phone || "Not provided"} />
+                                    {user.secondaryPhone && (
+                                        <InfoItem label="Secondary Phone" value={user.secondaryPhone} />
+                                    )}
 
                                     <InfoItem label="Member Since" value={joinDate} />
                                     <InfoItem label="Account Status" value={user.isBlock ? "Blocked" : "Active"} 
@@ -289,9 +293,15 @@ export default function ProfilePage() {
                                             <p className="text-sm font-bold text-gray-800">{selectedOrder.name}</p>
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase">Phone</p>
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase">Primary Phone</p>
                                             <p className="text-sm font-medium text-gray-700">{selectedOrder.phone}</p>
                                         </div>
+                                        {selectedOrder.secondaryPhone && (
+                                            <div>
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase">Secondary Phone</p>
+                                                <p className="text-sm font-medium text-gray-700">{selectedOrder.secondaryPhone}</p>
+                                            </div>
+                                        )}
                                         <div>
                                             <p className="text-[10px] font-bold text-gray-400 uppercase">Address</p>
                                             <p className="text-sm font-medium text-gray-700 leading-relaxed">{selectedOrder.address}</p>
@@ -339,12 +349,23 @@ export default function ProfilePage() {
                             </div>
                             
                             <div className="space-y-1.5">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">Primary Phone Number</label>
                                 <input 
                                     type="text" 
                                     value={editForm.phone}
                                     onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                                    placeholder="Enter phone number"
+                                    placeholder="Enter primary phone number"
+                                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary transition-colors text-sm"
+                                />
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-xs font-bold text-gray-500 uppercase">Secondary Phone Number (Optional)</label>
+                                <input 
+                                    type="text" 
+                                    value={editForm.secondaryPhone || ""}
+                                    onChange={(e) => setEditForm({...editForm, secondaryPhone: e.target.value})}
+                                    placeholder="Enter alternate phone number"
                                     className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary transition-colors text-sm"
                                 />
                             </div>
