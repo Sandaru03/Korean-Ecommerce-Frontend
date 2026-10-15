@@ -306,6 +306,15 @@ export default function ProfilePage() {
                                             <p className="text-[10px] font-bold text-gray-400 uppercase">Address</p>
                                             <p className="text-sm font-medium text-gray-700 leading-relaxed">{selectedOrder.address}</p>
                                         </div>
+                                        {selectedOrder.country && (
+                                            <div>
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase">Destination</p>
+                                                <p className="text-sm font-medium text-gray-700 flex items-center gap-1.5 mt-0.5">
+                                                    {selectedOrder.country.toLowerCase().includes("sri lanka") ? "🇱🇰 Sri Lanka (Domestic)" : `🌍 ${selectedOrder.country} (International)`}
+                                                    {selectedOrder.postalCode ? ` • Postal: ${selectedOrder.postalCode}` : ""}
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 </section>
                             </div>

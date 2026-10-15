@@ -4,7 +4,8 @@ import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
 import { useCart } from "@/context/CartContext"
 import { useCurrency } from "@/context/CurrencyContext"
-import { Loader2, ImagePlus, X, MessageCircle, Mail, ChevronLeft, Building2, CreditCard } from "lucide-react"
+import { Loader2, ImagePlus, X, MessageCircle, Mail, ChevronLeft, Building2, CreditCard, ChevronRight, ShieldCheck } from "lucide-react"
+import { FaWhatsapp } from "react-icons/fa"
 import toast from "react-hot-toast"
 import axios from "axios"
 
@@ -14,6 +15,7 @@ export default function CheckoutPage() {
     const { formatPrice } = useCurrency()
 
     const [email, setEmail] = useState("")
+    const [destinationType, setDestinationType] = useState("srilanka") // 'srilanka' or 'international'
     const [country, setCountry] = useState("Sri Lanka")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
@@ -63,7 +65,15 @@ export default function CheckoutPage() {
                 if (uApartment) setApartment(uApartment)
                 if (uCity) setCity(uCity)
                 if (uPostalCode) setPostalCode(uPostalCode)
-                if (uCountry) setCountry(uCountry)
+                if (uCountry) {
+                    if (uCountry.trim().toLowerCase() !== "sri lanka") {
+                        setDestinationType("international")
+                        setCountry(uCountry)
+                    } else {
+                        setDestinationType("srilanka")
+                        setCountry("Sri Lanka")
+                    }
+                }
             })
             .catch(() => { /* silently ignore */ })
             .finally(() => setLoadingUser(false))
@@ -94,10 +104,13 @@ export default function CheckoutPage() {
             return null
         }
 
+        const finalCountry = destinationType === "srilanka" ? "Sri Lanka" : (country.trim() || "International")
         try {
             const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/orders`, {
                 items: cart.map(item => ({ productId: item.productId, qty: item.qty })),
                 address: buildFullAddress(),
+                country: finalCountry,
+                postalCode: postalCode.trim() || null,
                 phone,
                 secondaryPhone,
                 paymentMethod,
@@ -111,7 +124,7 @@ export default function CheckoutPage() {
             if (saveInfo) {
                 try {
                     await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/users`, {
-                        firstName, lastName, phone, secondaryPhone, addressLine, apartment, city, postalCode, country
+                        firstName, lastName, phone, secondaryPhone, addressLine, apartment, city, postalCode, country: finalCountry
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
                     })
@@ -176,8 +189,18 @@ export default function CheckoutPage() {
 
     const validateOrder = () => {
         if (!email || !lastName || !addressLine || !city || !phone) {
-            toast.error("Please fill in all required delivery details.")
+            toast.error("Please fill in all required delivery details (including phone number).")
             return false
+        }
+        if (destinationType === "international") {
+            if (!country || !country.trim() || country.trim().toLowerCase() === "sri lanka") {
+                toast.error("Please enter the destination country for international delivery.")
+                return false
+            }
+            if (!postalCode || !postalCode.trim()) {
+                toast.error("Postal / ZIP code is mandatory for international deliveries.")
+                return false
+            }
         }
         if (paymentMethod === 'bank' && !slipFile && !slipUrl) {
             toast.error("Please upload the payment slip for bank transfer.")
@@ -203,11 +226,15 @@ export default function CheckoutPage() {
         const phoneLine = secondaryPhone 
             ? `*Primary Phone:* ${phone}\n*Secondary Phone:* ${secondaryPhone}` 
             : `*Phone:* ${phone}`
+        const destinationLine = destinationType === "srilanka" 
+            ? "*Delivery:* Sri Lanka (Domestic)" 
+            : `*Delivery:* ${country.trim()} (International)${postalCode ? `\n*Postal Code:* ${postalCode.trim()}` : ""}`
 
         const finalSummary =
             `🛒 *New Order*\n\n` +
             `*Name:* ${buildFullName()}\n` +
             `${phoneLine}\n` +
+            `${destinationLine}\n` +
             `*Email:* ${email}\n` +
             `*Address:* ${buildFullAddress()}\n\n` +
             `*Items:*\n${orderLines}\n` +
@@ -261,17 +288,23 @@ export default function CheckoutPage() {
         const phoneLine = secondaryPhone 
             ? `*Primary Phone:* ${phone}\n*Secondary Phone:* ${secondaryPhone}` 
             : `*Phone:* ${phone}`
+        const destinationLine = destinationType === "srilanka" 
+            ? "*Delivery:* Sri Lanka (Domestic)" 
+            : `*Delivery:* ${country.trim()} (International)${postalCode ? `\n*Postal Code:* ${postalCode.trim()}` : ""}`
 
         const summaryText =
             `🛒 *New Order*\n\n` +
             `*Name:* ${buildFullName()}\n` +
             `${phoneLine}\n` +
+            `${destinationLine}\n` +
             `*Email:* ${email}\n` +
             `*Address:* ${buildFullAddress()}\n\n` +
             `*Items:*\n${orderLines}\n` +
             `${deliveryLine}\n` +
             `*Total: ${formatPrice(grandTotal)}*` +
             (finalSlipUrl ? `\n\n📎 *Payment Slip:* ${finalSlipUrl}` : "")
+
+        const finalCountry = destinationType === "srilanka" ? "Sri Lanka" : (country.trim() || "International")
 
         try {
             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/app-configs/send-order-email`, {
@@ -283,6 +316,8 @@ export default function CheckoutPage() {
                     phone,
                     secondaryPhone,
                     email,
+                    country: finalCountry,
+                    postalCode: postalCode.trim() || null,
                     address: buildFullAddress(),
                     items: cart.map(item => ({
                         name: item.name,
@@ -358,17 +393,75 @@ export default function CheckoutPage() {
                                 {/* Delivery Section */}
                                 <div>
                                     <h2 className="text-xl font-bold text-[#111] mb-4">Delivery</h2>
-                                    <div className="space-y-3">
-                                        <div className="relative">
-                                            <label className="absolute text-[11px] text-[#555] top-1.5 left-3">Country/Region</label>
-                                            <select
-                                                value={country}
-                                                onChange={e => setCountry(e.target.value)}
-                                                className="w-full border border-[#ddd] rounded-md px-3 pb-2 pt-6 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none bg-white transition-all text-[#333]"
-                                            >
-                                                <option>Sri Lanka</option>
-                                            </select>
+                                    <div className="space-y-4">
+                                        {/* Destination Selector */}
+                                        <div className="space-y-2">
+                                            <label className="block text-[13px] font-bold text-[#111]">
+                                                Where should your package be delivered? <span className="text-primary">*</span>
+                                            </label>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setDestinationType("srilanka");
+                                                        setCountry("Sri Lanka");
+                                                    }}
+                                                    className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all ${
+                                                        destinationType === "srilanka"
+                                                            ? "border-primary bg-primary/5 text-primary font-bold ring-1 ring-primary shadow-sm"
+                                                            : "border-[#ddd] bg-white text-[#555] hover:border-gray-400 font-medium"
+                                                    }`}
+                                                >
+                                                    <span className="text-2xl">🇱🇰</span>
+                                                    <div>
+                                                        <p className="text-[14px] leading-snug">Deliver to Sri Lanka</p>
+                                                        <p className="text-[11px] text-gray-500 font-normal">Domestic Delivery</p>
+                                                    </div>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setDestinationType("international");
+                                                        if (country === "Sri Lanka") setCountry("");
+                                                    }}
+                                                    className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all ${
+                                                        destinationType === "international"
+                                                            ? "border-primary bg-primary/5 text-primary font-bold ring-1 ring-primary shadow-sm"
+                                                            : "border-[#ddd] bg-white text-[#555] hover:border-gray-400 font-medium"
+                                                    }`}
+                                                >
+                                                    <span className="text-2xl">🌍</span>
+                                                    <div>
+                                                        <p className="text-[14px] leading-snug">Another Country</p>
+                                                        <p className="text-[11px] text-gray-500 font-normal">International Delivery</p>
+                                                    </div>
+                                                </button>
+                                            </div>
                                         </div>
+
+                                        {/* Country display / input */}
+                                        {destinationType === "international" ? (
+                                            <div>
+                                                <label className="block text-[12px] font-bold text-[#333] mb-1">
+                                                    Destination Country <span className="text-primary">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter country name (e.g. Australia, United Kingdom, USA, Maldives)"
+                                                    value={country === "Sri Lanka" ? "" : country}
+                                                    onChange={e => setCountry(e.target.value)}
+                                                    className="w-full border-2 border-primary/40 rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#888] bg-white font-medium"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="relative">
+                                                <label className="absolute text-[11px] text-[#555] top-1.5 left-3">Country / Region</label>
+                                                <div className="w-full border border-[#ddd] bg-gray-50/90 rounded-md px-3 pb-2 pt-6 text-[14px] font-semibold text-[#333] flex items-center gap-2">
+                                                    <span>🇱🇰</span> Sri Lanka (Domestic Delivery)
+                                                </div>
+                                            </div>
+                                        )}
 
                                         <div className="grid grid-cols-2 gap-3">
                                             <input
@@ -411,13 +504,26 @@ export default function CheckoutPage() {
                                                 onChange={e => setCity(e.target.value)}
                                                 className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
                                             />
-                                            <input
-                                                type="text"
-                                                placeholder="Postal code (optional)"
-                                                value={postalCode}
-                                                onChange={e => setPostalCode(e.target.value)}
-                                                className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
-                                            />
+                                            {destinationType === "international" ? (
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Postal / ZIP code *"
+                                                        value={postalCode}
+                                                        onChange={e => setPostalCode(e.target.value)}
+                                                        className="w-full border-2 border-amber-400 bg-amber-50/40 rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#888] font-medium"
+                                                    />
+                                                    <span className="text-[10px] text-amber-700 font-semibold block mt-1">Required for international</span>
+                                                </div>
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    placeholder="Postal code (optional)"
+                                                    value={postalCode}
+                                                    onChange={e => setPostalCode(e.target.value)}
+                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                />
+                                            )}
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -623,32 +729,82 @@ export default function CheckoutPage() {
 
                             {/* Checkout Buttons */}
                             {paymentMethod === 'bank' ? (
-                                <div className="space-y-3">
-                                    <p className="font-bold text-[#111] text-[13px] text-center mb-1">Place Your Order Via</p>
+                                <div className="space-y-3 pt-1">
+                                    {/* Modern Header */}
+                                    <div className="flex items-center justify-between px-1">
+                                        <span className="text-[11px] font-black uppercase tracking-wider text-gray-500">
+                                            Place Your Order Via
+                                        </span>
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                                            <ShieldCheck className="h-3 w-3" /> Secure Order
+                                        </span>
+                                    </div>
+
+                                    {/* Primary Button: WhatsApp */}
                                     <button
                                         onClick={handleWhatsApp}
                                         disabled={isSavingOrder || sendingEmail}
-                                        className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#25D366] hover:bg-[#20BB5A] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-green-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group relative w-full p-3.5 bg-gradient-to-r from-[#22c55e] via-[#16a34a] to-[#15803d] hover:from-[#16a34a] hover:to-[#166534] text-white rounded-2xl shadow-[0_10px_25px_-5px_rgba(22,163,74,0.4)] hover:shadow-[0_12px_28px_-4px_rgba(22,163,74,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-between text-left overflow-hidden border border-emerald-400/30"
                                     >
-                                        {isSavingOrder && !sendingEmail ? (
-                                            <Loader2 className="h-5 w-5 animate-spin" />
-                                        ) : (
-                                            <MessageCircle className="h-5 w-5" />
-                                        )}
-                                        {isSavingOrder && !sendingEmail ? "Processing..." : "Order via WhatsApp"}
+                                        {/* Subtle ambient lighting on hover */}
+                                        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/15 rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
+
+                                        <div className="flex items-center gap-3.5 min-w-0 z-10">
+                                            <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-200">
+                                                {isSavingOrder && !sendingEmail ? (
+                                                    <Loader2 className="h-5 w-5 animate-spin text-white" />
+                                                ) : (
+                                                    <FaWhatsapp className="h-6 w-6 text-white drop-shadow-sm" />
+                                                )}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <span className="font-extrabold text-[15px] leading-tight text-white tracking-tight block">
+                                                    {isSavingOrder && !sendingEmail ? "Processing Order..." : "Order via WhatsApp"}
+                                                </span>
+                                                <p className="text-[11px] text-emerald-100 truncate font-medium mt-0.5">
+                                                    Direct chat & instant payment verification
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <ChevronRight className="h-5 w-5 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0 ml-2 z-10" />
                                     </button>
+
+                                    {/* Primary Button: Email (Matching WhatsApp UI) */}
                                     <button
                                         onClick={handleEmail}
                                         disabled={isSavingOrder || sendingEmail}
-                                        className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#4285F4] hover:bg-[#3367D6] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-blue-200 disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="group relative w-full p-3.5 bg-gradient-to-r from-[#3b82f6] via-[#2563eb] to-[#1d4ed8] hover:from-[#2563eb] hover:to-[#1e40af] text-white rounded-2xl shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_12px_28px_-4px_rgba(37,99,235,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-between text-left overflow-hidden border border-blue-400/30"
                                     >
-                                        {isSavingOrder || sendingEmail ? (
-                                            <Loader2 className="h-5 w-5 animate-spin" />
-                                        ) : (
-                                            <Mail className="h-5 w-5" />
-                                        )}
-                                        {isSavingOrder ? "Processing..." : (sendingEmail ? "Sending Email..." : "Order via Email")}
+                                        {/* Subtle ambient lighting on hover */}
+                                        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/15 rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
+
+                                        <div className="flex items-center gap-3.5 min-w-0 z-10">
+                                            <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-200">
+                                                {isSavingOrder || sendingEmail ? (
+                                                    <Loader2 className="h-5 w-5 animate-spin text-white" />
+                                                ) : (
+                                                    <Mail className="h-6 w-6 text-white drop-shadow-sm" />
+                                                )}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <span className="font-extrabold text-[15px] leading-tight text-white tracking-tight block">
+                                                    {isSavingOrder ? "Processing..." : (sendingEmail ? "Sending Email..." : "Order via Email")}
+                                                </span>
+                                                <p className="text-[11px] text-blue-100 truncate font-medium mt-0.5">
+                                                    Receive order confirmation to your inbox
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <ChevronRight className="h-5 w-5 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0 ml-2 z-10" />
                                     </button>
+
+                                    {/* Trust micro-text */}
+                                    <div className="pt-1.5 flex items-center justify-center gap-1.5 text-center text-[11px] text-gray-400">
+                                        <span>📎</span>
+                                        <span>Your bank slip will be automatically attached</span>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="space-y-3 animate-in fade-in duration-300">

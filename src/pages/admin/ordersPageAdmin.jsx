@@ -24,6 +24,7 @@ export default function OrdersPageAdmin() {
     const [toDate, setToDate] = useState("");
     const [selectedOrders, setSelectedOrders] = useState([]);
     const [bulkStatus, setBulkStatus] = useState("pending");
+    const [destination, setDestination] = useState("all"); // 'all' | 'srilanka' | 'international'
 
     const token = localStorage.getItem("token");
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -41,6 +42,7 @@ export default function OrdersPageAdmin() {
             if (search) params.append("search", search);
             if (fromDate) params.append("fromDate", fromDate);
             if (toDate) params.append("toDate", toDate);
+            if (destination && destination !== "all") params.append("destination", destination);
 
             const queryString = params.toString();
             const url = `${backendUrl}/orders/${page}/${limit}${queryString ? `?${queryString}` : ""}`;
@@ -79,7 +81,7 @@ export default function OrdersPageAdmin() {
         }, search ? 500 : 0);
 
         return () => clearTimeout(timeout);
-    }, [page, limit, search, fromDate, toDate]);
+    }, [page, limit, search, fromDate, toDate, destination]);
 
     const handleUpdateOrder = async () => {
         if (!clickOrder) return;
@@ -259,6 +261,47 @@ export default function OrdersPageAdmin() {
                 </div>
             </div>
 
+            {/* 🔹 Destination Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-gray-200/80 shadow-sm">
+                <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Destination:</span>
+                    <button
+                        onClick={() => { setDestination("all"); setPage(1); }}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            destination === "all"
+                                ? "bg-indigo-600 text-white shadow-sm shadow-indigo-200"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200/70"
+                        }`}
+                    >
+                        <span>🌐</span> All Destinations
+                    </button>
+                    <button
+                        onClick={() => { setDestination("srilanka"); setPage(1); }}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            destination === "srilanka"
+                                ? "bg-emerald-600 text-white shadow-sm shadow-emerald-200"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200/70"
+                        }`}
+                    >
+                        <span>🇱🇰</span> Sri Lanka (Domestic)
+                    </button>
+                    <button
+                        onClick={() => { setDestination("international"); setPage(1); }}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                            destination === "international"
+                                ? "bg-amber-500 text-white shadow-sm shadow-amber-200"
+                                : "bg-gray-100 text-gray-600 hover:bg-gray-200/70"
+                        }`}
+                    >
+                        <span>🌍</span> International (Overseas)
+                    </button>
+                </div>
+
+                <div className="text-xs text-gray-500 font-medium">
+                    Showing: <span className="font-bold text-gray-800">{destination === "all" ? "All Orders" : destination === "srilanka" ? "Sri Lanka Orders Only" : "International Orders Only"}</span>
+                </div>
+            </div>
+
             {loading ? (
                 <div className="w-full py-20 flex justify-center items-center">
                     <Loader />
@@ -312,11 +355,31 @@ export default function OrdersPageAdmin() {
                                             {order.orderId}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="flex flex-col">
-                                                <span className="font-bold text-gray-900 text-sm">{order.name}</span>
+                                            <div className="flex flex-col gap-1">
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <span className="font-bold text-gray-900 text-sm">{order.name}</span>
+                                                    {(() => {
+                                                        const country = (order.country || "Sri Lanka").trim();
+                                                        const isSL = country.toLowerCase() === "sri lanka" || country.toLowerCase().includes("sri lanka");
+                                                        return isSL ? (
+                                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                                🇱🇰 Sri Lanka
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                                                🌍 {country}
+                                                            </span>
+                                                        );
+                                                    })()}
+                                                </div>
                                                 <span className="text-[11px] text-gray-400 flex items-center gap-1">
-                                                    <FaMapMarkerAlt className="text-[10px]" /> {order.address}
+                                                    <FaMapMarkerAlt className="text-[10px] shrink-0" /> <span className="truncate max-w-[260px]">{order.address}</span>
                                                 </span>
+                                                {order.postalCode && (
+                                                    <span className="text-[10px] text-gray-500 font-medium">
+                                                        📮 Postal: <strong className="text-gray-700">{order.postalCode}</strong>
+                                                    </span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -485,6 +548,32 @@ export default function OrdersPageAdmin() {
                                             <div>
                                                 <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Delivery Address</p>
                                                 <p className="font-bold text-gray-800 text-sm leading-relaxed">{clickOrder.address}</p>
+                                            </div>
+
+                                            {/* Destination & Country */}
+                                            <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-200/60">
+                                                <div>
+                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Delivery Destination</p>
+                                                    {(() => {
+                                                        const country = (clickOrder.country || "Sri Lanka").trim();
+                                                        const isSL = country.toLowerCase() === "sri lanka" || country.toLowerCase().includes("sri lanka");
+                                                        return isSL ? (
+                                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 mt-1">
+                                                                🇱🇰 Sri Lanka (Domestic)
+                                                            </span>
+                                                        ) : (
+                                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 mt-1">
+                                                                🌍 {country} (International)
+                                                            </span>
+                                                        );
+                                                    })()}
+                                                </div>
+                                                <div>
+                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Postal / ZIP Code</p>
+                                                    <p className="font-bold text-gray-800 text-sm mt-1">
+                                                        {clickOrder.postalCode ? clickOrder.postalCode : <span className="text-gray-400 font-normal italic">Optional / Not provided</span>}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
