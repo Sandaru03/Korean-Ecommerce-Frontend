@@ -110,6 +110,7 @@ export default function CheckoutPage() {
                 items: cart.map(item => ({ productId: item.productId, qty: item.qty })),
                 address: buildFullAddress(),
                 country: finalCountry,
+                city,
                 postalCode: postalCode.trim() || null,
                 phone,
                 secondaryPhone,

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaUser, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaExclamationCircle, FaCheckCircle, FaTimesCircle, FaEye, FaEdit, FaSave, FaTimes, FaSearch } from "react-icons/fa";
+import { FaUser, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaExclamationCircle, FaCheckCircle, FaTimesCircle, FaEye, FaEdit, FaSave, FaTimes, FaSearch, FaPrint, FaTruck } from "react-icons/fa";
 import { FaBoxArchive } from "react-icons/fa6";
 import Paginator from "../../components/admin-utils/paginator";
 import Loader from "../../components/admin-utils/loader";
@@ -19,6 +19,7 @@ export default function OrdersPageAdmin() {
     const [orderStatus, setOrderStatus] = useState("pending");
     const [ordernotes, setOrderNotes] = useState("");
     const [saving, setSaving] = useState(false);
+    const [generatingWaybills, setGeneratingWaybills] = useState(false);
     const [search, setSearch] = useState("");
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
@@ -142,6 +143,70 @@ export default function OrdersPageAdmin() {
             toast.error("Failed to bulk update orders");
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleCreateWaybills = async (specificOrderIds = null) => {
+        const targetIds = specificOrderIds || selectedOrders;
+        if (!targetIds || targetIds.length === 0) {
+            toast.error("Please select at least one order to create waybills");
+            return;
+        }
+
+        const confirmMsg = `Send ${targetIds.length} order(s) to Fardar Courier & generate printable waybill stickers?`;
+        if (!window.confirm(confirmMsg)) return;
+
+        setGeneratingWaybills(true);
+        const loadingToast = toast.loading(`Processing ${targetIds.length} orders with courier API...`);
+
+        try {
+            const res = await axios.post(
+                `${backendUrl}/orders/courier/generate-waybills`,
+                { orderIds: targetIds },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            toast.dismiss(loadingToast);
+
+            if (res.data.success) {
+                const emailNotice = res.data.emailSent ? ` (PDF emailed to ${res.data.recipientEmail})` : "";
+                toast.success(
+                    `Waybills generated! (${res.data.newlyCreatedCount} new, ${res.data.reusedCount} reused).${emailNotice}`,
+                    { duration: 6000 }
+                );
+
+                // Open printable PDF in new tab if available, or HTML preview
+                if (res.data.pdfUrl) {
+                    window.open(res.data.pdfUrl, "_blank");
+                } else {
+                    window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${targetIds.join(",")}`, "_blank");
+                }
+
+                // Refresh orders and clear selection
+                setSelectedOrders([]);
+                fetchOrders();
+
+                // If modal is open for one of the updated orders, update clickOrder waybillNo
+                if (clickOrder && targetIds.includes(clickOrder.orderId)) {
+                    const found = res.data.orders?.find(o => o.orderId === clickOrder.orderId);
+                    if (found) {
+                        setClickOrder(prev => ({
+                            ...prev,
+                            waybillNo: found.waybillNo,
+                            waybillStatus: "sent",
+                        }));
+                    }
+                }
+            } else {
+                toast.error(res.data.message || "Failed to generate waybills");
+            }
+        } catch (err) {
+            toast.dismiss(loadingToast);
+            console.error("Error generating waybills:", err);
+            const errMsg = err.response?.data?.message || "Failed to generate courier waybills";
+            toast.error(errMsg);
+        } finally {
+            setGeneratingWaybills(false);
         }
     };
 
@@ -372,6 +437,28 @@ export default function OrdersPageAdmin() {
                                                         );
                                                     })()}
                                                 </div>
+                                                {/* Waybill badge if present */}
+                                                {order.waybillNo && (
+                                                    <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                                        <span
+                                                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200"
+                                                            title={`Waybill Status: ${order.waybillStatus || "sent"}`}
+                                                        >
+                                                            <FaTruck className="text-[10px] text-indigo-500" /> WB: {order.waybillNo}
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${order.orderId}`, "_blank");
+                                                            }}
+                                                            className="p-1 hover:bg-indigo-100 text-indigo-600 rounded text-xs transition-colors"
+                                                            title="Print Waybill Sticker"
+                                                        >
+                                                            <FaPrint className="text-[10px]" />
+                                                        </button>
+                                                    </div>
+                                                )}
                                                 <span className="text-[11px] text-gray-400 flex items-center gap-1">
                                                     <FaMapMarkerAlt className="text-[10px] shrink-0" /> <span className="truncate max-w-[260px]">{order.address}</span>
                                                 </span>
@@ -451,7 +538,54 @@ export default function OrdersPageAdmin() {
                         <span className="text-white font-bold text-sm">Orders Selected</span>
                     </div>
                     
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 flex-wrap">
+                        {/* Courier Waybill Creation Button */}
+                        {destination === "srilanka" ? (
+                            <button
+                                onClick={() => handleCreateWaybills()}
+                                disabled={generatingWaybills || saving}
+                                className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white font-black text-sm px-5 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                                title="Create parcels on Fardar courier and generate 9-per-A4 sticker sheet"
+                            >
+                                {generatingWaybills ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Sending to Courier...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaTruck className="text-base" />
+                                        <span>Create Waybill & Send to Courier</span>
+                                    </>
+                                )}
+                            </button>
+                        ) : destination === "all" ? (
+                            <button
+                                onClick={() => handleCreateWaybills()}
+                                disabled={generatingWaybills || saving}
+                                className="bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white font-black text-sm px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                                title="Create Fardar courier waybills for Sri Lanka orders in selection"
+                            >
+                                {generatingWaybills ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Processing...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaTruck className="text-base" />
+                                        <span>Create Courier Waybill (SL)</span>
+                                    </>
+                                )}
+                            </button>
+                        ) : (
+                            <div className="text-xs text-amber-300 font-bold px-3 py-1.5 bg-amber-950/60 border border-amber-800/80 rounded-xl flex items-center gap-1.5">
+                                <span>⚠️</span> Fardar waybills for Sri Lanka orders only
+                            </div>
+                        )}
+
+                        <div className="h-6 w-[1px] bg-slate-700 mx-1 hidden sm:block"></div>
+
                         <select
                             className="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-sm font-bold text-white outline-none focus:ring-2 focus:ring-indigo-500"
                             value={bulkStatus}
@@ -468,7 +602,7 @@ export default function OrdersPageAdmin() {
                         
                         <button
                             onClick={handleBulkUpdate}
-                            disabled={saving}
+                            disabled={saving || generatingWaybills}
                             className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-700 text-white font-black text-sm px-6 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 flex items-center gap-2"
                         >
                             {saving ? "Updating..." : "Update All Status"}
@@ -576,6 +710,65 @@ export default function OrdersPageAdmin() {
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    {/* Fardar Courier Waybill Information */}
+                                    <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-5 space-y-3">
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-[13px] font-black text-emerald-800 uppercase tracking-widest flex items-center gap-2">
+                                                <FaTruck className="text-emerald-600" /> Courier Waybill
+                                            </h3>
+                                            {clickOrder.waybillNo && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${clickOrder.orderId}`, "_blank")}
+                                                    className="px-3 py-1 bg-white border border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+                                                    title="Print Waybill Sticker"
+                                                >
+                                                    <FaPrint className="text-xs" /> Print Sticker
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Waybill Number</p>
+                                                <p className="font-black text-emerald-700 text-base mt-0.5">
+                                                    {clickOrder.waybillNo ? (
+                                                        clickOrder.waybillNo
+                                                    ) : (
+                                                        <span className="text-gray-400 text-xs font-semibold italic">Not generated yet</span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Waybill Status</p>
+                                                <p className="font-bold text-gray-800 text-xs mt-1">
+                                                    {clickOrder.waybillStatus ? (
+                                                        <span className="px-2 py-0.5 rounded bg-white border border-emerald-200 text-emerald-700 font-bold uppercase text-[10px]">
+                                                            {clickOrder.waybillStatus}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-gray-400 italic">None</span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* If domestic order and no waybill yet, offer one-click create */}
+                                        {(!clickOrder.waybillNo && (!clickOrder.country || clickOrder.country.toLowerCase().includes("sri lanka"))) && (
+                                            <div className="pt-2 border-t border-emerald-200/60">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleCreateWaybills([clickOrder.orderId])}
+                                                    disabled={generatingWaybills}
+                                                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
+                                                >
+                                                    {generatingWaybills ? <Loader2 className="h-4 w-4 animate-spin" /> : <FaTruck className="text-xs" />}
+                                                    <span>{generatingWaybills ? "Generating Waybill..." : "Create Waybill & Send to Courier"}</span>
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Action Column within Customer Col for mobile logic */}
