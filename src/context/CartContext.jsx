@@ -63,15 +63,31 @@ export function CartProvider({ children }) {
         setCart([])
     }
 
+    const [destinationType, setDestinationType] = useState(() => {
+        try {
+            return localStorage.getItem("destinationType") || "srilanka"
+        } catch {
+            return "srilanka"
+        }
+    })
+
+    useEffect(() => {
+        try {
+            localStorage.setItem("destinationType", destinationType)
+        } catch {}
+    }, [destinationType])
+
+    const isDomestic = destinationType === "srilanka"
+
     // Total item count (sum of all quantities)
     const totalItems = cart.reduce((sum, item) => sum + item.qty, 0)
     // Subtotal in LKR
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
-    // Free delivery check (subtotal >= 20000 LKR)
+    // Free delivery check (threshold is 20000 LKR in Sri Lanka)
     const isFreeDelivery = subtotal >= FREE_DELIVERY_THRESHOLD
     const freeDeliveryRemaining = Math.max(0, FREE_DELIVERY_THRESHOLD - subtotal)
-    // Delivery fee: 400 LKR if subtotal < 20000 LKR, FREE (0) if 20000 LKR or more
-    const deliveryFee = (subtotal > 0 && !isFreeDelivery) ? STANDARD_DELIVERY_FEE : 0
+    // Delivery fee: 400 LKR if domestic and subtotal < 20000 LKR. For international ('Another Country'), delivery fee is 0!
+    const deliveryFee = (isDomestic && subtotal > 0 && !isFreeDelivery) ? STANDARD_DELIVERY_FEE : 0
     // Grand total
     const grandTotal = subtotal + deliveryFee
 
@@ -79,6 +95,7 @@ export function CartProvider({ children }) {
         <CartContext.Provider value={{
             cart, addToCart, updateQty, removeFromCart, clearCart,
             totalItems, subtotal, deliveryFee, grandTotal,
+            destinationType, setDestinationType, isDomestic,
             isFreeDelivery, freeDeliveryRemaining,
             freeDeliveryThreshold: FREE_DELIVERY_THRESHOLD,
             standardDeliveryFee: STANDARD_DELIVERY_FEE,

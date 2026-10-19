@@ -15,6 +15,9 @@ export default function SideCart() {
         deliveryFee,
         grandTotal,
         totalItems,
+        destinationType,
+        setDestinationType,
+        isDomestic,
         isFreeDelivery,
         freeDeliveryRemaining,
         freeDeliveryThreshold
@@ -117,7 +120,7 @@ export default function SideCart() {
 
                 {/* Footer / Summary */}
                 {cart.length > 0 && (
-                    <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0 space-y-4">
+                    <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0 space-y-3.5">
                         {/* Free Delivery Bar */}
                         {!isFreeDelivery && subtotal > 0 && (
                             <div className="bg-red-50 border border-red-100 rounded-xl p-3 text-xs text-primary shadow-sm">
@@ -148,15 +151,13 @@ export default function SideCart() {
                                 <span>Subtotal</span>
                                 <span>{formatPrice(subtotal)}</span>
                             </div>
-                            <div className="flex justify-between text-sm text-gray-500">
+                            <div className="flex justify-between items-center text-sm text-gray-500">
                                 <span>Delivery</span>
-                                <span className={deliveryFee > 0 ? "font-semibold text-primary" : "font-semibold text-[#16a34a]"}>
-                                    {deliveryFee > 0 ? formatPrice(deliveryFee) : "FREE"}
-                                </span>
+                                <span className="text-xs text-gray-500 italic">Calculated on checkout page</span>
                             </div>
                             <div className="flex justify-between font-black text-lg text-gray-900 pt-2 border-t border-gray-200">
-                                <span>Total:</span>
-                                <span>{formatPrice(grandTotal)}</span>
+                                <span>Estimated Total:</span>
+                                <span>{formatPrice(subtotal)}</span>
                             </div>
                         </div>
 

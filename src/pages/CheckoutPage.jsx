@@ -11,12 +11,15 @@ import axios from "axios"
 
 export default function CheckoutPage() {
     const navigate = useNavigate()
-    const { cart, clearCart, totalItems, subtotal, deliveryFee, grandTotal } = useCart()
+    const { 
+        cart, clearCart, totalItems, subtotal, deliveryFee, grandTotal,
+        destinationType: cartDestinationType, setDestinationType: setCartDestinationType
+    } = useCart()
     const { formatPrice } = useCurrency()
 
     const [email, setEmail] = useState("")
-    const [destinationType, setDestinationType] = useState("srilanka") // 'srilanka' or 'international'
-    const [country, setCountry] = useState("Sri Lanka")
+    const [destinationType, setDestinationType] = useState(cartDestinationType || "srilanka") // 'srilanka' or 'international'
+    const [country, setCountry] = useState(cartDestinationType === "international" ? "" : "Sri Lanka")
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [addressLine, setAddressLine] = useState("")
@@ -38,6 +41,17 @@ export default function CheckoutPage() {
     const [slipPreview, setSlipPreview] = useState(null)
     const [slipUrl, setSlipUrl] = useState(null)
     const [uploadingSlip, setUploadingSlip] = useState(false)
+    const [showPaymentGatewayModal, setShowPaymentGatewayModal] = useState(false)
+
+    function handleDestinationChange(type) {
+        setDestinationType(type)
+        if (setCartDestinationType) setCartDestinationType(type)
+        if (type === "srilanka") {
+            setCountry("Sri Lanka")
+        } else if (country === "Sri Lanka") {
+            setCountry("")
+        }
+    }
 
     // Redirect to cart if empty
     useEffect(() => {
@@ -68,9 +82,11 @@ export default function CheckoutPage() {
                 if (uCountry) {
                     if (uCountry.trim().toLowerCase() !== "sri lanka") {
                         setDestinationType("international")
+                        if (setCartDestinationType) setCartDestinationType("international")
                         setCountry(uCountry)
                     } else {
                         setDestinationType("srilanka")
+                        if (setCartDestinationType) setCartDestinationType("srilanka")
                         setCountry("Sri Lanka")
                     }
                 }
@@ -84,15 +100,19 @@ export default function CheckoutPage() {
                 if (res.data.whatsappNumber) setWhatsappNumber(res.data.whatsappNumber)
             })
             .catch(err => console.error("Failed to fetch config:", err))
-    }, [])
+    }, [setCartDestinationType])
+
+    const isDomestic = destinationType === "srilanka"
+    const effectiveDeliveryFee = isDomestic ? deliveryFee : 0
+    const effectiveGrandTotal = subtotal + effectiveDeliveryFee
 
     const orderLines = cart.map(item =>
         `• ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}`
     ).join("\n")
 
-    const deliveryLine = deliveryFee > 0
-        ? `\nDelivery Fee: ${formatPrice(deliveryFee)}`
-        : "\nDelivery: Free"
+    const deliveryLine = isDomestic
+        ? (effectiveDeliveryFee > 0 ? `\nDelivery Fee: ${formatPrice(effectiveDeliveryFee)}` : "\nDelivery: Free")
+        : "\nDelivery: Free (International)"
         
     const buildFullName = () => `${firstName} ${lastName}`.trim()
     const buildFullAddress = () => `${addressLine}${apartment ? `, ${apartment}` : ''}, ${city}${postalCode ? ` - ${postalCode}` : ''}, ${country}`
@@ -240,7 +260,7 @@ export default function CheckoutPage() {
             `*Address:* ${buildFullAddress()}\n\n` +
             `*Items:*\n${orderLines}\n` +
             `${deliveryLine}\n` +
-            `*Total: ${formatPrice(grandTotal)}*` +
+            `*Total: ${formatPrice(effectiveGrandTotal)}*` +
             finalSlipLine
 
         const cleanNumber = whatsappNumber.replace(/[^0-9]/g, '')
@@ -302,7 +322,7 @@ export default function CheckoutPage() {
             `*Address:* ${buildFullAddress()}\n\n` +
             `*Items:*\n${orderLines}\n` +
             `${deliveryLine}\n` +
-            `*Total: ${formatPrice(grandTotal)}*` +
+            `*Total: ${formatPrice(effectiveGrandTotal)}*` +
             (finalSlipUrl ? `\n\n📎 *Payment Slip:* ${finalSlipUrl}` : "")
 
         const finalCountry = destinationType === "srilanka" ? "Sri Lanka" : (country.trim() || "International")
@@ -327,8 +347,8 @@ export default function CheckoutPage() {
                         qty: item.qty
                     })),
                     subtotal,
-                    deliveryFee,
-                    grandTotal,
+                    deliveryFee: effectiveDeliveryFee,
+                    grandTotal: effectiveGrandTotal,
                     totalItems
                 }
             })
@@ -403,10 +423,7 @@ export default function CheckoutPage() {
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 <button
                                                     type="button"
-                                                    onClick={() => {
-                                                        setDestinationType("srilanka");
-                                                        setCountry("Sri Lanka");
-                                                    }}
+                                                    onClick={() => handleDestinationChange("srilanka")}
                                                     className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all ${
                                                         destinationType === "srilanka"
                                                             ? "border-primary bg-primary/5 text-primary font-bold ring-1 ring-primary shadow-sm"
@@ -422,10 +439,7 @@ export default function CheckoutPage() {
 
                                                 <button
                                                     type="button"
-                                                    onClick={() => {
-                                                        setDestinationType("international");
-                                                        if (country === "Sri Lanka") setCountry("");
-                                                    }}
+                                                    onClick={() => handleDestinationChange("international")}
                                                     className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all ${
                                                         destinationType === "international"
                                                             ? "border-primary bg-primary/5 text-primary font-bold ring-1 ring-primary shadow-sm"
@@ -595,11 +609,14 @@ export default function CheckoutPage() {
                                             : 'border-[#eee] hover:border-[#ddd] bg-white'
                                         }`}
                                     >
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <div className={`p-2 rounded-full ${paymentMethod === 'online' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'}`}>
-                                                <CreditCard className="w-5 h-5" />
+                                        <div className="flex items-center justify-between w-full mb-2">
+                                            <div className="flex items-center gap-3">
+                                                <div className={`p-2 rounded-full ${paymentMethod === 'online' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                                    <CreditCard className="w-5 h-5" />
+                                                </div>
+                                                <span className={`font-bold ${paymentMethod === 'online' ? 'text-primary' : 'text-[#333]'}`}>Online Payment</span>
                                             </div>
-                                            <span className={`font-bold ${paymentMethod === 'online' ? 'text-primary' : 'text-[#333]'}`}>Online Payment</span>
+                                            <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Coming Soon</span>
                                         </div>
                                         <p className="text-[12px] text-[#666] leading-snug">Pay securely with Credit/Debit card.</p>
                                         
@@ -667,16 +684,26 @@ export default function CheckoutPage() {
                                 {/* Online Payment Gateway Message */}
                                 {paymentMethod === 'online' && (
                                     <div className="animate-in fade-in slide-in-from-top-2 duration-300 mt-5">
-                                        <div className="bg-[#fcfcfc] border border-[#eee] rounded-xl p-6 text-center">
-                                            <div className="flex justify-center mb-3">
-                                                <div className="h-12 w-12 bg-green-50 text-green-600 rounded-full flex items-center justify-center">
+                                        <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-5 text-center space-y-3">
+                                            <div className="flex justify-center">
+                                                <div className="h-12 w-12 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center shadow-inner">
                                                     <CreditCard className="w-6 h-6" />
                                                 </div>
                                             </div>
-                                            <h3 className="text-[#111] font-bold text-[15px] mb-2">Secure Online Payment</h3>
-                                            <p className="text-[#666] text-[13px]">
-                                                After clicking "Place Order", you will be securely redirected to our payment gateway to complete your purchase.
+                                            <div>
+                                                <span className="inline-block text-[10px] font-black uppercase tracking-wider bg-amber-200/80 text-amber-800 px-2.5 py-0.5 rounded-full mb-1">Coming Soon</span>
+                                                <h3 className="text-[#111] font-bold text-[15px]">Direct Card Payments Under Integration</h3>
+                                            </div>
+                                            <p className="text-[#666] text-[13px] max-w-md mx-auto leading-relaxed">
+                                                Our automated gateway for Visa, Mastercard, and Amex is currently being finalized. For now, please use <strong>Bank Transfer</strong> to complete your order.
                                             </p>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod('bank')}
+                                                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg hover:bg-red-800 transition shadow-sm"
+                                            >
+                                                <Building2 className="w-3.5 h-3.5" /> Switch to Bank Transfer
+                                            </button>
                                         </div>
                                     </div>
                                 )}
@@ -715,8 +742,8 @@ export default function CheckoutPage() {
                                 </div>
                                 <div className="flex justify-between text-[#555]">
                                     <span>Delivery</span>
-                                    {deliveryFee > 0 ? (
-                                        <span className="font-semibold text-primary">{formatPrice(deliveryFee)}</span>
+                                    {effectiveDeliveryFee > 0 ? (
+                                        <span className="font-semibold text-primary">{formatPrice(effectiveDeliveryFee)}</span>
                                     ) : (
                                         <span className="font-semibold text-[#16a34a]">FREE</span>
                                     )}
@@ -725,7 +752,7 @@ export default function CheckoutPage() {
 
                             <div className="border-t-2 border-[#111] mt-4 pt-4 flex justify-between items-baseline mb-6">
                                 <span className="font-bold text-[#111] text-[16px]">Total</span>
-                                <p className="font-black text-[28px] text-[#111] leading-none">{formatPrice(grandTotal)}</p>
+                                <p className="font-black text-[28px] text-[#111] leading-none">{formatPrice(effectiveGrandTotal)}</p>
                             </div>
 
                             {/* Checkout Buttons */}
@@ -810,16 +837,15 @@ export default function CheckoutPage() {
                             ) : (
                                 <div className="space-y-3 animate-in fade-in duration-300">
                                     <button
-                                        onClick={() => {
-                                            toast.info("Payment Gateway Integration is coming soon! For now, please use Bank Transfer.");
-                                        }}
+                                        type="button"
+                                        onClick={() => setShowPaymentGatewayModal(true)}
                                         className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#111] hover:bg-[#333] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-gray-200"
                                     >
                                         <CreditCard className="h-5 w-5" />
                                         Proceed to Payment
                                     </button>
-                                    <p className="text-center text-[12px] text-[#666]">
-                                        You will be redirected to our secure payment partner.
+                                    <p className="text-center text-[12px] text-amber-700 font-medium">
+                                        Card payment gateway is coming soon.
                                     </p>
                                 </div>
                             )}
@@ -827,6 +853,80 @@ export default function CheckoutPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Coming Soon Modal Popup */}
+            {showPaymentGatewayModal && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                    {/* Backdrop */}
+                    <div 
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+                        onClick={() => setShowPaymentGatewayModal(false)}
+                    />
+
+                    {/* Modal Content */}
+                    <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-6 z-10 animate-in fade-in zoom-in-95 duration-200">
+                        {/* Close Button */}
+                        <button
+                            type="button"
+                            onClick={() => setShowPaymentGatewayModal(false)}
+                            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                        >
+                            <X className="h-5 w-5" />
+                        </button>
+
+                        {/* Icon Header */}
+                        <div className="flex flex-col items-center text-center space-y-3 pt-2">
+                            <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-inner">
+                                <CreditCard className="w-8 h-8" />
+                            </div>
+                            
+                            <span className="inline-block text-[11px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 px-3 py-1 rounded-full">
+                                Coming Soon 🚀
+                            </span>
+
+                            <h3 className="text-xl font-black text-gray-900">
+                                Card Payment Gateway
+                            </h3>
+
+                            <p className="text-sm text-gray-600 leading-relaxed px-2">
+                                Our automated online payment gateway for <strong className="text-gray-900">Visa, Mastercard & Amex</strong> is currently under integration and will be available soon!
+                            </p>
+
+                            <div className="w-full bg-gray-50 border border-gray-200/80 rounded-xl p-3.5 text-xs text-gray-700 text-left space-y-1 my-1">
+                                <p className="font-bold text-gray-900 flex items-center gap-1.5">
+                                    <span>💡</span> How to order right now:
+                                </p>
+                                <p className="text-gray-600 pl-5">
+                                    Please choose <strong>Bank Transfer</strong> to transfer directly to our account and place your order instantly via <strong>WhatsApp</strong> or <strong>Email</strong>.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Modal Actions */}
+                        <div className="mt-6 space-y-2">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setPaymentMethod('bank')
+                                    setShowPaymentGatewayModal(false)
+                                    toast.success("Switched to Bank Transfer!")
+                                }}
+                                className="w-full h-12 bg-primary hover:bg-red-800 text-white font-bold text-sm rounded-xl transition-colors shadow-lg shadow-red-200/50 flex items-center justify-center gap-2"
+                            >
+                                <Building2 className="w-4 h-4" />
+                                Switch to Bank Transfer & Place Order
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setShowPaymentGatewayModal(false)}
+                                className="w-full h-11 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold text-sm rounded-xl transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
             
             <Footer />
         </div>

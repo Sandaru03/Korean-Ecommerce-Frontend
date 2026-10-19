@@ -210,6 +210,26 @@ export default function OrdersPageAdmin() {
         }
     };
 
+    const handlePreviewWaybills = (specificOrderIds = null) => {
+        const targetIds = specificOrderIds || selectedOrders;
+        if (!targetIds || targetIds.length === 0) {
+            toast.error("Please select at least one order to preview waybills");
+            return;
+        }
+
+        // Filter to Sri Lanka orders if selection has mixed
+        const targetOrders = orders.filter(o => targetIds.includes(o.orderId));
+        const slOrders = targetOrders.filter(o => !o.country || o.country.toLowerCase().includes("sri lanka"));
+
+        if (slOrders.length === 0 && targetOrders.length > 0) {
+            toast.error("Waybills can only be previewed for Sri Lanka domestic orders");
+            return;
+        }
+
+        const previewIds = (slOrders.length > 0 ? slOrders.map(o => o.orderId) : targetIds);
+        window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${previewIds.join(",")}`, "_blank");
+    };
+
     const toggleSelectAll = () => {
         if (selectedOrders.length === orders.length) {
             setSelectedOrders([]);
@@ -362,8 +382,19 @@ export default function OrdersPageAdmin() {
                     </button>
                 </div>
 
-                <div className="text-xs text-gray-500 font-medium">
-                    Showing: <span className="font-bold text-gray-800">{destination === "all" ? "All Orders" : destination === "srilanka" ? "Sri Lanka Orders Only" : "International Orders Only"}</span>
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        onClick={() => window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=sample`, "_blank")}
+                        className="px-3 py-1.5 bg-indigo-50/70 hover:bg-indigo-100/90 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+                        title="Test how a full 9-sticker A4 sheet looks with sample data without sending anything to courier"
+                    >
+                        <FaEye className="text-indigo-600 text-xs" />
+                        <span>Test Waybill (Sample A4)</span>
+                    </button>
+                    <div className="text-xs text-gray-500 font-medium hidden sm:block">
+                        Showing: <span className="font-bold text-gray-800">{destination === "all" ? "All Orders" : destination === "srilanka" ? "Sri Lanka Orders Only" : "International Orders Only"}</span>
+                    </div>
                 </div>
             </div>
 
@@ -438,7 +469,7 @@ export default function OrdersPageAdmin() {
                                                     })()}
                                                 </div>
                                                 {/* Waybill badge if present */}
-                                                {order.waybillNo && (
+                                                {order.waybillNo ? (
                                                     <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
                                                         <span
                                                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-indigo-50 text-indigo-700 border border-indigo-200"
@@ -458,7 +489,21 @@ export default function OrdersPageAdmin() {
                                                             <FaPrint className="text-[10px]" />
                                                         </button>
                                                     </div>
-                                                )}
+                                                ) : (!order.country || order.country.toLowerCase().includes("sri lanka")) ? (
+                                                    <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${order.orderId}`, "_blank");
+                                                            }}
+                                                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 border border-slate-200 transition-colors"
+                                                            title="Preview Waybill Sticker (Test view without sending to courier)"
+                                                        >
+                                                            <FaEye className="text-[10px] text-indigo-500" /> Preview WB
+                                                        </button>
+                                                    </div>
+                                                ) : null}
                                                 <span className="text-[11px] text-gray-400 flex items-center gap-1">
                                                     <FaMapMarkerAlt className="text-[10px] shrink-0" /> <span className="truncate max-w-[260px]">{order.address}</span>
                                                 </span>
@@ -539,6 +584,17 @@ export default function OrdersPageAdmin() {
                     </div>
                     
                     <div className="flex items-center gap-3 flex-wrap">
+                        {/* Courier Waybill Preview Button (Test without sending) */}
+                        <button
+                            type="button"
+                            onClick={() => handlePreviewWaybills()}
+                            className="bg-slate-800 hover:bg-slate-700 border border-indigo-500/40 text-indigo-300 hover:text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                            title="Preview 9-per-A4 waybill stickers for selected orders without sending to courier"
+                        >
+                            <FaEye className="text-cyan-400 text-sm" />
+                            <span>Preview Waybill</span>
+                        </button>
+
                         {/* Courier Waybill Creation Button */}
                         {destination === "srilanka" ? (
                             <button
@@ -755,17 +811,26 @@ export default function OrdersPageAdmin() {
                                             </div>
                                         </div>
 
-                                        {/* If domestic order and no waybill yet, offer one-click create */}
+                                        {/* If domestic order and no waybill yet, offer preview and create */}
                                         {(!clickOrder.waybillNo && (!clickOrder.country || clickOrder.country.toLowerCase().includes("sri lanka"))) && (
-                                            <div className="pt-2 border-t border-emerald-200/60">
+                                            <div className="pt-2 border-t border-emerald-200/60 flex items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${clickOrder.orderId}`, "_blank")}
+                                                    className="flex-1 py-2.5 bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                                                    title="Preview how this waybill sticker looks without sending to courier"
+                                                >
+                                                    <FaEye className="text-emerald-600 text-xs" />
+                                                    <span>Preview Waybill</span>
+                                                </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => handleCreateWaybills([clickOrder.orderId])}
                                                     disabled={generatingWaybills}
-                                                    className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
+                                                    className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
                                                 >
                                                     {generatingWaybills ? <Loader2 className="h-4 w-4 animate-spin" /> : <FaTruck className="text-xs" />}
-                                                    <span>{generatingWaybills ? "Generating Waybill..." : "Create Waybill & Send to Courier"}</span>
+                                                    <span>{generatingWaybills ? "Sending..." : "Create & Send"}</span>
                                                 </button>
                                             </div>
                                         )}

@@ -18,8 +18,10 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
     const [name, setName] = useState("")
     const [phone, setPhone] = useState("")
     const [secondaryPhone, setSecondaryPhone] = useState("")
-    const [destinationType, setDestinationType] = useState("srilanka") // "srilanka" | "international"
-    const [country, setCountry] = useState("Sri Lanka")
+    const { clearCart, destinationType: cartDestType, setDestinationType: setCartDestType } = useCart()
+    const { formatPrice } = useCurrency()
+    const [destinationType, setDestinationType] = useState(cartDestType || "srilanka") // "srilanka" | "international"
+    const [country, setCountry] = useState(cartDestType === "international" ? "" : "Sri Lanka")
     const [postalCode, setPostalCode] = useState("")
     const [address, setAddress] = useState("")
     const [orderEmail, setOrderEmail] = useState("orders@yourbusiness.com")
@@ -30,8 +32,12 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
     const [slipPreview, setSlipPreview] = useState(null)
     const [slipUrl, setSlipUrl] = useState(null)
     const [uploadingSlip, setUploadingSlip] = useState(false)
-    const { clearCart } = useCart()
-    const { formatPrice } = useCurrency()
+
+    // Sync modal destination changes with global cart context
+    const handleSetDestinationType = (type) => {
+        setDestinationType(type)
+        if (setCartDestType) setCartDestType(type)
+    }
 
     // Auto-fill name, phone, address, country from the logged-in user's profile
     useEffect(() => {
@@ -50,10 +56,10 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                 if (userPostal) setPostalCode(userPostal)
                 if (userCountry) {
                     if (userCountry.trim().toLowerCase() !== "sri lanka") {
-                        setDestinationType("international")
+                        handleSetDestinationType("international")
                         setCountry(userCountry)
                     } else {
-                        setDestinationType("srilanka")
+                        handleSetDestinationType("srilanka")
                         setCountry("Sri Lanka")
                     }
                 }
@@ -70,13 +76,18 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
     }, [])
 
 
+    const effectiveDeliveryFee = destinationType === "international" ? 0 : deliveryFee
+    const effectiveGrandTotal = subtotal + effectiveDeliveryFee
+
     const orderLines = cart.map(item =>
         `• ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}`
     ).join("\n")
 
-    const deliveryLine = deliveryFee > 0
-        ? `\nDelivery Fee: ${formatPrice(deliveryFee)}`
-        : "\nDelivery: Free"
+    const deliveryLine = destinationType === "international"
+        ? "\nDelivery: International (Arranged separately)"
+        : (effectiveDeliveryFee > 0
+            ? `\nDelivery Fee: ${formatPrice(effectiveDeliveryFee)}`
+            : "\nDelivery: Free")
 
     const slipLine = slipUrl ? `\n\n📎 *Payment Slip:* ${slipUrl}` : ""
 
@@ -95,7 +106,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
         `*Address:* ${address || "—"}\n\n` +
         `*Items:*\n${orderLines}\n` +
         `${deliveryLine}\n` +
-        `*Total: ${formatPrice(grandTotal)}*` +
+        `*Total: ${formatPrice(effectiveGrandTotal)}*` +
         slipLine
 
     async function saveOrderToDb() {
@@ -337,10 +348,10 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                                 <span>Subtotal</span>
                                 <span>{formatPrice(subtotal)}</span>
                             </div>
-                            {deliveryFee > 0 ? (
+                            {effectiveDeliveryFee > 0 ? (
                                 <div className="flex justify-between text-[13px] text-primary font-semibold">
                                     <span>Delivery Fee</span>
-                                    <span>{formatPrice(deliveryFee)}</span>
+                                    <span>{formatPrice(effectiveDeliveryFee)}</span>
                                 </div>
                             ) : (
                                 <div className="flex justify-between text-[13px] text-[#16a34a] font-semibold">
@@ -350,7 +361,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                             )}
                             <div className="flex justify-between text-[16px] font-black text-[#111] pt-1 border-t border-[#ddd]">
                                 <span>Total</span>
-                                <span>{formatPrice(grandTotal)}</span>
+                                <span>{formatPrice(effectiveGrandTotal)}</span>
                             </div>
                         </div>
                     </div>
@@ -387,7 +398,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                             <div className="grid grid-cols-2 gap-2">
                                 <button
                                     type="button"
-                                    onClick={() => { setDestinationType("srilanka"); setCountry("Sri Lanka"); }}
+                                    onClick={() => { handleSetDestinationType("srilanka"); setCountry("Sri Lanka"); }}
                                     className={`py-2.5 px-3 rounded-lg border text-left flex items-center gap-2 transition-all ${
                                         destinationType === "srilanka"
                                             ? "border-primary bg-primary/5 text-primary font-bold shadow-sm"
@@ -403,7 +414,7 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        setDestinationType("international");
+                                        handleSetDestinationType("international");
                                         if (country === "Sri Lanka") setCountry("");
                                     }}
                                     className={`py-2.5 px-3 rounded-lg border text-left flex items-center gap-2 transition-all ${
@@ -627,6 +638,7 @@ export default function CartPage() {
     const navigate = useNavigate()
     const { 
         cart, updateQty, removeFromCart, totalItems, subtotal, deliveryFee, grandTotal,
+        destinationType, setDestinationType, isDomestic,
         isFreeDelivery, freeDeliveryRemaining, freeDeliveryThreshold, standardDeliveryFee
     } = useCart()
     const { formatPrice } = useCurrency()
@@ -762,14 +774,14 @@ export default function CartPage() {
 
                             {/* Order Summary Sidebar */}
                             <div className="w-full lg:w-[320px] shrink-0 sticky top-6 space-y-4">
-                                {/* Delivery Fee Notice */}
+                                {/* Free Delivery Progress */}
                                 {!isFreeDelivery && subtotal > 0 && (
                                     <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3 items-start shadow-sm">
                                         <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                                         <div className="flex-1">
-                                            <p className="text-[13px] font-bold text-primary">Delivery Fee Applied</p>
+                                            <p className="text-[13px] font-bold text-primary">Free Delivery</p>
                                             <p className="text-[12px] text-primary/80 mt-0.5 leading-relaxed">
-                                                Orders under {formatPrice(freeDeliveryThreshold)} include a {formatPrice(standardDeliveryFee)} delivery charge. Add <span className="font-bold underline">{formatPrice(freeDeliveryRemaining)}</span> more for free delivery!
+                                                Add <span className="font-bold underline">{formatPrice(freeDeliveryRemaining)}</span> more to qualify for FREE delivery!
                                             </p>
                                             {/* Free Delivery Progress Bar */}
                                             <div className="w-full bg-red-200/60 h-2 rounded-full overflow-hidden mt-2.5">
@@ -805,19 +817,15 @@ export default function CartPage() {
                                             <span>Subtotal ({totalItems} items)</span>
                                             <span className="font-semibold text-[#111]">{formatPrice(subtotal)}</span>
                                         </div>
-                                        <div className="flex justify-between text-[#555]">
+                                        <div className="flex justify-between items-center text-[#555]">
                                             <span>Delivery</span>
-                                            {deliveryFee > 0 ? (
-                                                <span className="font-semibold text-primary">{formatPrice(deliveryFee)}</span>
-                                            ) : (
-                                                <span className="font-semibold text-[#16a34a]">FREE</span>
-                                            )}
+                                            <span className="text-[13px] text-gray-500 italic">Calculated on checkout page</span>
                                         </div>
                                     </div>
                                     <div className="border-t-2 border-[#111] mt-4 pt-4 flex justify-between items-baseline">
-                                        <span className="font-bold text-[#111] text-[15px]">Total</span>
+                                        <span className="font-bold text-[#111] text-[15px]">Estimated Total</span>
                                         <div className="text-right">
-                                            <p className="font-black text-[28px] text-[#111] leading-none">{formatPrice(grandTotal)}</p>
+                                            <p className="font-black text-[28px] text-[#111] leading-none">{formatPrice(subtotal)}</p>
                                         </div>
                                     </div>
 

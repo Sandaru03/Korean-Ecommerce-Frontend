@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { ChevronRight, Heart } from "lucide-react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 import { CommonProductCard } from "./CommonProductCard"
 
@@ -37,6 +37,32 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
         }, 5000);
         return () => clearInterval(timer);
     }, [images.length]);
+
+    // Measure right column height to ensure banner width on desktop is mathematically exact 3:5 ratio (zero crop)
+    const rightColRef = useRef(null);
+    const [desktopBannerWidth, setDesktopBannerWidth] = useState(null);
+
+    useEffect(() => {
+        if (!rightColRef.current) return;
+        const updateWidth = () => {
+            if (window.innerWidth >= 768 && rightColRef.current) {
+                const h = rightColRef.current.offsetHeight;
+                if (h > 0) {
+                    setDesktopBannerWidth(Math.round(h * (3 / 5)));
+                }
+            } else {
+                setDesktopBannerWidth(null);
+            }
+        };
+        updateWidth();
+        const observer = new ResizeObserver(updateWidth);
+        observer.observe(rightColRef.current);
+        window.addEventListener('resize', updateWidth);
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('resize', updateWidth);
+        };
+    }, []);
 
     const [touchStartX, setTouchStartX] = useState(0);
 
@@ -112,8 +138,11 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
             <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm items-stretch">
                 {/* Left: Banner Slider (Unified 3:5 Aspect Ratio for 100% Zero Crop & Zero Space) */}
                 <div 
-                    className="w-full md:w-[420px] lg:w-[430px] shrink-0 relative overflow-hidden aspect-[3/5] bg-[#fafafa]"
-                    style={{ touchAction: 'pan-y' }}
+                    className="w-full md:w-[465px] lg:w-[485px] xl:w-[510px] shrink-0 relative overflow-hidden aspect-[3/5] bg-[#fafafa]"
+                    style={{ 
+                        ...(desktopBannerWidth ? { width: `${desktopBannerWidth}px` } : {}),
+                        touchAction: 'pan-y' 
+                    }}
                     onTouchStart={handleTouchStart}
                     onTouchEnd={handleTouchEnd}
                 >
@@ -152,7 +181,7 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
                 </div>
 
                 {/* Right: Scrollable Product Rows */}
-                <div className="flex-1 p-4 bg-white overflow-hidden min-w-0">
+                <div ref={rightColRef} className="flex-1 p-4 bg-white overflow-hidden min-w-0">
                     <div className="flex justify-between items-center mb-4 border-b border-[#f0f0f0] pb-2">
                         <h2 className="text-xl font-bold text-neutral-dark">{title}</h2>
                     </div>
