@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaUser, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaExclamationCircle, FaCheckCircle, FaTimesCircle, FaEye, FaEdit, FaSave, FaTimes, FaSearch, FaPrint, FaTruck } from "react-icons/fa";
+import { FaUser, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaEnvelope, FaExclamationCircle, FaCheckCircle, FaTimesCircle, FaEye, FaEdit, FaSave, FaTimes, FaSearch, FaPrint, FaTruck, FaTrash } from "react-icons/fa";
 import { FaBoxArchive } from "react-icons/fa6";
 import Paginator from "../../components/admin-utils/paginator";
 import Loader from "../../components/admin-utils/loader";
@@ -26,6 +26,8 @@ export default function OrdersPageAdmin() {
     const [selectedOrders, setSelectedOrders] = useState([]);
     const [bulkStatus, setBulkStatus] = useState("pending");
     const [destination, setDestination] = useState("all"); // 'all' | 'srilanka' | 'international'
+    const [deleteConfirmModal, setDeleteConfirmModal] = useState({ open: false, orderIds: [] });
+    const [deletingOrders, setDeletingOrders] = useState(false);
 
     const token = localStorage.getItem("token");
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -143,6 +145,50 @@ export default function OrdersPageAdmin() {
             toast.error("Failed to bulk update orders");
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleDeleteOrders = async () => {
+        const orderIds = deleteConfirmModal.orderIds;
+        if (!orderIds || orderIds.length === 0) return;
+
+        setDeletingOrders(true);
+        const currentToken = localStorage.getItem("token");
+
+        try {
+            if (orderIds.length === 1) {
+                await axios.delete(`${backendUrl}/orders/${orderIds[0]}`, {
+                    headers: { Authorization: `Bearer ${currentToken}` }
+                });
+            } else {
+                await axios.delete(`${backendUrl}/orders/bulk`, {
+                    headers: { Authorization: `Bearer ${currentToken}` },
+                    data: { orderIds }
+                });
+            }
+
+            toast.success(
+                orderIds.length === 1 
+                    ? `Order #${orderIds[0]} deleted successfully` 
+                    : `${orderIds.length} orders deleted successfully`
+            );
+
+            // Remove deleted orders from selection
+            setSelectedOrders(prev => prev.filter(id => !orderIds.includes(id)));
+
+            // If deleted order is open in details modal, close it
+            if (clickOrder && orderIds.includes(clickOrder.orderId)) {
+                setPopupVisible(false);
+                setClickOrder(null);
+            }
+
+            setDeleteConfirmModal({ open: false, orderIds: [] });
+            fetchOrders();
+        } catch (error) {
+            console.error("Failed to delete order(s):", error);
+            toast.error(error.response?.data?.message || "Failed to delete order(s)");
+        } finally {
+            setDeletingOrders(false);
         }
     };
 
@@ -539,10 +585,27 @@ export default function OrdersPageAdmin() {
                                         <td className="px-6 py-4 text-center">
                                              <div className="flex items-center justify-center gap-2">
                                                  <button
+                                                     onClick={(e) => {
+                                                         e.stopPropagation();
+                                                         setOrderNotes(order.notes);
+                                                         setOrderStatus(order.status);
+                                                         setClickOrder(order);
+                                                         setPopupVisible(true);
+                                                     }}
                                                      className="p-2.5 bg-gray-100 hover:bg-indigo-600 hover:text-white text-indigo-600 rounded-xl transition-all shadow-sm"
                                                      title="View/Edit Details"
                                                  >
                                                      <FaEye />
+                                                 </button>
+                                                 <button
+                                                     onClick={(e) => {
+                                                         e.stopPropagation();
+                                                         setDeleteConfirmModal({ open: true, orderIds: [order.orderId] });
+                                                     }}
+                                                     className="p-2.5 bg-gray-100 hover:bg-red-600 hover:text-white text-red-600 rounded-xl transition-all shadow-sm"
+                                                     title="Delete Order"
+                                                 >
+                                                     <FaTrash className="text-xs" />
                                                  </button>
                                              </div>
                                         </td>
@@ -663,6 +726,16 @@ export default function OrdersPageAdmin() {
                         >
                             {saving ? "Updating..." : "Update All Status"}
                         </button>
+
+                        <button
+                            onClick={() => setDeleteConfirmModal({ open: true, orderIds: [...selectedOrders] })}
+                            disabled={saving || generatingWaybills || deletingOrders}
+                            className="bg-red-600 hover:bg-red-500 disabled:bg-slate-700 text-white font-black text-sm px-4 py-2.5 rounded-xl transition-all shadow-lg active:scale-95 flex items-center gap-2"
+                            title="Delete selected orders"
+                        >
+                            <FaTrash className="text-sm" />
+                            <span>Delete</span>
+                        </button>
                         
                         <button
                             onClick={() => setSelectedOrders([])}
@@ -681,7 +754,7 @@ export default function OrdersPageAdmin() {
                     <div className="w-full max-w-4xl max-h-[90vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-200">
                         
                         {/* Modal Header */}
-                        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                        <div className="shrink-0 px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                             <div>
                                 <h2 className="text-2xl font-black text-gray-900 flex items-center gap-3">
                                     Order <span className="text-indigo-600">{clickOrder.orderId}</span>
@@ -690,16 +763,26 @@ export default function OrdersPageAdmin() {
                                     <FaCalendarAlt /> Placed on {new Date(clickOrder.date).toLocaleString()}
                                 </p>
                             </div>
-                            <button
-                                className="w-10 h-10 bg-white border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-100 rounded-full flex items-center justify-center transition-all shadow-sm"
-                                onClick={() => setPopupVisible(false)}
-                            >
-                                <FaTimes />
-                            </button>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => setDeleteConfirmModal({ open: true, orderIds: [clickOrder.orderId] })}
+                                    className="px-3.5 py-2 bg-red-50 hover:bg-red-600 text-red-600 hover:text-white border border-red-200 hover:border-red-600 rounded-xl flex items-center gap-1.5 text-xs font-bold transition-all shadow-sm"
+                                    title="Delete this order"
+                                >
+                                    <FaTrash className="text-xs" />
+                                    <span>Delete Order</span>
+                                </button>
+                                <button
+                                    className="w-10 h-10 bg-white border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-100 rounded-full flex items-center justify-center transition-all shadow-sm"
+                                    onClick={() => setPopupVisible(false)}
+                                >
+                                    <FaTimes />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Modal Body */}
-                        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                        <div className="flex-1 min-h-0 overflow-y-auto p-8 custom-scrollbar">
                             <div className="mb-10 bg-gray-50 border border-gray-100 rounded-3xl p-6 shadow-sm">
                                 <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2 px-2">
                                     <FaExclamationCircle className="text-emerald-500" /> Delivery Progress
@@ -921,6 +1004,82 @@ export default function OrdersPageAdmin() {
                         </div>
 
                         {/* Modal Footer (Sticky if needed) */}
+                    </div>
+                </div>
+            )}
+
+            {/* 🔹 Delete Confirmation Modal */}
+            {deleteConfirmModal.open && (
+                <div 
+                    className="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+                    onClick={() => {
+                        if (!deletingOrders) setDeleteConfirmModal({ open: false, orderIds: [] });
+                    }}
+                >
+                    <div 
+                        className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-7 space-y-5 animate-in zoom-in-95 duration-200 border border-red-100"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center text-red-600 shrink-0 shadow-inner">
+                                <FaTrash className="text-xl" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-gray-900 leading-tight">
+                                    {deleteConfirmModal.orderIds.length === 1 
+                                        ? `Delete Order #${deleteConfirmModal.orderIds[0]}` 
+                                        : `Delete ${deleteConfirmModal.orderIds.length} Orders`}
+                                </h3>
+                                <p className="text-xs text-red-500 font-semibold mt-1">⚠️ Permanent database deletion</p>
+                            </div>
+                        </div>
+
+                        <p className="text-sm text-gray-600 leading-relaxed">
+                            Are you sure you want to permanently delete {deleteConfirmModal.orderIds.length === 1 ? (
+                                <>order <strong className="text-gray-900 font-mono">#{deleteConfirmModal.orderIds[0]}</strong></>
+                            ) : (
+                                <><strong className="text-gray-900 font-bold">{deleteConfirmModal.orderIds.length} selected orders</strong></>
+                            )} from the database? This action cannot be undone.
+                        </p>
+
+                        {deleteConfirmModal.orderIds.length > 1 && (
+                            <div className="max-h-24 overflow-y-auto bg-gray-50 rounded-xl p-2.5 text-xs text-gray-500 font-mono space-y-1 custom-scrollbar border border-gray-100">
+                                {deleteConfirmModal.orderIds.map(id => (
+                                    <span key={id} className="inline-block bg-white px-2 py-0.5 rounded border border-gray-200 mr-1.5 mb-1 text-[11px] font-bold text-gray-700">
+                                        #{id}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="flex items-center justify-end gap-3 pt-2">
+                            <button
+                                type="button"
+                                disabled={deletingOrders}
+                                onClick={() => setDeleteConfirmModal({ open: false, orderIds: [] })}
+                                className="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold text-sm transition-all"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                disabled={deletingOrders}
+                                onClick={handleDeleteOrders}
+                                className="px-6 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-black text-sm transition-all shadow-md shadow-red-500/20 active:scale-95 flex items-center gap-2 disabled:opacity-60"
+                            >
+                                {deletingOrders ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>Deleting...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <FaTrash className="text-xs" />
+                                        <span>Yes, Delete</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

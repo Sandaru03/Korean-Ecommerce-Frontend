@@ -51,8 +51,20 @@ export default function DistrictCitySelector({
     // Filtered cities by search
     const filteredCities = useMemo(() => {
         if (!citySearch.trim()) return availableCities
-        const q = citySearch.toLowerCase()
-        return availableCities.filter(c => c.toLowerCase().includes(q))
+        const rawQ = citySearch.toLowerCase().trim()
+        const terms = rawQ.split(/\s+/).filter(Boolean)
+        return availableCities.filter(c => {
+            const lower = c.toLowerCase()
+            // 1. Direct substring match
+            if (lower.includes(rawQ)) return true
+            // 2. All search tokens match
+            if (terms.length > 1 && terms.every(t => lower.includes(t))) return true
+            // 3. Transliteration tolerance (watte <-> watta, th <-> t, v <-> w)
+            const normLower = lower.replace(/watte/g, 'watta').replace(/th/g, 't').replace(/v/g, 'w')
+            const normQ = rawQ.replace(/watte/g, 'watta').replace(/th/g, 't').replace(/v/g, 'w')
+            if (normLower.includes(normQ)) return true
+            return false
+        })
     }, [availableCities, citySearch])
 
     // Close on outside click
