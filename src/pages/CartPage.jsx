@@ -187,6 +187,15 @@ function CheckoutModal({ onClose, cart, subtotal, deliveryFee, grandTotal, total
             return false
         }
 
+        if (destinationType === "srilanka") {
+            const cleanPhone = phone.replace(/[^0-9]/g, "");
+            const isValidSL = /^(?:0\d{9}|[1-9]\d{8}|94\d{9})$/.test(cleanPhone);
+            if (!isValidSL) {
+                toast.error("Please enter a valid 10-digit Sri Lankan phone number (e.g. 0771234567).");
+                return false;
+            }
+        }
+
         if (destinationType === "international") {
             if (!country || !country.trim() || country.trim().toLowerCase() === "sri lanka") {
                 toast.error("Please enter the destination country for international delivery.")

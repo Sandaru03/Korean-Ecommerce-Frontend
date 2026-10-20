@@ -28,9 +28,58 @@ export default function OrdersPageAdmin() {
     const [destination, setDestination] = useState("all"); // 'all' | 'srilanka' | 'international'
     const [deleteConfirmModal, setDeleteConfirmModal] = useState({ open: false, orderIds: [] });
     const [deletingOrders, setDeletingOrders] = useState(false);
+    const [isEditingCustomer, setIsEditingCustomer] = useState(false);
+    const [customerForm, setCustomerForm] = useState({
+        name: "",
+        phone: "",
+        secondaryPhone: "",
+        address: "",
+        city: "",
+    });
+    const [savingCustomer, setSavingCustomer] = useState(false);
 
     const token = localStorage.getItem("token");
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    const openOrderModal = (order) => {
+        setOrderStatus(order.status);
+        setOrderNotes(order.notes || "");
+        setClickOrder(order);
+        setCustomerForm({
+            name: order.name || "",
+            phone: order.phone || "",
+            secondaryPhone: order.secondaryPhone || "",
+            address: order.address || "",
+            city: order.city || "",
+        });
+        setIsEditingCustomer(false);
+        setPopupVisible(true);
+    };
+
+    const handleSaveCustomerDetails = async () => {
+        if (!clickOrder) return;
+        setSavingCustomer(true);
+        try {
+            await axios.put(
+                `${backendUrl}/orders/${clickOrder.orderId}`,
+                customerForm,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            toast.success("Customer details updated successfully");
+            setClickOrder((prev) => ({ ...prev, ...customerForm }));
+            setOrders((prev) =>
+                prev.map((o) =>
+                    o.orderId === clickOrder.orderId ? { ...o, ...customerForm } : o
+                )
+            );
+            setIsEditingCustomer(false);
+        } catch (err) {
+            console.error("Failed to update customer details:", err);
+            toast.error("Failed to update customer details");
+        } finally {
+            setSavingCustomer(false);
+        }
+    };
 
     const fetchOrders = async () => {
         const currentToken = localStorage.getItem("token");
@@ -193,13 +242,27 @@ export default function OrdersPageAdmin() {
     };
 
     const handleCreateWaybills = async (specificOrderIds = null) => {
-        const targetIds = specificOrderIds || selectedOrders;
-        if (!targetIds || targetIds.length === 0) {
+        const rawTargetIds = specificOrderIds || selectedOrders;
+        if (!rawTargetIds || rawTargetIds.length === 0) {
             toast.error("Please select at least one order to create waybills");
             return;
         }
 
-        const confirmMsg = `Send ${targetIds.length} order(s) to Fardar Courier & generate printable waybill stickers?`;
+        // Filter to Sri Lanka domestic orders only (Fardar is domestic only)
+        const targetOrders = orders.filter(o => rawTargetIds.includes(o.orderId));
+        const slOrders = targetOrders.filter(o => !o.country || o.country.toLowerCase().includes("sri lanka"));
+        const targetIds = slOrders.length > 0 ? slOrders.map(o => o.orderId) : rawTargetIds;
+
+        if (targetOrders.length > 0 && slOrders.length === 0) {
+            toast.error("Fardar Courier waybills can only be created for Sri Lanka domestic orders. International orders are handled via overseas couriers (DHL/FedEx).");
+            return;
+        }
+
+        if (slOrders.length > 0 && slOrders.length < rawTargetIds.length) {
+            toast("Skipped international order(s) — Fardar is Sri Lanka domestic only.", { icon: "ℹ️" });
+        }
+
+        const confirmMsg = `Send ${targetIds.length} Sri Lanka domestic order(s) to Fardar Courier & generate printable waybill stickers?`;
         if (!window.confirm(confirmMsg)) return;
 
         setGeneratingWaybills(true);
@@ -221,16 +284,16 @@ export default function OrdersPageAdmin() {
                     { duration: 6000 }
                 );
 
-                // Open printable PDF in new tab if available, or HTML preview
-                if (res.data.pdfUrl) {
-                    window.open(res.data.pdfUrl, "_blank");
-                } else {
-                    window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${targetIds.join(",")}`, "_blank");
+                // Immediate local state update for instant UI feedback
+                if (res.data.orders && res.data.orders.length > 0) {
+                    const wbMap = new Map(res.data.orders.map(o => [o.orderId, o.waybillNo]));
+                    setOrders(prev => prev.map(ord => {
+                        if (wbMap.has(ord.orderId)) {
+                            return { ...ord, waybillNo: wbMap.get(ord.orderId), waybillStatus: "sent" };
+                        }
+                        return ord;
+                    }));
                 }
-
-                // Refresh orders and clear selection
-                setSelectedOrders([]);
-                fetchOrders();
 
                 // If modal is open for one of the updated orders, update clickOrder waybillNo
                 if (clickOrder && targetIds.includes(clickOrder.orderId)) {
@@ -243,6 +306,22 @@ export default function OrdersPageAdmin() {
                         }));
                     }
                 }
+
+                // Open printable PDF in new tab if available, or HTML preview
+                if (res.data.pdfUrl) {
+                    window.open(res.data.pdfUrl, "_blank");
+                } else {
+                    window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${targetIds.join(",")}`, "_blank");
+                }
+
+                if (res.data.errors && res.data.errors.length > 0) {
+                    const errDetails = res.data.errors.map(e => `${e.orderId}: ${e.error}`).join("; ");
+                    toast.error(`Courier warnings: ${errDetails}`, { duration: 8000 });
+                }
+
+                // Refresh orders from server and clear selection
+                setSelectedOrders([]);
+                fetchOrders();
             } else {
                 toast.error(res.data.message || "Failed to generate waybills");
             }
@@ -476,12 +555,7 @@ export default function OrdersPageAdmin() {
                                 orders.map((order) => (
                                     <tr
                                         key={order.orderId}
-                                        onClick={() => {
-                                            setOrderStatus(order.status);
-                                            setOrderNotes(order.notes);
-                                            setClickOrder(order);
-                                            setPopupVisible(true);
-                                        }}
+                                        onClick={() => openOrderModal(order)}
                                         className={`hover:bg-gray-50/80 transition-colors group cursor-pointer ${selectedOrders.includes(order.orderId) ? "bg-indigo-50/30" : ""}`}
                                     >
                                         <td className="px-4 py-4 text-center">
@@ -537,6 +611,9 @@ export default function OrdersPageAdmin() {
                                                     </div>
                                                 ) : (!order.country || order.country.toLowerCase().includes("sri lanka")) ? (
                                                     <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                                                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200" title="Not registered on courier dashboard yet">
+                                                            <FaTruck className="text-[9px] text-amber-500" /> No WB
+                                                        </span>
                                                         <button
                                                             type="button"
                                                             onClick={(e) => {
@@ -544,7 +621,7 @@ export default function OrdersPageAdmin() {
                                                                 window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${order.orderId}`, "_blank");
                                                             }}
                                                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-600 border border-slate-200 transition-colors"
-                                                            title="Preview Waybill Sticker (Test view without sending to courier)"
+                                                            title="Preview Waybill Sticker (Shows NOT CREATED IN COURIER)"
                                                         >
                                                             <FaEye className="text-[10px] text-indigo-500" /> Preview WB
                                                         </button>
@@ -587,10 +664,7 @@ export default function OrdersPageAdmin() {
                                                  <button
                                                      onClick={(e) => {
                                                          e.stopPropagation();
-                                                         setOrderNotes(order.notes);
-                                                         setOrderStatus(order.status);
-                                                         setClickOrder(order);
-                                                         setPopupVisible(true);
+                                                         openOrderModal(order);
                                                      }}
                                                      className="p-2.5 bg-gray-100 hover:bg-indigo-600 hover:text-white text-indigo-600 rounded-xl transition-all shadow-sm"
                                                      title="View/Edit Details"
@@ -749,7 +823,10 @@ export default function OrdersPageAdmin() {
         )}
 
         {/* 🔹 Detailed Order Modal */}
-            {popupVisible && clickOrder && (
+            {popupVisible && clickOrder && (() => {
+                const country = (clickOrder.country || "Sri Lanka").trim();
+                const isDomesticOrder = country.toLowerCase() === "sri lanka" || country.toLowerCase().includes("sri lanka");
+                return (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
                     <div className="w-full max-w-4xl max-h-[90vh] bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col relative animate-in zoom-in-95 duration-200">
                         
@@ -794,34 +871,139 @@ export default function OrdersPageAdmin() {
                                 {/* Customer Column */}
                                 <div className="space-y-6">
                                     <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 space-y-4">
-                                        <h3 className="text-[13px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                            <FaUser className="text-blue-500" /> Customer Information
-                                        </h3>
-                                        <div className="space-y-3">
-                                            <div>
-                                                <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Full Name</p>
-                                                <p className="font-bold text-gray-800">{clickOrder.name}</p>
-                                            </div>
-                                            <div>
-                                                <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Email Address</p>
-                                                <p className="font-bold text-gray-800 text-sm">{clickOrder.email}</p>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Primary Phone</p>
-                                                    <p className="font-bold text-gray-800">{clickOrder.phone}</p>
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="text-[13px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                                <FaUser className="text-blue-500" /> Customer Information
+                                            </h3>
+                                            {!isEditingCustomer ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setCustomerForm({
+                                                            name: clickOrder.name || "",
+                                                            phone: clickOrder.phone || "",
+                                                            secondaryPhone: clickOrder.secondaryPhone || "",
+                                                            address: clickOrder.address || "",
+                                                            city: clickOrder.city || "",
+                                                        });
+                                                        setIsEditingCustomer(true);
+                                                    }}
+                                                    className="px-2.5 py-1 text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 rounded-lg flex items-center gap-1 transition-colors"
+                                                    title="Edit customer details (Phone, Address, etc.)"
+                                                >
+                                                    <FaEdit className="text-xs" /> Edit Info
+                                                </button>
+                                            ) : (
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleSaveCustomerDetails}
+                                                        disabled={savingCustomer}
+                                                        className="px-2.5 py-1 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 rounded-lg flex items-center gap-1 transition-colors shadow-sm"
+                                                    >
+                                                        <FaSave className="text-xs" /> {savingCustomer ? "Saving..." : "Save"}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsEditingCustomer(false)}
+                                                        disabled={savingCustomer}
+                                                        className="px-2 py-1 text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
+                                                    >
+                                                        Cancel
+                                                    </button>
                                                 </div>
-                                                {clickOrder.secondaryPhone && (
+                                            )}
+                                        </div>
+
+                                        {!isEditingCustomer ? (
+                                            <div className="space-y-3">
+                                                <div>
+                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Full Name</p>
+                                                    <p className="font-bold text-gray-800">{clickOrder.name}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Email Address</p>
+                                                    <p className="font-bold text-gray-800 text-sm">{clickOrder.email}</p>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Secondary Phone</p>
-                                                        <p className="font-bold text-gray-800">{clickOrder.secondaryPhone}</p>
+                                                        <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Primary Phone</p>
+                                                        <p className={`font-bold ${isDomesticOrder && (!clickOrder.phone || clickOrder.phone.replace(/[^0-9]/g, "").length !== 10) ? "text-amber-600" : "text-gray-800"}`}>
+                                                            {clickOrder.phone || "Not provided"}
+                                                        </p>
+                                                        {isDomesticOrder && clickOrder.phone && clickOrder.phone.replace(/[^0-9]/g, "").length !== 10 && (
+                                                            <span className="inline-block text-[10px] font-bold text-red-500 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded mt-1">
+                                                                ⚠️ Invalid SL phone ({clickOrder.phone.replace(/[^0-9]/g, "").length} digits). Fardar Courier requires 10 digits for Sri Lanka deliveries! Click "Edit Info" to fix.
+                                                            </span>
+                                                        )}
                                                     </div>
-                                                )}
+                                                    {clickOrder.secondaryPhone && (
+                                                        <div>
+                                                            <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Secondary Phone</p>
+                                                            <p className="font-bold text-gray-800">{clickOrder.secondaryPhone}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Delivery Address</p>
+                                                    <p className="font-bold text-gray-800 text-sm leading-relaxed">{clickOrder.address}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Delivery Address</p>
-                                                <p className="font-bold text-gray-800 text-sm leading-relaxed">{clickOrder.address}</p>
+                                        ) : (
+                                            <div className="space-y-3 bg-white p-3.5 rounded-xl border border-indigo-200 shadow-sm animate-in fade-in duration-150">
+                                                <div>
+                                                    <label className="text-[10px] text-gray-500 uppercase font-black tracking-wider block mb-1">
+                                                        Full Name
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        value={customerForm.name}
+                                                        onChange={(e) => setCustomerForm(prev => ({ ...prev, name: e.target.value }))}
+                                                        className="w-full text-xs font-semibold px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    <div>
+                                                        <label className="text-[10px] text-gray-500 uppercase font-black tracking-wider block mb-1">
+                                                            Primary Phone <span className="text-red-500">*</span>
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={customerForm.phone}
+                                                            onChange={(e) => setCustomerForm(prev => ({ ...prev, phone: e.target.value }))}
+                                                            placeholder="0771234567"
+                                                            className="w-full text-xs font-semibold px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                                                        />
+                                                        <p className="text-[10px] text-indigo-600 font-medium mt-0.5">
+                                                            {isDomesticOrder ? "10 digits required for Sri Lanka courier (e.g. 077XXXXXXX)" : "International format accepted (e.g. +1 555-0123)"}
+                                                        </p>
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-[10px] text-gray-500 uppercase font-black tracking-wider block mb-1">
+                                                            Secondary Phone
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={customerForm.secondaryPhone}
+                                                            onChange={(e) => setCustomerForm(prev => ({ ...prev, secondaryPhone: e.target.value }))}
+                                                            placeholder="Optional"
+                                                            className="w-full text-xs font-semibold px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label className="text-[10px] text-gray-500 uppercase font-black tracking-wider block mb-1">
+                                                        Delivery Address
+                                                    </label>
+                                                    <textarea
+                                                        rows={2}
+                                                        value={customerForm.address}
+                                                        onChange={(e) => setCustomerForm(prev => ({ ...prev, address: e.target.value }))}
+                                                        className="w-full text-xs font-semibold px-3 py-1.5 border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 resize-none"
+                                                    />
+                                                </div>
                                             </div>
+                                        )}
 
                                             {/* Destination & Country */}
                                             <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-200/60">
@@ -849,75 +1031,97 @@ export default function OrdersPageAdmin() {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    {/* Fardar Courier Waybill Information */}
-                                    <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-5 space-y-3">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-[13px] font-black text-emerald-800 uppercase tracking-widest flex items-center gap-2">
-                                                <FaTruck className="text-emerald-600" /> Courier Waybill
-                                            </h3>
-                                            {clickOrder.waybillNo && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${clickOrder.orderId}`, "_blank")}
-                                                    className="px-3 py-1 bg-white border border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
-                                                    title="Print Waybill Sticker"
-                                                >
-                                                    <FaPrint className="text-xs" /> Print Sticker
-                                                </button>
+                                    {/* Courier Information: Fardar Domestic vs International */}
+                                    {isDomesticOrder ? (
+                                        <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-5 space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-[13px] font-black text-emerald-800 uppercase tracking-widest flex items-center gap-2">
+                                                    <FaTruck className="text-emerald-600" /> Courier Waybill (Fardar SL)
+                                                </h3>
+                                                {clickOrder.waybillNo && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${clickOrder.orderId}`, "_blank")}
+                                                        className="px-3 py-1 bg-white border border-emerald-300 text-emerald-700 hover:bg-emerald-600 hover:text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+                                                        title="Print Waybill Sticker"
+                                                    >
+                                                        <FaPrint className="text-xs" /> Print Sticker
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Waybill Number</p>
+                                                    <p className="font-black text-emerald-700 text-base mt-0.5">
+                                                        {clickOrder.waybillNo ? (
+                                                            clickOrder.waybillNo
+                                                        ) : (
+                                                            <span className="text-red-600 text-xs font-black uppercase tracking-wider bg-red-50 px-2.5 py-1 rounded-md border border-red-200 inline-block">
+                                                                ⚠️ Not Created in Courier
+                                                            </span>
+                                                        )}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Waybill Status</p>
+                                                    <p className="font-bold text-gray-800 text-xs mt-1">
+                                                        {clickOrder.waybillStatus ? (
+                                                            <span className="px-2 py-0.5 rounded bg-white border border-emerald-200 text-emerald-700 font-bold uppercase text-[10px]">
+                                                                {clickOrder.waybillStatus}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-gray-400 italic">None</span>
+                                                        )}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* If domestic order and no waybill yet, offer preview and create */}
+                                            {!clickOrder.waybillNo && (
+                                                <div className="pt-2 border-t border-emerald-200/60 flex items-center gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${clickOrder.orderId}`, "_blank")}
+                                                        className="flex-1 py-2.5 bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                                                        title="Preview how this waybill sticker looks without sending to courier"
+                                                    >
+                                                        <FaEye className="text-emerald-600 text-xs" />
+                                                        <span>Preview Waybill</span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleCreateWaybills([clickOrder.orderId])}
+                                                        disabled={generatingWaybills}
+                                                        className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                                                    >
+                                                        {generatingWaybills ? <Loader2 className="h-4 w-4 animate-spin" /> : <FaTruck className="text-xs" />}
+                                                        <span>{generatingWaybills ? "Sending..." : "Create & Send"}</span>
+                                                    </button>
+                                                </div>
                                             )}
                                         </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Waybill Number</p>
-                                                <p className="font-black text-emerald-700 text-base mt-0.5">
-                                                    {clickOrder.waybillNo ? (
-                                                        clickOrder.waybillNo
-                                                    ) : (
-                                                        <span className="text-gray-400 text-xs font-semibold italic">Not generated yet</span>
-                                                    )}
-                                                </p>
+                                    ) : (
+                                        <div className="bg-amber-50/70 border border-amber-200 rounded-2xl p-5 space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <h3 className="text-[13px] font-black text-amber-800 uppercase tracking-widest flex items-center gap-2">
+                                                    🌍 International Shipment
+                                                </h3>
+                                                <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[10px] font-black uppercase">
+                                                    Overseas
+                                                </span>
                                             </div>
-                                            <div>
-                                                <p className="text-[11px] text-gray-400 uppercase font-black tracking-tighter">Waybill Status</p>
-                                                <p className="font-bold text-gray-800 text-xs mt-1">
-                                                    {clickOrder.waybillStatus ? (
-                                                        <span className="px-2 py-0.5 rounded bg-white border border-emerald-200 text-emerald-700 font-bold uppercase text-[10px]">
-                                                            {clickOrder.waybillStatus}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-gray-400 italic">None</span>
-                                                    )}
-                                                </p>
+                                            <p className="text-xs text-amber-900 leading-relaxed font-medium">
+                                                This order is destined for <strong>{country}</strong>. It is handled via overseas courier (DHL / FedEx / EMS), not Fardar Domestic Courier.
+                                            </p>
+                                            <div className="bg-white/80 rounded-xl p-3 border border-amber-200/80 text-xs text-amber-800 space-y-1">
+                                                <p>• <strong>Courier:</strong> Dispatched via international shipping partner</p>
+                                                <p>• <strong>Fardar API:</strong> Excluded (operates within Sri Lanka only)</p>
+                                                <p>• <strong>Customer Phone:</strong> Foreign/overseas numbers are fully accepted</p>
                                             </div>
                                         </div>
-
-                                        {/* If domestic order and no waybill yet, offer preview and create */}
-                                        {(!clickOrder.waybillNo && (!clickOrder.country || clickOrder.country.toLowerCase().includes("sri lanka"))) && (
-                                            <div className="pt-2 border-t border-emerald-200/60 flex items-center gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => window.open(`${backendUrl}/orders/courier/preview-waybills?orderIds=${clickOrder.orderId}`, "_blank")}
-                                                    className="flex-1 py-2.5 bg-white border border-emerald-300 text-emerald-800 hover:bg-emerald-50 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
-                                                    title="Preview how this waybill sticker looks without sending to courier"
-                                                >
-                                                    <FaEye className="text-emerald-600 text-xs" />
-                                                    <span>Preview Waybill</span>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleCreateWaybills([clickOrder.orderId])}
-                                                    disabled={generatingWaybills}
-                                                    className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-400 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
-                                                >
-                                                    {generatingWaybills ? <Loader2 className="h-4 w-4 animate-spin" /> : <FaTruck className="text-xs" />}
-                                                    <span>{generatingWaybills ? "Sending..." : "Create & Send"}</span>
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
+                                    )}
 
                                     {/* Action Column within Customer Col for mobile logic */}
                                     <div className="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-5 space-y-4">
@@ -1006,7 +1210,8 @@ export default function OrdersPageAdmin() {
                         {/* Modal Footer (Sticky if needed) */}
                     </div>
                 </div>
-            )}
+                );
+            })()}
 
             {/* 🔹 Delete Confirmation Modal */}
             {deleteConfirmModal.open && (

@@ -254,6 +254,12 @@ export default function CheckoutPage() {
             return false
         }
         if (destinationType === "srilanka") {
+            const cleanPhone = phone.replace(/[^0-9]/g, "");
+            const isValidSL = /^(?:0\d{9}|[1-9]\d{8}|94\d{9})$/.test(cleanPhone);
+            if (!isValidSL) {
+                toast.error("Please enter a valid 10-digit Sri Lankan phone number (e.g. 0771234567).");
+                return false;
+            }
             if (!district) {
                 toast.error("Please select your District.")
                 return false
@@ -442,7 +448,7 @@ export default function CheckoutPage() {
                             <div className="p-6 space-y-8">
                                 {/* Contact Section */}
                                 <div>
-                                    <div className="flex justify-between items-baseline mb-4">
+                                    <div className="flex justify-between items-baseline mb-3">
                                         <h2 className="text-xl font-bold text-[#111]">Contact</h2>
                                         {!localStorage.getItem("token") && (
                                             <Link to="/login" className="text-[14px] text-primary hover:underline font-medium">Sign in</Link>
@@ -453,13 +459,16 @@ export default function CheckoutPage() {
                                             </span>
                                         )}
                                     </div>
-                                    <div className="relative">
+                                    <div>
+                                        <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                            Email Address <span className="text-red-500">*</span>
+                                        </label>
                                         <input
                                             type="email"
-                                            placeholder="Email"
+                                            placeholder="Enter your email address"
                                             value={email}
                                             onChange={e => setEmail(e.target.value)}
-                                            className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                            className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
                                         />
                                     </div>
                                 </div>
@@ -511,8 +520,8 @@ export default function CheckoutPage() {
                                         {/* Country display / input */}
                                         {destinationType === "international" ? (
                                             <div>
-                                                <label className="block text-[12px] font-bold text-[#333] mb-1">
-                                                    Destination Country <span className="text-primary">*</span>
+                                                <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                    Destination Country <span className="text-red-500">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -523,46 +532,68 @@ export default function CheckoutPage() {
                                                 />
                                             </div>
                                         ) : (
-                                            <div className="relative">
-                                                <label className="absolute text-[11px] text-[#555] top-1.5 left-3">Country / Region</label>
-                                                <div className="w-full border border-[#ddd] bg-gray-50/90 rounded-md px-3 pb-2 pt-6 text-[14px] font-semibold text-[#333] flex items-center gap-2">
+                                            <div>
+                                                <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                    Country / Region
+                                                </label>
+                                                <div className="w-full border border-[#ddd] bg-gray-50/90 rounded-md px-3 py-3 text-[14px] font-semibold text-[#333] flex items-center gap-2">
                                                     <span>🇱🇰</span> Sri Lanka (Domestic Delivery)
                                                 </div>
                                             </div>
                                         )}
 
-                                        <div className="grid grid-cols-2 gap-3">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                            <div>
+                                                <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                    First Name <span className="text-[12px] font-normal text-gray-400 ml-1">(optional)</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="First name"
+                                                    value={firstName}
+                                                    onChange={e => setFirstName(e.target.value)}
+                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                    Last Name <span className="text-red-500">*</span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Last name"
+                                                    value={lastName}
+                                                    onChange={e => setLastName(e.target.value)}
+                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                Address <span className="text-red-500">*</span>
+                                            </label>
                                             <input
                                                 type="text"
-                                                placeholder="First name (optional)"
-                                                value={firstName}
-                                                onChange={e => setFirstName(e.target.value)}
-                                                className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
-                                            />
-                                            <input
-                                                type="text"
-                                                placeholder="Last name"
-                                                value={lastName}
-                                                onChange={e => setLastName(e.target.value)}
-                                                className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                placeholder="Street address, house number, area"
+                                                value={addressLine}
+                                                onChange={e => setAddressLine(e.target.value)}
+                                                className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
                                             />
                                         </div>
 
-                                        <input
-                                            type="text"
-                                            placeholder="Address"
-                                            value={addressLine}
-                                            onChange={e => setAddressLine(e.target.value)}
-                                            className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
-                                        />
-
-                                        <input
-                                            type="text"
-                                            placeholder="Apartment, suite, etc. (optional)"
-                                            value={apartment}
-                                            onChange={e => setApartment(e.target.value)}
-                                            className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
-                                        />
+                                        <div>
+                                            <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                Apartment, suite, etc. <span className="text-[12px] font-normal text-gray-400 ml-1">(optional)</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Apartment, suite, unit, building, floor, etc. (optional)"
+                                                value={apartment}
+                                                onChange={e => setApartment(e.target.value)}
+                                                className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
+                                            />
+                                        </div>
 
                                         {destinationType === "srilanka" ? (
                                             <>
@@ -573,54 +604,71 @@ export default function CheckoutPage() {
                                                     onSelectCity={setCity}
                                                 />
                                                 <div>
+                                                    <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                        Postal Code <span className="text-[12px] font-normal text-gray-400 ml-1">(optional)</span>
+                                                    </label>
                                                     <input
                                                         type="text"
-                                                        placeholder="Postal code (optional)"
+                                                        placeholder="Postal code (e.g. 10100)"
                                                         value={postalCode}
                                                         onChange={e => setPostalCode(e.target.value)}
-                                                        className="w-full border border-[#ddd] rounded-xl px-4 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                        className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
                                                     />
                                                 </div>
                                             </>
                                         ) : (
-                                            <div className="grid grid-cols-2 gap-3">
-                                                <input
-                                                    type="text"
-                                                    placeholder="City *"
-                                                    value={city}
-                                                    onChange={e => setCity(e.target.value)}
-                                                    className="w-full border border-[#ddd] rounded-xl px-4 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
-                                                />
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                                 <div>
+                                                    <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                        City / Town <span className="text-red-500">*</span>
+                                                    </label>
                                                     <input
                                                         type="text"
-                                                        placeholder="Postal / ZIP code *"
+                                                        placeholder="City"
+                                                        value={city}
+                                                        onChange={e => setCity(e.target.value)}
+                                                        className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                        Postal / ZIP code <span className="text-red-500">*</span>
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Postal / ZIP code"
                                                         value={postalCode}
                                                         onChange={e => setPostalCode(e.target.value)}
-                                                        className="w-full border-2 border-amber-400 bg-amber-50/40 rounded-xl px-4 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#888] font-medium"
+                                                        className="w-full border-2 border-amber-400 bg-amber-50/40 rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#888] font-medium"
                                                     />
-                                                    <span className="text-[10px] text-amber-700 font-semibold block mt-1">Required for international</span>
+                                                    <span className="text-[10px] text-amber-700 font-semibold block mt-1">Required for international delivery</span>
                                                 </div>
                                             </div>
                                         )}
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                             <div>
+                                                <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                    Primary Phone <span className="text-red-500">*</span>
+                                                </label>
                                                 <input
                                                     type="tel"
-                                                    placeholder="Primary Phone *"
+                                                    placeholder={destinationType === "srilanka" ? "e.g. 0771234567" : "Phone number"}
                                                     value={phone}
                                                     onChange={e => setPhone(e.target.value)}
-                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
                                                 />
                                             </div>
                                             <div>
+                                                <label className="block text-[14px] font-bold text-[#1f2937] mb-2 tracking-tight">
+                                                    Secondary Phone <span className="text-[12px] font-normal text-gray-400 ml-1">(optional)</span>
+                                                </label>
                                                 <input
                                                     type="tel"
-                                                    placeholder="Secondary Phone (optional)"
+                                                    placeholder="Alternative contact number"
                                                     value={secondaryPhone}
                                                     onChange={e => setSecondaryPhone(e.target.value)}
-                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
                                                 />
                                             </div>
                                         </div>
