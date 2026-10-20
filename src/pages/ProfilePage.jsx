@@ -29,6 +29,18 @@ export default function ProfilePage() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
+    // Prevent background scrolling while any modal is open
+    useEffect(() => {
+        if (isDetailsModalOpen || isEditModalOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isDetailsModalOpen, isEditModalOpen]);
+
     useEffect(() => {
         fetchProfile();
         if (activeTab === "orders") {
@@ -229,9 +241,14 @@ export default function ProfilePage() {
 
             {/* Order Details Modal */}
             {isDetailsModalOpen && selectedOrder && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
-                        <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
+                <div 
+                    className="fixed inset-0 z-[100000] flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-sm overflow-y-auto"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) setIsDetailsModalOpen(false);
+                    }}
+                >
+                    <div className="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[85vh] sm:max-h-[90vh] my-auto">
+                        <div className="shrink-0 flex items-center justify-between p-4 md:p-6 border-b border-gray-100 bg-gray-50/50">
                             <div>
                                 <h2 className="text-xl font-bold text-gray-900">Order #{selectedOrder.orderId}</h2>
                                 <p className="text-xs text-gray-500 mt-1">Placed on {new Date(selectedOrder.date).toLocaleDateString()}</p>
@@ -241,7 +258,7 @@ export default function ProfilePage() {
                             </button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+                        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-6 custom-scrollbar">
                             {/* Progress Tracker */}
                             <section>
                                 <h3 className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -324,8 +341,13 @@ export default function ProfilePage() {
             )}
             {/* Edit Profile Modal */}
             {isEditModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div 
+                    className="fixed inset-0 z-[100000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) setIsEditModalOpen(false);
+                    }}
+                >
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200 my-auto">
                         <div className="flex items-center justify-between p-6 border-b border-gray-100">
                             <h2 className="text-xl font-bold text-gray-900">Edit Profile</h2>
                             <button onClick={() => setIsEditModalOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
