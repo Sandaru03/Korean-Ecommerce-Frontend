@@ -10,12 +10,13 @@ import toast from "react-hot-toast"
 import axios from "axios"
 import DistrictCitySelector from "@/components/common/DistrictCitySelector"
 import deliveryData from "@/data/sriLankaDeliveryZones.json"
-import { getDistrictDeliveryFee, DISTRICT_DELIVERY_FEES } from "@/data/districtDeliveryRates"
+import { getDistrictDeliveryFee, calculatePackagingAndWeight, DISTRICT_DELIVERY_FEES } from "@/data/districtDeliveryRates"
 
 export default function CheckoutPage() {
     const navigate = useNavigate()
     const { 
         cart, clearCart, totalItems, subtotal, deliveryFee, grandTotal,
+        totalProductWeight: contextProductWeight,
         destinationType: cartDestinationType, setDestinationType: setCartDestinationType
     } = useCart()
     const { formatPrice } = useCurrency()
@@ -120,16 +121,24 @@ export default function CheckoutPage() {
 
     const isDomestic = destinationType === "srilanka"
     const isFreeDelivery = isDomestic && subtotal >= 20000
-    const effectiveDeliveryFee = getDistrictDeliveryFee(district, subtotal, destinationType)
+    
+    // Product net weight and packaging calculations
+    const totalProductWeight = cart.reduce((sum, item) => sum + (Number(item.weight) || 0) * item.qty, 0)
+    const packagingInfo = calculatePackagingAndWeight(totalProductWeight)
+    const effectiveDeliveryFee = getDistrictDeliveryFee(district, subtotal, destinationType, totalProductWeight)
     const effectiveGrandTotal = subtotal + effectiveDeliveryFee
 
     const orderLines = cart.map(item =>
         `• ${item.name} x${item.qty} — ${formatPrice(item.price * item.qty)}`
     ).join("\n")
 
+    const weightDetail = packagingInfo.grossWeight > 0
+        ? ` (${packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)}kg` : `${packagingInfo.grossWeight}g`} in ${packagingInfo.boxes} ${packagingInfo.boxes === 1 ? 'box' : 'boxes'})`
+        : ""
+
     const deliveryLine = isDomestic
         ? (effectiveDeliveryFee > 0 
-            ? `\nDelivery Fee: ${formatPrice(effectiveDeliveryFee)}${district ? ` (${district})` : ""}` 
+            ? `\nDelivery Fee: ${formatPrice(effectiveDeliveryFee)}${district ? ` (${district})` : ""}${weightDetail}` 
             : "\nDelivery: Free (Orders over LKR 20,000)")
         : "\nDelivery: Free (International)"
         
@@ -166,7 +175,9 @@ export default function CheckoutPage() {
                 email,
                 firstName,
                 lastName,
-                deliveryFee: effectiveDeliveryFee
+                deliveryFee: effectiveDeliveryFee,
+                totalWeight: packagingInfo.grossWeight,
+                boxesCount: packagingInfo.boxes
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -793,7 +804,14 @@ export default function CheckoutPage() {
                                     <span className="font-semibold text-[#111]">{formatPrice(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-[#555]">
-                                    <span>Delivery</span>
+                                    <div>
+                                        <span>Delivery</span>
+                                        {packagingInfo.grossWeight > 0 && isDomestic && (
+                                            <span className="block text-[11px] text-gray-400 font-normal">
+                                                Weight: {packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg` : `${packagingInfo.grossWeight}g`} ({packagingInfo.boxes} {packagingInfo.boxes === 1 ? 'box' : 'boxes'})
+                                            </span>
+                                        )}
+                                    </div>
                                     {effectiveDeliveryFee > 0 ? (
                                         <div className="text-right">
                                             <span className="font-semibold text-primary">{formatPrice(effectiveDeliveryFee)}</span>

@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useEffect } from "react"
+import { getDistrictDeliveryFee, calculatePackagingAndWeight, FREE_DELIVERY_THRESHOLD } from "@/data/districtDeliveryRates"
 
 const CartContext = createContext(null)
 
-export const FREE_DELIVERY_THRESHOLD = 20000 // Free delivery threshold in LKR
-export const STANDARD_DELIVERY_FEE = 400     // Standard delivery fee in LKR
+export { FREE_DELIVERY_THRESHOLD }
+export const STANDARD_DELIVERY_FEE = 400     // Standard base delivery fee in LKR
 
 export function CartProvider({ children }) {
     const [isCartOpen, setIsCartOpen] = useState(false)
@@ -28,7 +29,7 @@ export function CartProvider({ children }) {
             if (existing) {
                 return prev.map(item =>
                     item.id === product.id
-                        ? { ...item, qty: item.qty + qty }
+                        ? { ...item, qty: item.qty + qty, weight: Number(product.weight) || Number(item.weight) || 0 }
                         : item
                 )
             }
@@ -45,6 +46,7 @@ export function CartProvider({ children }) {
                 name: product.name,
                 price: Number(product.price),
                 image: images[0] || null,
+                weight: Number(product.weight) || 0,
                 qty,
             }]
         })
@@ -83,18 +85,25 @@ export function CartProvider({ children }) {
     const totalItems = cart.reduce((sum, item) => sum + item.qty, 0)
     // Subtotal in LKR
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0)
+    // Total product weight in grams
+    const totalProductWeight = cart.reduce((sum, item) => sum + (Number(item.weight) || 0) * item.qty, 0)
+    // Packaging info (boxes, box tare weight, gross shipping weight)
+    const packagingInfo = calculatePackagingAndWeight(totalProductWeight)
     // Free delivery check (threshold is 20000 LKR in Sri Lanka)
     const isFreeDelivery = subtotal >= FREE_DELIVERY_THRESHOLD
     const freeDeliveryRemaining = Math.max(0, FREE_DELIVERY_THRESHOLD - subtotal)
-    // Delivery fee: 400 LKR if domestic and subtotal < 20000 LKR. For international ('Another Country'), delivery fee is 0!
-    const deliveryFee = (isDomestic && subtotal > 0 && !isFreeDelivery) ? STANDARD_DELIVERY_FEE : 0
+    // Delivery fee: based on domestic, subtotal, and total gross weight
+    const deliveryFee = (isDomestic && subtotal > 0 && !isFreeDelivery) 
+        ? getDistrictDeliveryFee("", subtotal, destinationType, totalProductWeight) 
+        : 0
     // Grand total
     const grandTotal = subtotal + deliveryFee
 
     return (
         <CartContext.Provider value={{
             cart, addToCart, updateQty, removeFromCart, clearCart,
-            totalItems, subtotal, deliveryFee, grandTotal,
+            totalItems, subtotal, totalProductWeight, packagingInfo,
+            deliveryFee, grandTotal,
             destinationType, setDestinationType, isDomestic,
             isFreeDelivery, freeDeliveryRemaining,
             freeDeliveryThreshold: FREE_DELIVERY_THRESHOLD,
