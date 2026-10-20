@@ -32,7 +32,7 @@
     "Trincomalee",
     "Vavuniya"
   ],
-  "totalCities": 8987,
+  "totalCities": 8865,
   "citiesByDistrict": {
     "Ampara": [
       {
@@ -655,12 +655,6 @@
       },
       {
         "name": "Irakkamam",
-        "hub": "Ampara",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
-        "name": "Irakkamama",
         "hub": "Ampara",
         "zone": "Remote Area",
         "rate": 500
@@ -1488,12 +1482,6 @@
         "rate": 500
       },
       {
-        "name": "Periyaneelavanai",
-        "hub": "Kalmunai",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Pihitiwawa",
         "hub": "Dehiaththakandiya",
         "zone": "Outstation",
@@ -1824,12 +1812,6 @@
         "rate": 500
       },
       {
-        "name": "Thambaddai",
-        "hub": "Pottuvil",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Thambattai",
         "hub": "Pottuvil",
         "zone": "Remote Area",
@@ -1932,12 +1914,6 @@
         "rate": 450
       },
       {
-        "name": "Tirukkovil",
-        "hub": "Pottuvil",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Town Area - Ampara City",
         "hub": "Ampara",
         "zone": "Remote Area",
@@ -1975,12 +1951,6 @@
       },
       {
         "name": "Unuwathura Bubula",
-        "hub": "Ampara",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
-        "name": "Unuwathurabubula",
         "hub": "Ampara",
         "zone": "Remote Area",
         "rate": 500
@@ -2222,12 +2192,6 @@
         "rate": 450
       },
       {
-        "name": "Aluthherathgama",
-        "hub": "Thambuttegama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Aluthwewa - Kekirawa",
         "hub": "Kekirawa",
         "zone": "Outstation",
@@ -2331,12 +2295,6 @@
       },
       {
         "name": "Buduruwa Kanda",
-        "hub": "Thambuttegama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Buduruwakanda",
         "hub": "Thambuttegama",
         "zone": "Outstation",
         "rate": 450
@@ -3704,12 +3662,6 @@
         "rate": 450
       },
       {
-        "name": "Pahalamaragahawewa",
-        "hub": "Thambuttegama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Palagala",
         "hub": "Kekirawa",
         "zone": "Outstation",
@@ -3986,12 +3938,6 @@
         "rate": 450
       },
       {
-        "name": "Saliyawewa Junction",
-        "hub": "Thambuttegama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Sampathnuwura",
         "hub": "Kebithigollewa",
         "zone": "Remote Area",
@@ -4024,12 +3970,6 @@
       {
         "name": "Santhagama",
         "hub": "Kekirawa",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Seeppukulam",
-        "hub": "Medawachchiya",
         "zone": "Outstation",
         "rate": 450
       },
@@ -4174,12 +4114,6 @@
       {
         "name": "Talawa-Anuradhapura",
         "hub": "Anuradhapura",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Tambuttegama",
-        "hub": "Thambuttegama",
         "zone": "Outstation",
         "rate": 450
       },
@@ -4524,12 +4458,6 @@
         "hub": "Anuradhapura",
         "zone": "Outstation",
         "rate": 450
-      },
-      {
-        "name": "Yodaela",
-        "hub": "Kekirawa",
-        "zone": "Outstation",
-        "rate": 450
       }
     ],
     "Badulla": [
@@ -4674,12 +4602,6 @@
       {
         "name": "Akkara Siyaya",
         "hub": "Badulla",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Akkarasiyaya",
-        "hub": "Bandarawela",
         "zone": "Outstation",
         "rate": 450
       },
@@ -4853,12 +4775,6 @@
       },
       {
         "name": "Arawatta",
-        "hub": "Badulla",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Arawatte",
         "hub": "Badulla",
         "zone": "Outstation",
         "rate": 450
@@ -5572,12 +5488,6 @@
         "rate": 450
       },
       {
-        "name": "Hali Ela",
-        "hub": "Badulla",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Hali-Ela",
         "hub": "Badulla",
         "zone": "Outstation",
@@ -5585,12 +5495,6 @@
       },
       {
         "name": "Hali-Ela Town",
-        "hub": "Badulla",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Haliela",
         "hub": "Badulla",
         "zone": "Outstation",
         "rate": 450
@@ -6292,12 +6196,6 @@
         "rate": 450
       },
       {
-        "name": "Lunuwatte",
-        "hub": "Welimada",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Madakanda",
         "hub": "Mahiyanganaya",
         "zone": "Outstation",
@@ -6400,19 +6298,7 @@
         "rate": 450
       },
       {
-        "name": "Mahiyangane",
-        "hub": "Mahiyanganaya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Makul Ella",
-        "hub": "Bandarawela",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Makulella",
         "hub": "Bandarawela",
         "zone": "Outstation",
         "rate": 450
@@ -6564,12 +6450,6 @@
       {
         "name": "Mhudanawa",
         "hub": "Welimada",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Minipa",
-        "hub": "Mahiyanganaya",
         "zone": "Outstation",
         "rate": 450
       },
@@ -7944,12 +7824,6 @@
         "rate": 500
       },
       {
-        "name": "Koddamunai",
-        "hub": "Batticaloa",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Kokkaddichcholai",
         "hub": "Batticaloa",
         "zone": "Remote Area",
@@ -8551,12 +8425,6 @@
       },
       {
         "name": "Periyaporativu",
-        "hub": "Batticaloa",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
-        "name": "Periyapullumalai",
         "hub": "Batticaloa",
         "zone": "Remote Area",
         "rate": 500
@@ -10022,12 +9890,6 @@
         "rate": 400
       },
       {
-        "name": "Ethulkotte",
-        "hub": "Kotte",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
         "name": "Fort City",
         "hub": "Office",
         "zone": "Colombo 1-15",
@@ -11108,12 +10970,6 @@
         "rate": 400
       },
       {
-        "name": "Mahabuthgamuwa",
-        "hub": "Malabe",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
         "name": "Mahadeniya City",
         "hub": "Office",
         "zone": "Suburbs",
@@ -11588,12 +11444,6 @@
         "rate": 400
       },
       {
-        "name": "Obesekarapura",
-        "hub": "Kotte",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
         "name": "Orugodawatha City",
         "hub": "Office",
         "zone": "Suburbs",
@@ -11679,18 +11529,6 @@
       },
       {
         "name": "Palawaththa-Battaramulla",
-        "hub": "Malabe",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
-        "name": "Palawatta",
-        "hub": "Malabe",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
-        "name": "Palawatte",
         "hub": "Malabe",
         "zone": "Suburbs",
         "rate": 400
@@ -11828,12 +11666,6 @@
         "rate": 400
       },
       {
-        "name": "Pelawatte",
-        "hub": "Malabe",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
         "name": "Pepiliyana",
         "hub": "Kohuwala",
         "zone": "Suburbs",
@@ -11956,12 +11788,6 @@
       {
         "name": "Pore",
         "hub": "Malabe",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
-        "name": "pore gedara",
-        "hub": "Hanwella",
         "zone": "Suburbs",
         "rate": 400
       },
@@ -12934,12 +12760,6 @@
         "rate": 450
       },
       {
-        "name": "Aluthwala",
-        "hub": "Ambalangoda",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Amarakeeryhigama",
         "hub": "Ambalangoda",
         "zone": "Outstation",
@@ -13726,12 +13546,6 @@
         "rate": 450
       },
       {
-        "name": "Gonapinuwal",
-        "hub": "Ambalangoda",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Gonapinuwala",
         "hub": "Ambalangoda",
         "zone": "Outstation",
@@ -13997,12 +13811,6 @@
       },
       {
         "name": "Ihala Walpola",
-        "hub": "Galle",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Ihalahewessa",
         "hub": "Galle",
         "zone": "Outstation",
         "rate": 450
@@ -14446,12 +14254,6 @@
         "rate": 450
       },
       {
-        "name": "Kottawagama",
-        "hub": "Galle",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Kottawagama - Yakkalamulla",
         "hub": "Imaduwa",
         "zone": "Outstation",
@@ -14729,12 +14531,6 @@
       },
       {
         "name": "Manam Pita",
-        "hub": "Ambalangoda",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Manampita",
         "hub": "Ambalangoda",
         "zone": "Outstation",
         "rate": 450
@@ -15172,12 +14968,6 @@
         "rate": 450
       },
       {
-        "name": "Parana Thanayamgoda",
-        "hub": "Galle",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Paranathanaymgoda",
         "hub": "Baddegama",
         "zone": "Outstation",
@@ -15490,12 +15280,6 @@
         "rate": 450
       },
       {
-        "name": "Sandarawala",
-        "hub": "Baddegama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Sangamittha",
         "hub": "Galle",
         "zone": "Outstation",
@@ -15556,18 +15340,6 @@
         "rate": 450
       },
       {
-        "name": "Talgaspe",
-        "hub": "Galle",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Talgaswela",
-        "hub": "Galle",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Talpe",
         "hub": "Galle",
         "zone": "Outstation",
@@ -15617,7 +15389,7 @@
       },
       {
         "name": "Thalgaspe",
-        "hub": "Uragasmanhandiya",
+        "hub": "Galle",
         "zone": "Outstation",
         "rate": 450
       },
@@ -15641,7 +15413,7 @@
       },
       {
         "name": "Thalgaswela",
-        "hub": "Baddegama",
+        "hub": "Galle",
         "zone": "Outstation",
         "rate": 450
       },
@@ -15756,12 +15528,6 @@
       {
         "name": "Thunduwa",
         "hub": "Uragasmanhandiya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Tiranagama",
-        "hub": "Galle",
         "zone": "Outstation",
         "rate": 450
       },
@@ -16740,12 +16506,6 @@
         "rate": 450
       },
       {
-        "name": "Dambuwawatta",
-        "hub": "Wattala",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
         "name": "Dan Ovita",
         "hub": "Pasyala",
         "zone": "Outstation",
@@ -17496,12 +17256,6 @@
         "rate": 450
       },
       {
-        "name": "Ja Ela",
-        "hub": "Katunayake",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
         "name": "Ja-Ela",
         "hub": "Katunayake",
         "zone": "Suburbs",
@@ -17592,16 +17346,10 @@
         "rate": 450
       },
       {
-        "name": "Kal Eliya",
+        "name": "Kal-Eliya",
         "hub": "Katunayake",
         "zone": "Suburbs",
         "rate": 400
-      },
-      {
-        "name": "Kal-Eliya",
-        "hub": "Pasyala",
-        "zone": "Outstation",
-        "rate": 450
       },
       {
         "name": "Kalagedihena",
@@ -17624,12 +17372,6 @@
       {
         "name": "Kalalpitiya",
         "hub": "Pasyala",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Kaleliya",
-        "hub": "Yakkala",
         "zone": "Outstation",
         "rate": 450
       },
@@ -17776,12 +17518,6 @@
         "hub": "Biyagama",
         "zone": "Outstation",
         "rate": 450
-      },
-      {
-        "name": "Katunayaka",
-        "hub": "Katunayake",
-        "zone": "Suburbs",
-        "rate": 400
       },
       {
         "name": "Katunayake",
@@ -18276,16 +18012,10 @@
         "rate": 450
       },
       {
-        "name": "Mabola",
+        "name": "Mabole",
         "hub": "Wattala",
         "zone": "Suburbs",
         "rate": 400
-      },
-      {
-        "name": "Mabole",
-        "hub": "Yakkala",
-        "zone": "Outstation",
-        "rate": 450
       },
       {
         "name": "Madagampiriya",
@@ -18302,12 +18032,6 @@
       {
         "name": "Madampalla",
         "hub": "Divulapitiya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Madampalle",
-        "hub": "Negombo",
         "zone": "Outstation",
         "rate": 450
       },
@@ -18476,12 +18200,6 @@
       {
         "name": "Malwathu Hiripitiya",
         "hub": "Yakkala",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Malwathuhiripitiya",
-        "hub": "Kirindiwela",
         "zone": "Outstation",
         "rate": 450
       },
@@ -21794,12 +21512,6 @@
         "rate": 450
       },
       {
-        "name": "Rammalawarapitiya",
-        "hub": "Tissamaharama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Ramminithenna",
         "hub": "Tissamaharama",
         "zone": "Outstation",
@@ -22064,12 +21776,6 @@
         "rate": 450
       },
       {
-        "name": "Tangalla",
-        "hub": "Ranna",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Tangalle",
         "hub": "Ranna",
         "zone": "Outstation",
@@ -22100,26 +21806,8 @@
         "rate": 450
       },
       {
-        "name": "Thangalla",
-        "hub": "Ranna",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Thangalle",
-        "hub": "Tissamaharama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Thelawilla",
         "hub": "Hambanthota",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Thissamaharama",
-        "hub": "Tissamaharama",
         "zone": "Outstation",
         "rate": 450
       },
@@ -22161,12 +21849,6 @@
       },
       {
         "name": "Udadeniya - Hambantota",
-        "hub": "Walasmulla",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Udagomadiya",
         "hub": "Walasmulla",
         "zone": "Outstation",
         "rate": 450
@@ -22322,12 +22004,6 @@
         "rate": 450
       },
       {
-        "name": "Weeraketiye",
-        "hub": "Ranna",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Weerawila",
         "hub": "Tissamaharama",
         "zone": "Outstation",
@@ -22335,12 +22011,6 @@
       },
       {
         "name": "Weerawila New Town",
-        "hub": "Tissamaharama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Weerawila Newtown",
         "hub": "Tissamaharama",
         "zone": "Outstation",
         "rate": 450
@@ -22672,14 +22342,8 @@
         "rate": 500
       },
       {
-        "name": "Eluthumadduval",
-        "hub": "Kodikamam",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Eluthumattuval",
-        "hub": "Jaffna",
+        "hub": "Kodikamam",
         "zone": "Remote Area",
         "rate": 500
       },
@@ -23500,12 +23164,6 @@
         "rate": 500
       },
       {
-        "name": "Pointpedro",
-        "hub": "Nelliady",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Pointpetro",
         "hub": "Jaffna",
         "zone": "Remote Area",
@@ -23520,12 +23178,6 @@
       {
         "name": "Poli Kandy",
         "hub": "Nelliady",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
-        "name": "Polikandy",
-        "hub": "Jaffna",
         "zone": "Remote Area",
         "rate": 500
       },
@@ -24276,12 +23928,6 @@
         "rate": 450
       },
       {
-        "name": "Chinafort Dharga",
-        "hub": "Town",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Daluwatta",
         "hub": "Kalutara",
         "zone": "Outstation",
@@ -24378,12 +24024,6 @@
         "rate": 450
       },
       {
-        "name": "Dhargatown Dharga",
-        "hub": "Town",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Dibbedda",
         "hub": "Panadura",
         "zone": "Suburbs",
@@ -24458,12 +24098,6 @@
       {
         "name": "Egal Oya",
         "hub": "Kalutara",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Egaloya",
-        "hub": "Horana",
         "zone": "Outstation",
         "rate": 450
       },
@@ -25038,12 +24672,6 @@
         "rate": 400
       },
       {
-        "name": "Kuruppumulla",
-        "hub": "Panadura",
-        "zone": "Suburbs",
-        "rate": 400
-      },
-      {
         "name": "Labugama - Horana",
         "hub": "Horana",
         "zone": "Outstation",
@@ -25344,12 +24972,6 @@
         "rate": 450
       },
       {
-        "name": "Munhena",
-        "hub": "Kalutara",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Naboda",
         "hub": "Horana",
         "zone": "Outstation",
@@ -25369,12 +24991,6 @@
       },
       {
         "name": "Nagas Handiya",
-        "hub": "Kalutara",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Nagashandiya",
         "hub": "Kalutara",
         "zone": "Outstation",
         "rate": 450
@@ -25806,12 +25422,6 @@
         "rate": 450
       },
       {
-        "name": "Tebuwana",
-        "hub": "Horana",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Tempo Handiya",
         "hub": "Horana",
         "zone": "Outstation",
@@ -25855,7 +25465,7 @@
       },
       {
         "name": "Thebuwana",
-        "hub": "Kalutara",
+        "hub": "Horana",
         "zone": "Outstation",
         "rate": 450
       },
@@ -26012,12 +25622,6 @@
       {
         "name": "Weththewa",
         "hub": "Matugama",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Wettumakada",
-        "hub": "Kalutara",
         "zone": "Outstation",
         "rate": 450
       },
@@ -28220,12 +27824,6 @@
         "rate": 450
       },
       {
-        "name": "Kundasala",
-        "hub": "Digana",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Kundasale",
         "hub": "Digana",
         "zone": "Outstation",
@@ -28670,12 +28268,6 @@
         "rate": 450
       },
       {
-        "name": "Menikhinne",
-        "hub": "Digana",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Merivila",
         "hub": "Nawalapitiya",
         "zone": "Outstation",
@@ -28983,12 +28575,6 @@
       },
       {
         "name": "Nilamba",
-        "hub": "Peradeniya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Nillamba",
         "hub": "Peradeniya",
         "zone": "Outstation",
         "rate": 450
@@ -29780,18 +29366,6 @@
         "rate": 450
       },
       {
-        "name": "Talatuoya",
-        "hub": "Kandy",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Talwatta",
-        "hub": "Kandy",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Tanekubura",
         "hub": "Kandy",
         "zone": "Outstation",
@@ -29805,12 +29379,6 @@
       },
       {
         "name": "Tawalantenna",
-        "hub": "Digana",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Teldeniya",
         "hub": "Digana",
         "zone": "Outstation",
         "rate": 450
@@ -29998,12 +29566,6 @@
       {
         "name": "Udainguruwatta",
         "hub": "Gampola",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Udaperadeniya",
-        "hub": "Peradeniya",
         "zone": "Outstation",
         "rate": 450
       },
@@ -30700,12 +30262,6 @@
         "rate": 450
       },
       {
-        "name": "Aranayaka",
-        "hub": "Mawanella",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Aranayake",
         "hub": "Mawanella",
         "zone": "Outstation",
@@ -30726,12 +30282,6 @@
       {
         "name": "Asmadala",
         "hub": "Mawanella",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Atala",
-        "hub": "Kegalle",
         "zone": "Outstation",
         "rate": 450
       },
@@ -32034,12 +31584,6 @@
         "rate": 500
       },
       {
-        "name": "Ananthapuram",
-        "hub": "Kilinochchi",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Anichchankulam",
         "hub": "Kilinochchi",
         "zone": "Remote Area",
@@ -32490,12 +32034,6 @@
         "rate": 500
       },
       {
-        "name": "Naddankandal",
-        "hub": "Kilinochchi",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Nallur Kilinochchi",
         "hub": "Kilinochchi",
         "zone": "Remote Area",
@@ -32839,12 +32377,6 @@
       },
       {
         "name": "Uruththera Puram",
-        "hub": "Kilinochchi",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
-        "name": "Uruththerapuram",
         "hub": "Kilinochchi",
         "zone": "Remote Area",
         "rate": 500
@@ -36374,18 +35906,6 @@
         "rate": 450
       },
       {
-        "name": "Torayaya",
-        "hub": "Kurunegala",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Tuttiripitigama",
-        "hub": "Wariyapola",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Udagama-Mahawa",
         "hub": "Mahawa",
         "zone": "Outstation",
@@ -37444,12 +36964,6 @@
         "rate": 500
       },
       {
-        "name": "Talaimannar",
-        "hub": "Mannar",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Thadchanamarudamadu",
         "hub": "Mannar",
         "zone": "Remote Area",
@@ -37939,12 +37453,6 @@
       },
       {
         "name": "Dunkolawatta",
-        "hub": "Matale",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Dunkolawatte",
         "hub": "Matale",
         "zone": "Outstation",
         "rate": 450
@@ -38670,12 +38178,6 @@
         "rate": 450
       },
       {
-        "name": "Naula",
-        "hub": "Dambulla",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Nawagashinna",
         "hub": "Dambulla",
         "zone": "Outstation",
@@ -39048,12 +38550,6 @@
         "rate": 450
       },
       {
-        "name": "Tenna",
-        "hub": "Matale",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Thabalagla",
         "hub": "Matale",
         "zone": "Outstation",
@@ -39211,12 +38707,6 @@
       },
       {
         "name": "Welangahawatta",
-        "hub": "Matale",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Welangahawatte",
         "hub": "Matale",
         "zone": "Outstation",
         "rate": 450
@@ -39476,12 +38966,6 @@
         "rate": 450
       },
       {
-        "name": "Dehigaspa",
-        "hub": "Morawaka",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Dehigaspe",
         "hub": "Morawaka",
         "zone": "Outstation",
@@ -39519,12 +39003,6 @@
       },
       {
         "name": "Denipitiya",
-        "hub": "Matara",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Denipitiye",
         "hub": "Matara",
         "zone": "Outstation",
         "rate": 450
@@ -39986,12 +39464,6 @@
         "rate": 450
       },
       {
-        "name": "Kamburupitiye",
-        "hub": "Matara",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Kandedola",
         "hub": "Morawaka",
         "zone": "Outstation",
@@ -40394,12 +39866,6 @@
         "rate": 450
       },
       {
-        "name": "Mee- Ella",
-        "hub": "Matara",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Mee-Ella",
         "hub": "Matara",
         "zone": "Outstation",
@@ -40796,12 +40262,6 @@
         "rate": 450
       },
       {
-        "name": "Puhulwella",
-        "hub": "Matara",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Rabukana",
         "hub": "Morawaka",
         "zone": "Outstation",
@@ -40940,12 +40400,6 @@
         "rate": 450
       },
       {
-        "name": "Telijjawila",
-        "hub": "Matara",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Thalanagalla",
         "hub": "Morawaka",
         "zone": "Outstation",
@@ -41079,12 +40533,6 @@
       },
       {
         "name": "Urubokka - Morawaka",
-        "hub": "Morawaka",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Urubokke",
         "hub": "Morawaka",
         "zone": "Outstation",
         "rate": 450
@@ -41740,12 +41188,6 @@
         "rate": 450
       },
       {
-        "name": "Bibila",
-        "hub": "Bibile",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Bibila City",
         "hub": "Monaragala",
         "zone": "Outstation",
@@ -41753,7 +41195,7 @@
       },
       {
         "name": "Bibile",
-        "hub": "Monaragala",
+        "hub": "Bibile",
         "zone": "Outstation",
         "rate": 450
       },
@@ -43552,12 +42994,6 @@
         "rate": 450
       },
       {
-        "name": "Tanamalwila",
-        "hub": "Monaragala",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Thabana",
         "hub": "Siyambalanduwa",
         "zone": "Outstation",
@@ -43577,7 +43013,7 @@
       },
       {
         "name": "Thanamalwila",
-        "hub": "Ranna",
+        "hub": "Monaragala",
         "zone": "Outstation",
         "rate": 450
       },
@@ -45308,12 +44744,6 @@
         "rate": 450
       },
       {
-        "name": "Halgranoya Nuwara",
-        "hub": "Eliya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Handabowa Nuwara",
         "hub": "Eliya",
         "zone": "Outstation",
@@ -45374,12 +44804,6 @@
         "rate": 450
       },
       {
-        "name": "Hawaeliya Nuwara",
-        "hub": "Eliya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Hedunuwewa Nuwara",
         "hub": "Eliya",
         "zone": "Outstation",
@@ -45412,12 +44836,6 @@
       {
         "name": "Highforest no3",
         "hub": "Walapane",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Highforest Nuwara",
-        "hub": "Eliya",
         "zone": "Outstation",
         "rate": 450
       },
@@ -45585,12 +45003,6 @@
       },
       {
         "name": "Keerthi Bandarapura Nuwara",
-        "hub": "Eliya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Keerthibandarapura Nuwara",
         "hub": "Eliya",
         "zone": "Outstation",
         "rate": 450
@@ -48048,12 +47460,6 @@
         "rate": 450
       },
       {
-        "name": "Battuluoya",
-        "hub": "Chilaw",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Bingiriya - Puttalam",
         "hub": "Chilaw",
         "zone": "Outstation",
@@ -48175,12 +47581,6 @@
       },
       {
         "name": "Elewenkulam",
-        "hub": "Puttalam",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Eluwankulam",
         "hub": "Puttalam",
         "zone": "Outstation",
         "rate": 450
@@ -48331,12 +47731,6 @@
       },
       {
         "name": "Ismail Puram",
-        "hub": "Puttalam",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Ismailpuram",
         "hub": "Puttalam",
         "zone": "Outstation",
         "rate": 450
@@ -48708,12 +48102,6 @@
         "rate": 450
       },
       {
-        "name": "Mahakumbukkadawala",
-        "hub": "Puttalam",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Mahawewa",
         "hub": "Chilaw",
         "zone": "Outstation",
@@ -48757,12 +48145,6 @@
       },
       {
         "name": "Mangala Eliya",
-        "hub": "Puttalam",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Mangala Eliye",
         "hub": "Puttalam",
         "zone": "Outstation",
         "rate": 450
@@ -49110,12 +48492,6 @@
         "rate": 450
       },
       {
-        "name": "Panirendawe",
-        "hub": "Chilaw",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Pilakatumulla",
         "hub": "Wennappuwa",
         "zone": "Outstation",
@@ -49266,12 +48642,6 @@
         "rate": 450
       },
       {
-        "name": "Tabbowa",
-        "hub": "Puttalam",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Talawila Church",
         "hub": "Puttalam",
         "zone": "Outstation",
@@ -49285,7 +48655,7 @@
       },
       {
         "name": "Thabbowa",
-        "hub": "Wennappuwa",
+        "hub": "Puttalam",
         "zone": "Outstation",
         "rate": 450
       },
@@ -49344,12 +48714,6 @@
         "rate": 450
       },
       {
-        "name": "Thoduwawe",
-        "hub": "Chilaw",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Thoppuwa",
         "hub": "Wennappuwa",
         "zone": "Outstation",
@@ -49364,12 +48728,6 @@
       {
         "name": "Thummodara - Wennappuwa",
         "hub": "Wennappuwa",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Toduwawa",
-        "hub": "Puttalam",
         "zone": "Outstation",
         "rate": 450
       },
@@ -49436,12 +48794,6 @@
       {
         "name": "Waikkal",
         "hub": "Puttalam",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Waikkala",
-        "hub": "Wennappuwa",
         "zone": "Outstation",
         "rate": 450
       },
@@ -50810,12 +50162,6 @@
         "rate": 450
       },
       {
-        "name": "Kolambageara",
-        "hub": "Embilipitiya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Kolaniya Junction",
         "hub": "Kalawana",
         "zone": "Outstation",
@@ -51392,12 +50738,6 @@
         "rate": 450
       },
       {
-        "name": "Opanayaka",
-        "hub": "Balangoda",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Opanayake",
         "hub": "Balangoda",
         "zone": "Outstation",
@@ -51872,12 +51212,6 @@
         "rate": 450
       },
       {
-        "name": "Teppanawa",
-        "hub": "Ratnapura",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Thalakella",
         "hub": "Embilipitiya",
         "zone": "Outstation",
@@ -51986,12 +51320,6 @@
         "rate": 450
       },
       {
-        "name": "Tunkama",
-        "hub": "Embilipitiya",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
         "name": "Uda Ranchamadama",
         "hub": "Embilipitiya",
         "zone": "Outstation",
@@ -52030,12 +51358,6 @@
       {
         "name": "Udaniriella",
         "hub": "Ratnapura",
-        "zone": "Outstation",
-        "rate": 450
-      },
-      {
-        "name": "Udawalawa",
-        "hub": "Embilipitiya",
         "zone": "Outstation",
         "rate": 450
       },
@@ -52480,12 +51802,6 @@
         "rate": 500
       },
       {
-        "name": "Chinabay",
-        "hub": "Trincomalee",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Dehiwatte",
         "hub": "Trincomalee",
         "zone": "Remote Area",
@@ -52654,12 +51970,6 @@
         "rate": 500
       },
       {
-        "name": "Kilivetty",
-        "hub": "Trincomalee",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Kinnia",
         "hub": "Trincomalee",
         "zone": "Remote Area",
@@ -52697,12 +52007,6 @@
       },
       {
         "name": "Kumburupiddy",
-        "hub": "Trincomalee",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
-        "name": "Kumburupitty",
         "hub": "Trincomalee",
         "zone": "Remote Area",
         "rate": 500
@@ -52912,12 +52216,6 @@
         "rate": 500
       },
       {
-        "name": "Orrshill",
-        "hub": "Trincomalee",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Ors Hill",
         "hub": "Trincomalee",
         "zone": "Remote Area",
@@ -53116,12 +52414,6 @@
         "rate": 500
       },
       {
-        "name": "Sirajnagar",
-        "hub": "Kantale",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Somapura",
         "hub": "Trincomalee",
         "zone": "Remote Area",
@@ -53176,19 +52468,7 @@
         "rate": 500
       },
       {
-        "name": "Tiriyai",
-        "hub": "Trincomalee",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Tiriyayi",
-        "hub": "Trincomalee",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
-        "name": "Toppur",
         "hub": "Trincomalee",
         "zone": "Remote Area",
         "rate": 500
@@ -53340,12 +52620,6 @@
         "rate": 500
       },
       {
-        "name": "Annanagar",
-        "hub": "Vavuniya",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
         "name": "Asikulam",
         "hub": "Vavuniya",
         "zone": "Remote Area",
@@ -53408,12 +52682,6 @@
       {
         "name": "Horowupatana",
         "hub": "Kebithigollewa",
-        "zone": "Remote Area",
-        "rate": 500
-      },
-      {
-        "name": "Iraddaperiyakulam",
-        "hub": "Vavuniya",
         "zone": "Remote Area",
         "rate": 500
       },

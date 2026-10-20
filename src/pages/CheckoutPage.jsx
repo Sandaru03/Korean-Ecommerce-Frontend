@@ -8,6 +8,9 @@ import { Loader2, ImagePlus, X, MessageCircle, Mail, ChevronLeft, Building2, Cre
 import { FaWhatsapp } from "react-icons/fa"
 import toast from "react-hot-toast"
 import axios from "axios"
+import DistrictCitySelector from "@/components/common/DistrictCitySelector"
+import deliveryData from "@/data/sriLankaDeliveryZones.json"
+import { getDistrictDeliveryFee, DISTRICT_DELIVERY_FEES } from "@/data/districtDeliveryRates"
 
 export default function CheckoutPage() {
     const navigate = useNavigate()
@@ -24,6 +27,7 @@ export default function CheckoutPage() {
     const [lastName, setLastName] = useState("")
     const [addressLine, setAddressLine] = useState("")
     const [apartment, setApartment] = useState("")
+    const [district, setDistrict] = useState("")
     const [city, setCity] = useState("")
     const [postalCode, setPostalCode] = useState("")
     const [phone, setPhone] = useState("")
@@ -48,8 +52,9 @@ export default function CheckoutPage() {
         if (setCartDestinationType) setCartDestinationType(type)
         if (type === "srilanka") {
             setCountry("Sri Lanka")
-        } else if (country === "Sri Lanka") {
-            setCountry("")
+        } else {
+            if (country === "Sri Lanka") setCountry("")
+            setDistrict("")
         }
     }
 
@@ -77,7 +82,18 @@ export default function CheckoutPage() {
                 if (res.data.secondaryPhone && res.data.secondaryPhone !== "Not Given" && res.data.secondaryPhone !== "Not Provided") setSecondaryPhone(res.data.secondaryPhone)
                 if (uAddress) setAddressLine(uAddress)
                 if (uApartment) setApartment(uApartment)
-                if (uCity) setCity(uCity)
+                if (uCity) {
+                    setCity(uCity)
+                    // Auto-detect district if uCity matches any district's city list
+                    if (deliveryData?.citiesByDistrict) {
+                        for (const [distName, cityList] of Object.entries(deliveryData.citiesByDistrict)) {
+                            if (cityList.some(c => c.name.toLowerCase() === uCity.toLowerCase())) {
+                                setDistrict(distName)
+                                break
+                            }
+                        }
+                    }
+                }
                 if (uPostalCode) setPostalCode(uPostalCode)
                 if (uCountry) {
                     if (uCountry.trim().toLowerCase() !== "sri lanka") {
@@ -103,7 +119,8 @@ export default function CheckoutPage() {
     }, [setCartDestinationType])
 
     const isDomestic = destinationType === "srilanka"
-    const effectiveDeliveryFee = isDomestic ? deliveryFee : 0
+    const isFreeDelivery = isDomestic && subtotal >= 20000
+    const effectiveDeliveryFee = getDistrictDeliveryFee(district, subtotal, destinationType)
     const effectiveGrandTotal = subtotal + effectiveDeliveryFee
 
     const orderLines = cart.map(item =>
@@ -111,11 +128,21 @@ export default function CheckoutPage() {
     ).join("\n")
 
     const deliveryLine = isDomestic
-        ? (effectiveDeliveryFee > 0 ? `\nDelivery Fee: ${formatPrice(effectiveDeliveryFee)}` : "\nDelivery: Free")
+        ? (effectiveDeliveryFee > 0 
+            ? `\nDelivery Fee: ${formatPrice(effectiveDeliveryFee)}${district ? ` (${district})` : ""}` 
+            : "\nDelivery: Free (Orders over LKR 20,000)")
         : "\nDelivery: Free (International)"
         
     const buildFullName = () => `${firstName} ${lastName}`.trim()
-    const buildFullAddress = () => `${addressLine}${apartment ? `, ${apartment}` : ''}, ${city}${postalCode ? ` - ${postalCode}` : ''}, ${country}`
+    const buildFullAddress = () => {
+        const parts = [addressLine]
+        if (apartment) parts.push(apartment)
+        if (city) parts.push(city)
+        if (isDomestic && district) parts.push(district)
+        if (postalCode) parts.push(postalCode)
+        parts.push(isDomestic ? "Sri Lanka" : country)
+        return parts.filter(Boolean).join(", ")
+    }
 
     async function saveOrderToDb() {
         const token = localStorage.getItem("token")
@@ -130,6 +157,7 @@ export default function CheckoutPage() {
                 items: cart.map(item => ({ productId: item.productId, qty: item.qty })),
                 address: buildFullAddress(),
                 country: finalCountry,
+                district: isDomestic ? district : null,
                 city,
                 postalCode: postalCode.trim() || null,
                 phone,
@@ -137,7 +165,8 @@ export default function CheckoutPage() {
                 paymentMethod,
                 email,
                 firstName,
-                lastName
+                lastName,
+                deliveryFee: effectiveDeliveryFee
             }, {
                 headers: { Authorization: `Bearer ${token}` }
             })
@@ -209,11 +238,24 @@ export default function CheckoutPage() {
     }
 
     const validateOrder = () => {
-        if (!email || !lastName || !addressLine || !city || !phone) {
+        if (!email || !lastName || !addressLine || !phone) {
             toast.error("Please fill in all required delivery details (including phone number).")
             return false
         }
-        if (destinationType === "international") {
+        if (destinationType === "srilanka") {
+            if (!district) {
+                toast.error("Please select your District.")
+                return false
+            }
+            if (!city) {
+                toast.error("Please select your Town/City.")
+                return false
+            }
+        } else {
+            if (!city || !city.trim()) {
+                toast.error("Please enter your City.")
+                return false
+            }
             if (!country || !country.trim() || country.trim().toLowerCase() === "sri lanka") {
                 toast.error("Please enter the destination country for international delivery.")
                 return false
@@ -248,7 +290,7 @@ export default function CheckoutPage() {
             ? `*Primary Phone:* ${phone}\n*Secondary Phone:* ${secondaryPhone}` 
             : `*Phone:* ${phone}`
         const destinationLine = destinationType === "srilanka" 
-            ? "*Delivery:* Sri Lanka (Domestic)" 
+            ? `*Delivery:* Sri Lanka (Domestic)${district ? `\n*District:* ${district}` : ""}${city ? `\n*Town/City:* ${city}` : ""}` 
             : `*Delivery:* ${country.trim()} (International)${postalCode ? `\n*Postal Code:* ${postalCode.trim()}` : ""}`
 
         const finalSummary =
@@ -310,7 +352,7 @@ export default function CheckoutPage() {
             ? `*Primary Phone:* ${phone}\n*Secondary Phone:* ${secondaryPhone}` 
             : `*Phone:* ${phone}`
         const destinationLine = destinationType === "srilanka" 
-            ? "*Delivery:* Sri Lanka (Domestic)" 
+            ? `*Delivery:* Sri Lanka (Domestic)${district ? `\n*District:* ${district}` : ""}${city ? `\n*Town/City:* ${city}` : ""}` 
             : `*Delivery:* ${country.trim()} (International)${postalCode ? `\n*Postal Code:* ${postalCode.trim()}` : ""}`
 
         const summaryText =
@@ -330,7 +372,7 @@ export default function CheckoutPage() {
         try {
             await axios.post(`${import.meta.env.VITE_BACKEND_URL}/app-configs/send-order-email`, {
                 summary: summaryText,
-                email: null,
+                email: email || null,
                 slipImageUrl: finalSlipUrl || null,
                 orderData: {
                     name: buildFullName(),
@@ -385,7 +427,7 @@ export default function CheckoutPage() {
                     <div className="flex-1 w-full space-y-6">
                         
                         {/* Delivery Details */}
-                        <div className="bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-[#eee] overflow-hidden">
+                        <div className="bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-[#eee] overflow-visible">
                             <div className="p-6 space-y-8">
                                 {/* Contact Section */}
                                 <div>
@@ -511,35 +553,45 @@ export default function CheckoutPage() {
                                             className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
                                         />
 
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <input
-                                                type="text"
-                                                placeholder="City"
-                                                value={city}
-                                                onChange={e => setCity(e.target.value)}
-                                                className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
-                                            />
-                                            {destinationType === "international" ? (
+                                        {destinationType === "srilanka" ? (
+                                            <>
+                                                <DistrictCitySelector
+                                                    selectedDistrict={district}
+                                                    selectedCity={city}
+                                                    onSelectDistrict={setDistrict}
+                                                    onSelectCity={setCity}
+                                                />
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Postal code (optional)"
+                                                        value={postalCode}
+                                                        onChange={e => setPostalCode(e.target.value)}
+                                                        className="w-full border border-[#ddd] rounded-xl px-4 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                    />
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="grid grid-cols-2 gap-3">
+                                                <input
+                                                    type="text"
+                                                    placeholder="City *"
+                                                    value={city}
+                                                    onChange={e => setCity(e.target.value)}
+                                                    className="w-full border border-[#ddd] rounded-xl px-4 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
+                                                />
                                                 <div>
                                                     <input
                                                         type="text"
                                                         placeholder="Postal / ZIP code *"
                                                         value={postalCode}
                                                         onChange={e => setPostalCode(e.target.value)}
-                                                        className="w-full border-2 border-amber-400 bg-amber-50/40 rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#888] font-medium"
+                                                        className="w-full border-2 border-amber-400 bg-amber-50/40 rounded-xl px-4 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#888] font-medium"
                                                     />
                                                     <span className="text-[10px] text-amber-700 font-semibold block mt-1">Required for international</span>
                                                 </div>
-                                            ) : (
-                                                <input
-                                                    type="text"
-                                                    placeholder="Postal code (optional)"
-                                                    value={postalCode}
-                                                    onChange={e => setPostalCode(e.target.value)}
-                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#666]"
-                                                />
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                             <div>
@@ -740,12 +792,24 @@ export default function CheckoutPage() {
                                     <span>Subtotal ({totalItems} items)</span>
                                     <span className="font-semibold text-[#111]">{formatPrice(subtotal)}</span>
                                 </div>
-                                <div className="flex justify-between text-[#555]">
+                                <div className="flex justify-between items-center text-[#555]">
                                     <span>Delivery</span>
                                     {effectiveDeliveryFee > 0 ? (
-                                        <span className="font-semibold text-primary">{formatPrice(effectiveDeliveryFee)}</span>
+                                        <div className="text-right">
+                                            <span className="font-semibold text-primary">{formatPrice(effectiveDeliveryFee)}</span>
+                                            {district ? (
+                                                <span className="block text-[11px] text-gray-500 font-normal">{district} District</span>
+                                            ) : (
+                                                <span className="block text-[10px] text-gray-400 font-normal">Base fee</span>
+                                            )}
+                                        </div>
                                     ) : (
-                                        <span className="font-semibold text-[#16a34a]">FREE</span>
+                                        <div className="text-right">
+                                            <span className="font-bold text-[#16a34a]">FREE</span>
+                                            {isDomestic && (
+                                                <span className="block text-[10px] text-[#16a34a] font-medium">Over {formatPrice(20000)}</span>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                             </div>

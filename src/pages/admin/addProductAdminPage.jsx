@@ -11,6 +11,7 @@ export default function AddProductPage() {
     const [altNames, setAlternativeName] = useState("");
     const [labellPrice, setLablePrice] = useState("");
     const [price, setPrice] = useState("");
+    const [weight, setWeight] = useState("");
     const [images, setImages] = useState([]);
     const [description, setDescription] = useState("");
     const [miniDescription, setMiniDescription] = useState("");
@@ -34,6 +35,7 @@ export default function AddProductPage() {
             altNames: altNamesInArray,
             labellPrice: labellPrice,
             price: price,
+            weight: Number(weight) || 0,
             images: responses,
             description: description,
             miniDescription: miniDescription
@@ -103,6 +105,19 @@ export default function AddProductPage() {
                     <div className="flex-1 flex flex-col gap-1">
                         <label className="text-sm font-semibold">Price</label>
                         <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full border-[2px] h-[40px] rounded-md px-2" />
+                    </div>
+
+                    <div className="flex-1 flex flex-col gap-1">
+                        <label className="text-sm font-semibold">Weight (g)</label>
+                        <input 
+                            type="number" 
+                            step="any"
+                            min="0"
+                            placeholder="e.g. 250"
+                            value={weight} 
+                            onChange={(e) => setWeight(e.target.value)} 
+                            className="w-full border-[2px] h-[40px] rounded-md px-2" 
+                        />
                     </div>
                 </div>
 

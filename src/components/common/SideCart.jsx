@@ -141,7 +141,7 @@ export default function SideCart() {
                         )}
                         {isFreeDelivery && subtotal > 0 && (
                             <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-2.5 text-xs text-[#16a34a] font-bold flex items-center justify-between shadow-sm">
-                                <span>🎉 FREE Delivery Unlocked!</span>
+                                <span>FREE Delivery Unlocked!</span>
                                 <span className="text-[10px] bg-[#16a34a] text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Unlocked</span>
                             </div>
                         )}
@@ -153,7 +153,11 @@ export default function SideCart() {
                             </div>
                             <div className="flex justify-between items-center text-sm text-gray-500">
                                 <span>Delivery</span>
-                                <span className="text-xs text-gray-500 italic">Calculated on checkout page</span>
+                                {isFreeDelivery ? (
+                                    <span className="text-xs font-bold text-[#16a34a]">FREE</span>
+                                ) : (
+                                    <span className="text-xs text-gray-500 italic">Calculated on checkout page</span>
+                                )}
                             </div>
                             <div className="flex justify-between font-black text-lg text-gray-900 pt-2 border-t border-gray-200">
                                 <span>Estimated Total:</span>

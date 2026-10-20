@@ -71,6 +71,7 @@ export default function ProductAdminPage() {
                                 <th className="p-4">Product Name</th>
                                 <th className="p-4">Label Price</th>
                                 <th className="p-4">Price</th>
+                                <th className="p-4">Weight</th>
                                 <th className="p-4 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -79,7 +80,7 @@ export default function ProductAdminPage() {
                         <tbody>
                             {filteredProducts.length === 0 ? (
                                 <tr>
-                                    <td colSpan="6" className="p-8 text-center text-gray-500">
+                                    <td colSpan="7" className="p-8 text-center text-gray-500">
                                         No products found matching your search.
                                     </td>
                                 </tr>
@@ -114,6 +115,17 @@ export default function ProductAdminPage() {
                                         {/* Price */}
                                         <td className="p-4 text-red-600 font-semibold">
                                             LKR {product.price}
+                                        </td>
+
+                                        {/* Weight */}
+                                        <td className="p-4 text-gray-700 font-medium">
+                                            {product.weight > 0 ? (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                                    {product.weight}g
+                                                </span>
+                                            ) : (
+                                                <span className="text-gray-400 text-xs italic">Not set</span>
+                                            )}
                                         </td>
 
                                         {/* Actions */}

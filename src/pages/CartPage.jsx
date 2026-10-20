@@ -797,7 +797,7 @@ export default function CartPage() {
                                     <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-4 flex gap-3 items-start shadow-sm">
                                         <AlertCircle className="h-5 w-5 text-[#16a34a] shrink-0 mt-0.5" />
                                         <div className="flex-1">
-                                            <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery Unlocked! 🎉</p>
+                                            <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery Unlocked!</p>
                                             <p className="text-[12px] text-[#16a34a]/80 mt-0.5 leading-relaxed">
                                                 You've unlocked free delivery for ordering over {formatPrice(freeDeliveryThreshold)}!
                                             </p>
@@ -819,7 +819,11 @@ export default function CartPage() {
                                         </div>
                                         <div className="flex justify-between items-center text-[#555]">
                                             <span>Delivery</span>
-                                            <span className="text-[13px] text-gray-500 italic">Calculated on checkout page</span>
+                                            {isFreeDelivery ? (
+                                                <span className="text-[14px] font-bold text-[#16a34a]">FREE</span>
+                                            ) : (
+                                                <span className="text-[13px] text-gray-500 italic">Calculated on checkout page</span>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="border-t-2 border-[#111] mt-4 pt-4 flex justify-between items-baseline">
