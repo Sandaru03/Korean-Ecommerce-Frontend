@@ -4,7 +4,11 @@ import { Header } from "@/components/coupang/header"
 import { Footer } from "@/components/coupang/footer"
 import { useCart } from "@/context/CartContext"
 import { useCurrency } from "@/context/CurrencyContext"
-import { Loader2, ImagePlus, X, MessageCircle, Mail, ChevronLeft, Building2, CreditCard, ChevronRight, ShieldCheck } from "lucide-react"
+import { 
+    Loader2, ImagePlus, X, MessageCircle, Mail, ChevronLeft, Building2, 
+    CreditCard, ChevronRight, ShieldCheck, Package, Sparkles, CheckCircle2, 
+    AlertCircle, Scale, Box, Lock, Info, Truck, ChevronDown, ChevronUp
+} from "lucide-react"
 import { FaWhatsapp } from "react-icons/fa"
 import toast from "react-hot-toast"
 import axios from "axios"
@@ -47,6 +51,7 @@ export default function CheckoutPage() {
     const [slipUrl, setSlipUrl] = useState(null)
     const [uploadingSlip, setUploadingSlip] = useState(false)
     const [showPaymentGatewayModal, setShowPaymentGatewayModal] = useState(false)
+    const [showWeightBreakdown, setShowWeightBreakdown] = useState(false)
 
     function handleDestinationChange(type) {
         setDestinationType(type)
@@ -824,77 +829,217 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Right Column: Order Summary */}
-                    <div className="w-full lg:w-[380px] shrink-0 lg:sticky lg:top-6 space-y-4">
-                        <div className="bg-white rounded-xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-[#eee] p-6">
-                            <h3 className="font-bold text-[#111] text-[18px] mb-4 pb-3 border-b border-[#eee]">Order Summary</h3>
+                    <div className="w-full lg:w-[390px] shrink-0 lg:sticky lg:top-20 space-y-4">
+                        <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-slate-200/90 p-5 sm:p-6 space-y-5">
                             
-                            {/* Items Preview */}
-                            <div className="space-y-3 mb-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
-                                {cart.map(item => (
-                                    <div key={item.id} className="flex items-start gap-3 text-[13px]">
-                                        <div className="w-12 h-12 bg-[#f5f5f5] rounded-md overflow-hidden shrink-0 border border-[#eee]">
-                                            <img src={item.image || "/placeholder.jpg"} alt={item.name} className="w-full h-full object-cover" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-[#333] leading-snug line-clamp-2">{item.name}</p>
-                                            <p className="text-[#777] mt-0.5">Qty: {item.qty}</p>
-                                        </div>
-                                        <div className="shrink-0 font-bold text-[#111]">
-                                            {formatPrice(item.price * item.qty)}
-                                        </div>
+                            {/* Card Header */}
+                            <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
+                                        <Package className="w-5 h-5 text-amber-400" />
                                     </div>
-                                ))}
+                                    <div>
+                                        <h3 className="font-extrabold text-slate-900 text-[17px] tracking-tight leading-tight">Order Summary</h3>
+                                        <p className="text-[11px] text-slate-500 font-medium">Review your items & courier details</p>
+                                    </div>
+                                </div>
+                                <span className="text-[12px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80">
+                                    {totalItems} {totalItems === 1 ? 'item' : 'items'}
+                                </span>
                             </div>
 
-                            <div className="border-t border-[#eee] pt-4 space-y-3 text-[14px]">
-                                <div className="flex justify-between text-[#555]">
-                                    <span>Subtotal ({totalItems} items)</span>
-                                    <span className="font-semibold text-[#111]">{formatPrice(subtotal)}</span>
+                            {/* Free Delivery Progress Bar (For Domestic Orders) */}
+                            {isDomestic && (
+                                <div className="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-teal-500/10 border border-emerald-200/60 rounded-xl p-3 space-y-1.5">
+                                    <div className="flex items-center justify-between text-[11px]">
+                                        {subtotal >= 20000 ? (
+                                            <span className="font-extrabold text-emerald-700 flex items-center gap-1.5">
+                                                <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
+                                                FREE Delivery Qualified!
+                                            </span>
+                                        ) : (
+                                            <span className="font-bold text-slate-700">
+                                                Add <strong className="text-emerald-700 font-extrabold">{formatPrice(20000 - subtotal)}</strong> for FREE Delivery
+                                            </span>
+                                        )}
+                                        <span className="text-[10px] font-bold text-slate-500">
+                                            {subtotal >= 20000 ? "100%" : `${Math.min(100, Math.round((subtotal / 20000) * 100))}%`}
+                                        </span>
+                                    </div>
+                                    <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
+                                        <div 
+                                            className="h-full bg-gradient-to-r from-amber-500 via-emerald-500 to-teal-500 rounded-full transition-all duration-500"
+                                            style={{ width: `${Math.min(100, Math.round((subtotal / 20000) * 100))}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-[10px] text-slate-500 flex justify-between">
+                                        <span>Standard orders</span>
+                                        <span className="font-semibold text-slate-600">Free threshold: {formatPrice(20000)}</span>
+                                    </p>
                                 </div>
-                                <div className="flex justify-between items-center text-[#555]">
+                            )}
+
+                            {/* Items Preview List with Unit Weights & Details */}
+                            <div>
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">Cart Items</span>
+                                    <span className="text-[11px] text-slate-500 font-medium">Scroll to see all</span>
+                                </div>
+                                <div className="space-y-2.5 max-h-[250px] overflow-y-auto pr-1.5 custom-scrollbar">
+                                    {cart.map(item => (
+                                        <div key={item.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50/70 hover:bg-slate-50 border border-slate-100 transition-colors">
+                                            <div className="relative w-13 h-13 w-[52px] h-[52px] bg-white rounded-lg overflow-hidden shrink-0 border border-slate-200 shadow-2xs">
+                                                <img 
+                                                    src={item.image || "/placeholder.jpg"} 
+                                                    alt={item.name} 
+                                                    className="w-full h-full object-cover" 
+                                                />
+                                                <span className="absolute bottom-0 right-0 bg-slate-900/90 backdrop-blur-xs text-white text-[9px] font-black px-1.5 py-0.5 rounded-tl-md">
+                                                    ×{item.qty}
+                                                </span>
+                                            </div>
+                                            
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-slate-800 font-semibold text-[12.5px] leading-snug line-clamp-2">
+                                                    {item.name}
+                                                </p>
+                                                <div className="flex flex-wrap items-center gap-1.5 mt-1 text-[11px] text-slate-500">
+                                                    <span>{formatPrice(item.price)} each</span>
+                                                    {Number(item.weight) > 0 && (
+                                                        <span className="inline-flex items-center gap-0.5 font-semibold text-slate-600 bg-white border border-slate-200 px-1.5 py-0.2 rounded text-[10px]">
+                                                            <Scale className="w-2.5 h-2.5 text-slate-400" />
+                                                            {Number(item.weight) >= 1000 ? `${(Number(item.weight) / 1000).toFixed(2)}kg` : `${item.weight}g`}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="shrink-0 text-right">
+                                                <span className="font-extrabold text-[13.5px] text-slate-900 block">
+                                                    {formatPrice(item.price * item.qty)}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Courier Shipping Details */}
+                            {isDomestic && packagingInfo.grossWeight > 0 && (
+                                <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 space-y-2">
+                                    <div className="flex items-center justify-between text-[12px]">
+                                        <span className="flex items-center gap-1.5 font-bold text-slate-700">
+                                            <Box className="w-3.5 h-3.5 text-indigo-600" />
+                                            <span>Shipping Weight</span>
+                                        </span>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="font-black text-slate-900 text-[13px]">
+                                                {packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg` : `${packagingInfo.grossWeight}g`}
+                                            </span>
+                                            <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-0.5 rounded-full">
+                                                {packagingInfo.boxes} {packagingInfo.boxes === 1 ? 'Box' : 'Boxes'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-200/60 text-slate-500">
+                                        <span className="flex items-center gap-1">
+                                            <Truck className="w-3 h-3 text-slate-400" />
+                                            Destination:
+                                        </span>
+                                        <span className="font-bold text-slate-800">
+                                            {district ? `${district} District` : "Sri Lanka (Select District)"}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Price Breakdown */}
+                            <div className="border-t border-slate-200/80 pt-3.5 space-y-2.5 text-[13.5px]">
+                                <div className="flex justify-between text-slate-600">
+                                    <span>Subtotal ({totalItems} items)</span>
+                                    <span className="font-bold text-slate-900">{formatPrice(subtotal)}</span>
+                                </div>
+
+
+                                <div className="flex justify-between items-center text-slate-600">
                                     <div>
-                                        <span>Delivery</span>
+                                        <span>Courier Delivery</span>
                                         {packagingInfo.grossWeight > 0 && isDomestic && (
-                                            <span className="block text-[11px] text-gray-400 font-normal">
-                                                Weight: {packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg` : `${packagingInfo.grossWeight}g`} ({packagingInfo.boxes} {packagingInfo.boxes === 1 ? 'box' : 'boxes'})
+                                            <span className="block text-[11px] text-slate-400 font-normal">
+                                                Billable: {packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg` : `${packagingInfo.grossWeight}g`}
                                             </span>
                                         )}
                                     </div>
                                     {effectiveDeliveryFee > 0 ? (
                                         <div className="text-right">
-                                            <span className="font-semibold text-primary">{formatPrice(effectiveDeliveryFee)}</span>
-                                            {district ? (
-                                                <span className="block text-[11px] text-gray-500 font-normal">{district} District</span>
-                                            ) : (
-                                                <span className="block text-[10px] text-gray-400 font-normal">Base fee</span>
-                                            )}
+                                            <span className="font-extrabold text-primary text-[14px]">
+                                                {formatPrice(effectiveDeliveryFee)}
+                                            </span>
+                                            <span className="block text-[10px] text-slate-400 font-medium">
+                                                {district ? `${district} Rate` : "Base courier rate"}
+                                            </span>
                                         </div>
                                     ) : (
                                         <div className="text-right">
-                                            <span className="font-bold text-[#16a34a]">FREE</span>
+                                            <span className="font-black text-emerald-600 text-[14px]">FREE</span>
                                             {isDomestic && (
-                                                <span className="block text-[10px] text-[#16a34a] font-medium">Over {formatPrice(20000)}</span>
+                                                <span className="block text-[10px] text-emerald-600 font-medium">Over {formatPrice(20000)}</span>
                                             )}
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div className="border-t-2 border-[#111] mt-4 pt-4 flex justify-between items-baseline mb-6">
-                                <span className="font-bold text-[#111] text-[16px]">Total</span>
-                                <p className="font-black text-[28px] text-[#111] leading-none">{formatPrice(effectiveGrandTotal)}</p>
+                            {/* Grand Total Luxury Card */}
+                            <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white rounded-2xl p-4 shadow-lg flex items-center justify-between border border-slate-800">
+                                <div>
+                                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300 block">Total Payable</span>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">All taxes & packaging included</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-black text-[25px] sm:text-[27px] tracking-tight leading-none text-white">
+                                        {formatPrice(effectiveGrandTotal)}
+                                    </p>
+                                </div>
                             </div>
+
+                            {/* Slip Status Verification (For Bank Transfer) */}
+                            {paymentMethod === 'bank' && (
+                                <div>
+                                    {slipPreview ? (
+                                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-900 text-[12px]">
+                                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                            <div className="min-w-0 flex-1">
+                                                <span className="font-bold block">Payment Slip Ready</span>
+                                                <p className="text-[10px] text-emerald-700 truncate">
+                                                    {slipFile ? slipFile.name : "Receipt attached to order"}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-50/80 border border-amber-200/80 text-amber-900 text-[12px]">
+                                            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                                            <div className="min-w-0 flex-1">
+                                                <span className="font-bold block">Payment Slip Pending</span>
+                                                <p className="text-[10px] text-amber-700">
+                                                    Upload receipt on the left before ordering
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             {/* Checkout Buttons */}
                             {paymentMethod === 'bank' ? (
                                 <div className="space-y-3 pt-1">
-                                    {/* Modern Header */}
                                     <div className="flex items-center justify-between px-1">
-                                        <span className="text-[11px] font-black uppercase tracking-wider text-gray-500">
+                                        <span className="text-[11px] font-black uppercase tracking-wider text-slate-500">
                                             Place Your Order Via
                                         </span>
-                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                                            <ShieldCheck className="h-3 w-3" /> Secure Order
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                            <ShieldCheck className="h-3 w-3 text-emerald-600" /> Secure Order
                                         </span>
                                     </div>
 
@@ -904,7 +1049,6 @@ export default function CheckoutPage() {
                                         disabled={isSavingOrder || sendingEmail}
                                         className="group relative w-full p-3.5 bg-gradient-to-r from-[#22c55e] via-[#16a34a] to-[#15803d] hover:from-[#16a34a] hover:to-[#166534] text-white rounded-2xl shadow-[0_10px_25px_-5px_rgba(22,163,74,0.4)] hover:shadow-[0_12px_28px_-4px_rgba(22,163,74,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-between text-left overflow-hidden border border-emerald-400/30"
                                     >
-                                        {/* Subtle ambient lighting on hover */}
                                         <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/15 rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
 
                                         <div className="flex items-center gap-3.5 min-w-0 z-10">
@@ -928,13 +1072,12 @@ export default function CheckoutPage() {
                                         <ChevronRight className="h-5 w-5 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all shrink-0 ml-2 z-10" />
                                     </button>
 
-                                    {/* Primary Button: Email (Matching WhatsApp UI) */}
+                                    {/* Primary Button: Email */}
                                     <button
                                         onClick={handleEmail}
                                         disabled={isSavingOrder || sendingEmail}
                                         className="group relative w-full p-3.5 bg-gradient-to-r from-[#3b82f6] via-[#2563eb] to-[#1d4ed8] hover:from-[#2563eb] hover:to-[#1e40af] text-white rounded-2xl shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_12px_28px_-4px_rgba(37,99,235,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-between text-left overflow-hidden border border-blue-400/30"
                                     >
-                                        {/* Subtle ambient lighting on hover */}
                                         <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/15 rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
 
                                         <div className="flex items-center gap-3.5 min-w-0 z-10">
@@ -959,9 +1102,9 @@ export default function CheckoutPage() {
                                     </button>
 
                                     {/* Trust micro-text */}
-                                    <div className="pt-1.5 flex items-center justify-center gap-1.5 text-center text-[11px] text-gray-400">
-                                        <span>📎</span>
-                                        <span>Your bank slip will be automatically attached</span>
+                                    <div className="pt-1 flex items-center justify-center gap-1.5 text-center text-[11px] text-slate-400">
+                                        <Lock className="w-3 h-3 text-slate-400" />
+                                        <span>Your bank slip will be automatically attached to your order</span>
                                     </div>
                                 </div>
                             ) : (
@@ -969,7 +1112,7 @@ export default function CheckoutPage() {
                                     <button
                                         type="button"
                                         onClick={() => setShowPaymentGatewayModal(true)}
-                                        className="w-full flex items-center justify-center gap-3 h-[52px] bg-[#111] hover:bg-[#333] text-white font-bold text-[15px] rounded-xl transition-colors shadow-md shadow-gray-200"
+                                        className="w-full flex items-center justify-center gap-3 h-[52px] bg-slate-900 hover:bg-slate-800 text-white font-bold text-[15px] rounded-xl transition-colors shadow-md"
                                     >
                                         <CreditCard className="h-5 w-5" />
                                         Proceed to Payment
@@ -979,6 +1122,22 @@ export default function CheckoutPage() {
                                     </p>
                                 </div>
                             )}
+
+                            {/* Trust Badges Footer Grid */}
+                            <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center text-[10px] text-slate-500 font-medium">
+                                <div className="flex flex-col items-center gap-1">
+                                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                                    <span>100% Authentic Korean Brands</span>
+                                </div>
+                                <div className="flex flex-col items-center gap-1">
+                                    <Box className="w-4 h-4 text-indigo-600" />
+                                    <span>Tamper-Proof Box Packing</span>
+                                </div>
+                                <div className="flex flex-col items-center gap-1">
+                                    <Truck className="w-4 h-4 text-blue-600" />
+                                    <span>Tracked Courier Delivery</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
