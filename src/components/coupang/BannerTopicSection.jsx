@@ -187,11 +187,11 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
                     </div>
                     
                     {/* Mobile View (3 rows) */}
-                    <div className="md:hidden flex flex-col gap-4">
+                    <div className="md:hidden flex flex-col gap-3.5">
                         {mobileRows.map((row, i) => (
-                            <div key={`mobile-row-${i}`} {...dragEvents} className="flex gap-3 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
+                            <div key={`mobile-row-${i}`} {...dragEvents} className="flex gap-2.5 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
                                 {row.map(p => (
-                                    <div key={p.id} className="snap-start w-[140px] shrink-0">
+                                    <div key={p.id} className="snap-start w-[calc((100%-20px)/2.35)] min-w-[112px] max-w-[136px] shrink-0">
                                         <CommonProductCard product={p} />
                                     </div>
                                 ))}
@@ -202,9 +202,9 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
                     {/* Desktop View (2 rows) */}
                     <div className="hidden md:flex flex-col gap-5">
                         {desktopRows.map((row, i) => (
-                            <div key={`desktop-row-${i}`} {...dragEvents} className="flex gap-4 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
+                            <div key={`desktop-row-${i}`} {...dragEvents} className="flex gap-3.5 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
                                 {row.map(p => (
-                                    <div key={p.id} className="snap-start w-[180px] lg:w-[200px] xl:w-[220px] shrink-0">
+                                    <div key={p.id} className="snap-start w-[165px] lg:w-[185px] xl:w-[205px] shrink-0">
                                         <CommonProductCard product={p} />
                                     </div>
                                 ))}

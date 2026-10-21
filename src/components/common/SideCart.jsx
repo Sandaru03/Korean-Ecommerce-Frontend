@@ -40,7 +40,7 @@ export default function SideCart() {
     if (!isCartOpen) return null
 
     return (
-        <div className="fixed inset-0 z-[9999] flex justify-end">
+        <div className="fixed inset-0 z-[100000] flex justify-end">
             {/* Backdrop overlay */}
             <div 
                 className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
@@ -120,7 +120,7 @@ export default function SideCart() {
 
                 {/* Footer / Summary */}
                 {cart.length > 0 && (
-                    <div className="p-6 border-t border-gray-100 bg-gray-50 shrink-0 space-y-3.5">
+                    <div className="p-6 pb-8 sm:pb-6 border-t border-gray-100 bg-gray-50 shrink-0 space-y-3.5">
                         {/* Free Delivery Bar */}
                         {!isFreeDelivery && subtotal > 0 && (
                             <div className="bg-red-50 border border-red-100 rounded-xl p-3 text-xs text-primary shadow-sm">

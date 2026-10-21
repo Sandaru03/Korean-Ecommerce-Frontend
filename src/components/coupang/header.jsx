@@ -697,7 +697,7 @@ export function Header() {
       {/* =========================================
           MOBILE BOTTOM NAVBAR
       ========================================= */}
-      <div className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 z-[9999] pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+      <div className="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 z-40 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <div className="flex justify-between items-center px-6 h-[72px] relative">
           
           <button onClick={() => setShowMobileCategories(true)} className="flex flex-col items-center gap-1 text-black hover:text-primary transition-colors">

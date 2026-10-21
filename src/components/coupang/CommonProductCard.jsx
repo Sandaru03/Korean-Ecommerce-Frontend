@@ -54,7 +54,7 @@ export function CommonProductCard({ product }) {
     return (
         <Link to={`/product/${product.id}`} className="group block w-full">
             {/* Image Section */}
-            <div className="relative aspect-square overflow-hidden rounded-md bg-[#f5f5f5] mb-3 transition-colors shadow-[inset_0_0_0_1px_#eee] group-hover:shadow-[inset_0_0_0_1px_#ddd] transform-gpu">
+            <div className="relative aspect-square overflow-hidden rounded-md bg-[#f5f5f5] mb-2.5 md:mb-3 transition-colors shadow-[inset_0_0_0_1px_#eee] group-hover:shadow-[inset_0_0_0_1px_#ddd] transform-gpu">
                 <img
                     src={imageUrl}
                     alt={product.name}
@@ -66,38 +66,38 @@ export function CommonProductCard({ product }) {
             {/* Info Section */}
             <div className="px-0.5 space-y-1">
                 {/* Brand Row */}
-                <div className="flex items-start justify-between gap-2">
-                    <p className="text-[14px] font-black text-[#111] leading-tight truncate flex-1 uppercase tracking-tight">
+                <div className="flex items-start justify-between gap-1.5 md:gap-2">
+                    <p className="text-[12px] sm:text-[13px] md:text-[14px] font-black text-[#111] leading-tight truncate flex-1 uppercase tracking-tight">
                         {brandName}
                     </p>
                     <button 
                         onClick={handleQuickAdd}
-                        className="p-1 px-1.5 -mt-0.5 text-[#999] hover:text-[#ff1268] transition-colors rounded-full hover:bg-red-50"
+                        className="p-1 px-1.5 -mt-0.5 text-[#999] hover:text-[#ff1268] transition-colors rounded-full hover:bg-red-50 shrink-0"
                         title="Add to cart"
                     >
-                        <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.5} />
+                        <ShoppingBag className="h-4 w-4 md:h-[18px] md:w-[18px]" strokeWidth={1.5} />
                     </button>
                 </div>
 
                 {/* Product Name */}
-                <p className="text-[13px] text-[#333] leading-[1.4] line-clamp-2 min-h-[36px] font-medium">
+                <p className="text-[12px] md:text-[13px] text-[#333] leading-[1.35] line-clamp-2 min-h-[32px] md:min-h-[36px] font-medium">
                     {product.name}
                 </p>
 
                 {product.miniDescription && (
-                    <p className="text-[11px] text-[#888] line-clamp-1 mt-1 font-medium italic">
+                    <p className="text-[10px] md:text-[11px] text-[#888] line-clamp-1 mt-0.5 md:mt-1 font-medium italic">
                         {product.miniDescription}
                     </p>
                 )}
 
                 {/* Price Section */}
-                <div className="flex flex-col pt-1">
-                    <div className="flex items-center gap-2">
-                        <p className="text-[17px] font-black text-[#111] leading-none">
+                <div className="flex flex-col pt-0.5 md:pt-1">
+                    <div className="flex items-center gap-1.5 md:gap-2">
+                        <p className="text-[14px] sm:text-[15px] md:text-[17px] font-black text-[#111] leading-none">
                             {formatPrice(price)}
                         </p>
                         {hasDiscount && (
-                            <span className="text-[14px] font-bold text-[#ff1268]">
+                            <span className="text-[12px] sm:text-[13px] md:text-[14px] font-bold text-[#ff1268]">
                                 {Math.round(((labellPrice - price) / labellPrice) * 100)}%
                             </span>
                         )}
