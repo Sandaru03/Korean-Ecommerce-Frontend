@@ -48,7 +48,7 @@ export function CommonProductCard({ product }) {
         e.preventDefault()
         e.stopPropagation()
         addToCart(product, 1)
-        toast.success(`"${product.name}" added to cart!`, { icon: '🛒' })
+        toast.success("Added to cart!", { icon: '🛒' })
     }
 
     return (

@@ -70,7 +70,6 @@ export function Footer() {
                 <li><Link to="/" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Home</Link></li>
                 <li className="hidden md:block"><Link to="/about" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">About Us</Link></li>
                 <li><Link to="/contact" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Contact Us</Link></li>
-                <li><Link to="/login" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Track Orders</Link></li>
                 <li><Link to="/request-product" className="text-[13px] text-neutral-muted hover:text-primary transition-colors">Request a Product</Link></li>
               </ul>
             </div>
@@ -116,7 +115,7 @@ export function Footer() {
             {/* Left: Motto */}
             <div className="flex-1 flex justify-center md:justify-start">
               <p className="text-[12px] text-[#888] font-medium">
-                Samee and Sandu Corp. | Your Korean Lifestyle Partner
+                Samee and Sandu | Your Korean Lifestyle Partner
               </p>
             </div>
 
@@ -130,7 +129,7 @@ export function Footer() {
                   rel="noopener noreferrer" 
                   className="text-[#E4405F] font-semibold hover:text-[#c43650] transition-colors"
                 >
-                  SynTechCraft
+                  Syntechcraft
                 </a>
               </p>
             </div>

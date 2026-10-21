@@ -352,7 +352,7 @@ export default function ProductPage() {
                             <button
                                 onClick={() => {
                                     addToCart(product, 1)
-                                    toast.success(`"${product.name}" added to cart!`, { icon: '🛒' })
+                                    toast.success("Added to cart!", { icon: '🛒' })
                                 }}
                                 className="w-full h-[50px] md:h-[56px] border-[1.5px] border-primary text-primary font-bold transition-all hover:bg-neutral-light rounded-[4px] flex items-center justify-center gap-2 text-sm md:text-base"
                             >

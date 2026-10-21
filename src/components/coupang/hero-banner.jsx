@@ -29,7 +29,7 @@ function getCardStyle(offset, screenMode) {
     zIndex = offset === 0 ? 20 : Math.abs(offset) === 1 ? 10 : 1;
   } else {
     // Mobile (< 640px): Dominant center card with touch swipe support
-    w = 0.85;
+    w = 0.82;
     targets = { 0: 0.50, '-1': -0.30, 1: 1.30, '-2': -0.90, 2: 1.90 };
     scale = offset === 0 ? 1 : Math.abs(offset) === 1 ? 0.88 : 0.72;
     opacity = offset === 0 ? 1 : Math.abs(offset) === 1 ? 0.35 : 0;
@@ -146,14 +146,14 @@ export function HeroBanner() {
 
   return (
     <div
-      className="relative group w-full bg-[#FFFFFF] pt-0 pb-2 md:py-6 lg:py-10 overflow-hidden px-2 md:px-4"
+      className="relative group w-full bg-[#FFFFFF] pt-1 pb-2 md:py-6 lg:py-8 overflow-hidden px-2 md:px-4"
       style={{ touchAction: 'pan-y' }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="max-w-[1400px] mx-auto">
+      <div className="max-w-[1400px] mx-auto relative">
         <div
-          className="relative w-full h-[420px] sm:h-[480px] md:h-[560px] xl:h-[600px]"
+          className="relative w-full h-[440px] sm:h-[480px] md:h-[560px] xl:h-[600px]"
           style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
         >
           {displayArray.map((slide, i) => {
@@ -172,7 +172,7 @@ export function HeroBanner() {
               // OUTER: fixed at left:50%, width NEVER changes — ONLY transform animates.
               <div
                 key={slide.uniqueId}
-                className="absolute top-1/2 left-1/2 w-[85%] sm:w-[75%] md:w-[48%] xl:w-[33%] aspect-[4/5] md:aspect-[3/4] cursor-pointer"
+                className="absolute top-1/2 left-1/2 w-[82%] max-w-[320px] max-h-[380px] sm:max-w-none sm:max-h-none sm:w-[75%] md:w-[48%] xl:w-[33%] aspect-[4/5] md:aspect-[3/4] cursor-pointer"
                 style={cardStyle}
                 onClick={() => { if (!isCenter) setCurrentSlide(i); }}
               >
@@ -204,32 +204,32 @@ export function HeroBanner() {
             );
           })}
         </div>
+
+        {/* Navigation Arrows */}
+        <button
+          onClick={prevSlide}
+          className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-30 hidden sm:flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full bg-white/70 hover:bg-white text-[#111] shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
+          aria-label="Previous banner"
+        >
+          <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+        </button>
+        <button
+          onClick={nextSlide}
+          className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-30 hidden sm:flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full bg-white/70 hover:bg-white text-[#111] shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
+          aria-label="Next banner"
+        >
+          <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+        </button>
       </div>
 
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-30 hidden sm:flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full bg-white/70 hover:bg-white text-[#111] shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
-        aria-label="Previous banner"
-      >
-        <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-30 hidden sm:flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full bg-white/70 hover:bg-white text-[#111] shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300"
-        aria-label="Next banner"
-      >
-        <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
-      </button>
-
       {/* Indicators */}
-      <div className="absolute bottom-3 md:bottom-4 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+      <div className="relative flex justify-center items-center gap-2 mt-3 md:mt-4 mb-1 md:mb-2 z-30">
         {originalBanners.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentSlide(i)}
-            className={`h-1.5 transition-all duration-300 rounded-full ${
-              i === realCurrentIndex ? "w-8 bg-black" : "w-2 bg-black/20 hover:bg-black/40"
+            className={`h-2 transition-all duration-300 rounded-full ${
+              i === realCurrentIndex ? "w-8 bg-black shadow-xs" : "w-2.5 bg-black/25 hover:bg-black/50"
             }`}
             aria-label={`Go to slide ${i + 1}`}
           />

@@ -138,14 +138,14 @@ export default function CheckoutPage() {
     ).join("\n")
 
     const weightDetail = packagingInfo.grossWeight > 0
-        ? ` (${packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)}kg` : `${packagingInfo.grossWeight}g`} in ${packagingInfo.boxes} ${packagingInfo.boxes === 1 ? 'box' : 'boxes'})`
+        ? ` (${packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)}kg` : `${packagingInfo.grossWeight}g`})`
         : ""
 
     const deliveryLine = isDomestic
         ? (effectiveDeliveryFee > 0 
             ? `\nDelivery Fee: ${formatPrice(effectiveDeliveryFee)}${district ? ` (${district})` : ""}${weightDetail}` 
             : "\nDelivery: Free (Orders over LKR 20,000)")
-        : "\nDelivery: Free (International)"
+        : `\nDelivery: International (We will contact you regarding shipping fee)${weightDetail}`
         
     const buildFullName = () => `${firstName} ${lastName}`.trim()
     const buildFullAddress = () => {
@@ -497,7 +497,11 @@ export default function CheckoutPage() {
                                                             : "border-[#ddd] bg-white text-[#555] hover:border-gray-400 font-medium"
                                                     }`}
                                                 >
-                                                    <span className="text-2xl">🇱🇰</span>
+                                                    <img 
+                                                        src="/lk-flag.svg" 
+                                                        alt="Sri Lanka" 
+                                                        className="w-7 h-5 object-cover rounded shadow-2xs shrink-0 border border-slate-200" 
+                                                    />
                                                     <div>
                                                         <p className="text-[14px] leading-snug">Deliver to Sri Lanka</p>
                                                         <p className="text-[11px] text-gray-500 font-normal">Domestic Delivery</p>
@@ -533,7 +537,7 @@ export default function CheckoutPage() {
                                                     placeholder="Enter country name (e.g. Australia, United Kingdom, USA, Maldives)"
                                                     value={country === "Sri Lanka" ? "" : country}
                                                     onChange={e => setCountry(e.target.value)}
-                                                    className="w-full border-2 border-primary/40 rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#888] bg-white font-medium"
+                                                    className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
                                                 />
                                             </div>
                                         ) : (
@@ -542,7 +546,12 @@ export default function CheckoutPage() {
                                                     Country / Region
                                                 </label>
                                                 <div className="w-full border border-[#ddd] bg-gray-50/90 rounded-md px-3 py-3 text-[14px] font-semibold text-[#333] flex items-center gap-2">
-                                                    <span>🇱🇰</span> Sri Lanka (Domestic Delivery)
+                                                    <img 
+                                                        src="/lk-flag.svg" 
+                                                        alt="Sri Lanka" 
+                                                        className="w-5 h-3.5 object-cover rounded shadow-2xs border border-slate-200 inline-block" 
+                                                    />
+                                                    <span>Sri Lanka (Domestic Delivery)</span>
                                                 </div>
                                             </div>
                                         )}
@@ -644,9 +653,8 @@ export default function CheckoutPage() {
                                                         placeholder="Postal / ZIP code"
                                                         value={postalCode}
                                                         onChange={e => setPostalCode(e.target.value)}
-                                                        className="w-full border-2 border-amber-400 bg-amber-50/40 rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#888] font-medium"
+                                                        className="w-full border border-[#ddd] rounded-md px-3 py-3 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-[#999]"
                                                     />
-                                                    <span className="text-[10px] text-amber-700 font-semibold block mt-1">Required for international delivery</span>
                                                 </div>
                                             </div>
                                         )}
@@ -829,14 +837,50 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Right Column: Order Summary */}
-                    <div className="w-full lg:w-[390px] shrink-0 lg:sticky lg:top-20 space-y-4">
+                    <div className="w-full lg:w-[390px] shrink-0 space-y-4">
+
+                        {/* Free Delivery Progress (Matches Cart Page) */}
+                        {isDomestic && !isFreeDelivery && subtotal > 0 && (
+                            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3 items-start shadow-sm">
+                                <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                                <div className="flex-1">
+                                    <p className="text-[13px] font-bold text-primary">Free Delivery</p>
+                                    <p className="text-[12px] text-primary/80 mt-0.5 leading-relaxed">
+                                        Add <span className="font-bold underline">{formatPrice(Math.max(0, 20000 - subtotal))}</span> more to qualify for FREE delivery!
+                                    </p>
+                                    {/* Free Delivery Progress Bar */}
+                                    <div className="w-full bg-red-200/60 h-2 rounded-full overflow-hidden mt-2.5">
+                                        <div 
+                                            className="bg-primary h-full transition-all duration-500 rounded-full"
+                                            style={{ width: `${Math.min(100, Math.max(0, (subtotal / 20000) * 100))}%` }}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {isDomestic && isFreeDelivery && subtotal > 0 && (
+                            <div className="bg-[#f0fff4] border border-[#b2f5cb] rounded-xl p-4 flex gap-3 items-start shadow-sm">
+                                <AlertCircle className="h-5 w-5 text-[#16a34a] shrink-0 mt-0.5" />
+                                <div className="flex-1">
+                                    <p className="text-[13px] font-bold text-[#16a34a]">Free Delivery Unlocked!</p>
+                                    <p className="text-[12px] text-[#16a34a]/80 mt-0.5 leading-relaxed">
+                                        You've unlocked free delivery for ordering over {formatPrice(20000)}!
+                                    </p>
+                                    {/* 100% Progress Bar */}
+                                    <div className="w-full bg-[#b2f5cb] h-2 rounded-full overflow-hidden mt-2.5">
+                                        <div className="bg-[#16a34a] h-full w-full rounded-full" />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-slate-200/90 p-5 sm:p-6 space-y-5">
                             
                             {/* Card Header */}
                             <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
                                 <div className="flex items-center gap-2.5">
-                                    <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-sm">
-                                        <Package className="w-5 h-5 text-amber-400" />
+                                    <div className="w-9 h-9 rounded-xl bg-primary text-white flex items-center justify-center shadow-sm">
+                                        <Box className="w-5 h-5 text-white" />
                                     </div>
                                     <div>
                                         <h3 className="font-extrabold text-slate-900 text-[17px] tracking-tight leading-tight">Order Summary</h3>
@@ -848,38 +892,7 @@ export default function CheckoutPage() {
                                 </span>
                             </div>
 
-                            {/* Free Delivery Progress Bar (For Domestic Orders) */}
-                            {isDomestic && (
-                                <div className="bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-teal-500/10 border border-emerald-200/60 rounded-xl p-3 space-y-1.5">
-                                    <div className="flex items-center justify-between text-[11px]">
-                                        {subtotal >= 20000 ? (
-                                            <span className="font-extrabold text-emerald-700 flex items-center gap-1.5">
-                                                <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-pulse" />
-                                                FREE Delivery Qualified!
-                                            </span>
-                                        ) : (
-                                            <span className="font-bold text-slate-700">
-                                                Add <strong className="text-emerald-700 font-extrabold">{formatPrice(20000 - subtotal)}</strong> for FREE Delivery
-                                            </span>
-                                        )}
-                                        <span className="text-[10px] font-bold text-slate-500">
-                                            {subtotal >= 20000 ? "100%" : `${Math.min(100, Math.round((subtotal / 20000) * 100))}%`}
-                                        </span>
-                                    </div>
-                                    <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
-                                        <div 
-                                            className="h-full bg-gradient-to-r from-amber-500 via-emerald-500 to-teal-500 rounded-full transition-all duration-500"
-                                            style={{ width: `${Math.min(100, Math.round((subtotal / 20000) * 100))}%` }}
-                                        />
-                                    </div>
-                                    <p className="text-[10px] text-slate-500 flex justify-between">
-                                        <span>Standard orders</span>
-                                        <span className="font-semibold text-slate-600">Free threshold: {formatPrice(20000)}</span>
-                                    </p>
-                                </div>
-                            )}
-
-                            {/* Items Preview List with Unit Weights & Details */}
+                            {/* Items Preview List */}
                             <div>
                                 <div className="flex items-center justify-between mb-2">
                                     <span className="text-[11px] font-black uppercase tracking-wider text-slate-400">Cart Items</span>
@@ -905,12 +918,6 @@ export default function CheckoutPage() {
                                                 </p>
                                                 <div className="flex flex-wrap items-center gap-1.5 mt-1 text-[11px] text-slate-500">
                                                     <span>{formatPrice(item.price)} each</span>
-                                                    {Number(item.weight) > 0 && (
-                                                        <span className="inline-flex items-center gap-0.5 font-semibold text-slate-600 bg-white border border-slate-200 px-1.5 py-0.2 rounded text-[10px]">
-                                                            <Scale className="w-2.5 h-2.5 text-slate-400" />
-                                                            {Number(item.weight) >= 1000 ? `${(Number(item.weight) / 1000).toFixed(2)}kg` : `${item.weight}g`}
-                                                        </span>
-                                                    )}
                                                 </div>
                                             </div>
 
@@ -925,31 +932,58 @@ export default function CheckoutPage() {
                             </div>
 
                             {/* Courier Shipping Details */}
-                            {isDomestic && packagingInfo.grossWeight > 0 && (
+                            {isDomestic ? (
                                 <div className="rounded-xl border border-slate-200/80 bg-slate-50/70 p-3 space-y-2">
                                     <div className="flex items-center justify-between text-[12px]">
                                         <span className="flex items-center gap-1.5 font-bold text-slate-700">
-                                            <Box className="w-3.5 h-3.5 text-indigo-600" />
-                                            <span>Shipping Weight</span>
-                                        </span>
-                                        <div className="flex items-center gap-1.5">
-                                            <span className="font-black text-slate-900 text-[13px]">
-                                                {packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg` : `${packagingInfo.grossWeight}g`}
-                                            </span>
-                                            <span className="text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-0.5 rounded-full">
-                                                {packagingInfo.boxes} {packagingInfo.boxes === 1 ? 'Box' : 'Boxes'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-200/60 text-slate-500">
-                                        <span className="flex items-center gap-1">
-                                            <Truck className="w-3 h-3 text-slate-400" />
-                                            Destination:
+                                            <Truck className="w-3.5 h-3.5 text-primary" />
+                                            <span>Courier Destination</span>
                                         </span>
                                         <span className="font-bold text-slate-800">
                                             {district ? `${district} District` : "Sri Lanka (Select District)"}
                                         </span>
+                                    </div>
+                                    {packagingInfo.grossWeight > 0 && (
+                                        <div className="flex items-center justify-between text-[12px] pt-1.5 border-t border-slate-200/60">
+                                            <span className="flex items-center gap-1.5 font-bold text-slate-700">
+                                                <Scale className="w-3.5 h-3.5 text-primary" />
+                                                <span>Package Weight</span>
+                                            </span>
+                                            <span className="font-extrabold text-slate-900">
+                                                {packagingInfo.grossWeight >= 1000
+                                                    ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg`
+                                                    : `${packagingInfo.grossWeight} g`}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className="rounded-xl border border-amber-200/90 bg-amber-50/80 p-3 space-y-2">
+                                    <div className="flex items-center justify-between text-[12px]">
+                                        <span className="flex items-center gap-1.5 font-bold text-amber-900">
+                                            <Truck className="w-3.5 h-3.5 text-amber-600" />
+                                            <span>Destination Country</span>
+                                        </span>
+                                        <span className="font-bold text-amber-950">
+                                            {country.trim() || "Another Country"}
+                                        </span>
+                                    </div>
+                                    {packagingInfo.grossWeight > 0 && (
+                                        <div className="flex items-center justify-between text-[12px] pt-1.5 border-t border-amber-200/60">
+                                            <span className="flex items-center gap-1.5 font-bold text-amber-900">
+                                                <Scale className="w-3.5 h-3.5 text-amber-600" />
+                                                <span>Package Weight</span>
+                                            </span>
+                                            <span className="font-extrabold text-amber-950">
+                                                {packagingInfo.grossWeight >= 1000
+                                                    ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg`
+                                                    : `${packagingInfo.grossWeight} g`}
+                                            </span>
+                                        </div>
+                                    )}
+                                    <div className="pt-2 border-t border-amber-200/70 flex items-start gap-1.5 text-[11px] text-amber-800 leading-snug">
+                                        <Info className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
+                                        <span>International courier rates will be calculated and we will contact you directly to confirm delivery charges.</span>
                                     </div>
                                 </div>
                             )}
@@ -961,31 +995,39 @@ export default function CheckoutPage() {
                                     <span className="font-bold text-slate-900">{formatPrice(subtotal)}</span>
                                 </div>
 
-
-                                <div className="flex justify-between items-center text-slate-600">
+                                <div className="flex justify-between items-start text-slate-600">
                                     <div>
-                                        <span>Courier Delivery</span>
-                                        {packagingInfo.grossWeight > 0 && isDomestic && (
-                                            <span className="block text-[11px] text-slate-400 font-normal">
-                                                Billable: {packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg` : `${packagingInfo.grossWeight}g`}
+                                        <span className="block leading-tight">Courier Delivery</span>
+                                        {packagingInfo.grossWeight > 0 && (
+                                            <span className="block text-[11px] text-slate-400 font-medium mt-0.5">
+                                                Total Weight: {packagingInfo.grossWeight >= 1000 ? `${(packagingInfo.grossWeight / 1000).toFixed(2)} kg` : `${packagingInfo.grossWeight} g`}
                                             </span>
                                         )}
                                     </div>
-                                    {effectiveDeliveryFee > 0 ? (
-                                        <div className="text-right">
-                                            <span className="font-extrabold text-primary text-[14px]">
-                                                {formatPrice(effectiveDeliveryFee)}
-                                            </span>
-                                            <span className="block text-[10px] text-slate-400 font-medium">
-                                                {district ? `${district} Rate` : "Base courier rate"}
-                                            </span>
-                                        </div>
+                                    {isDomestic ? (
+                                        effectiveDeliveryFee > 0 ? (
+                                            <div className="text-right">
+                                                <span className="font-extrabold text-primary text-[14px] leading-tight block">
+                                                    {formatPrice(effectiveDeliveryFee)}
+                                                </span>
+                                                <span className="block text-[10px] text-slate-400 font-medium mt-0.5">
+                                                    {district ? `${district} Rate` : "Base courier rate"}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div className="text-right">
+                                                <span className="font-black text-emerald-600 text-[14px] leading-tight block">FREE</span>
+                                                <span className="block text-[10px] text-emerald-600 font-medium mt-0.5">Over {formatPrice(20000)}</span>
+                                            </div>
+                                        )
                                     ) : (
                                         <div className="text-right">
-                                            <span className="font-black text-emerald-600 text-[14px]">FREE</span>
-                                            {isDomestic && (
-                                                <span className="block text-[10px] text-emerald-600 font-medium">Over {formatPrice(20000)}</span>
-                                            )}
+                                            <span className="font-bold text-amber-700 text-[13px] leading-tight block">
+                                                Calculated Later
+                                            </span>
+                                            <span className="block text-[10px] text-amber-600/90 font-medium mt-0.5">
+                                                We will contact you
+                                            </span>
                                         </div>
                                     )}
                                 </div>
@@ -995,7 +1037,9 @@ export default function CheckoutPage() {
                             <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white rounded-2xl p-4 shadow-lg flex items-center justify-between border border-slate-800">
                                 <div>
                                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-300 block">Total Payable</span>
-                                    <p className="text-[10px] text-slate-400 mt-0.5">All taxes & packaging included</p>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">
+                                        {isDomestic ? "All taxes & packaging included" : "Items total • Intl. courier quoted separately"}
+                                    </p>
                                 </div>
                                 <div className="text-right">
                                     <p className="font-black text-[25px] sm:text-[27px] tracking-tight leading-none text-white">
@@ -1076,7 +1120,7 @@ export default function CheckoutPage() {
                                     <button
                                         onClick={handleEmail}
                                         disabled={isSavingOrder || sendingEmail}
-                                        className="group relative w-full p-3.5 bg-gradient-to-r from-[#3b82f6] via-[#2563eb] to-[#1d4ed8] hover:from-[#2563eb] hover:to-[#1e40af] text-white rounded-2xl shadow-[0_10px_25px_-5px_rgba(37,99,235,0.4)] hover:shadow-[0_12px_28px_-4px_rgba(37,99,235,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-between text-left overflow-hidden border border-blue-400/30"
+                                        className="group relative w-full p-3.5 bg-gradient-to-r from-primary via-[#b91c1c] to-[#991b1b] hover:from-[#b91c1c] hover:to-[#7f1d1d] text-white rounded-2xl shadow-[0_10px_25px_-5px_rgba(185,28,28,0.4)] hover:shadow-[0_12px_28px_-4px_rgba(185,28,28,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-between text-left overflow-hidden border border-red-400/30"
                                     >
                                         <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/15 rounded-full blur-xl pointer-events-none group-hover:scale-150 transition-transform duration-500" />
 
@@ -1092,7 +1136,7 @@ export default function CheckoutPage() {
                                                 <span className="font-extrabold text-[15px] leading-tight text-white tracking-tight block">
                                                     {isSavingOrder ? "Processing..." : (sendingEmail ? "Sending Email..." : "Order via Email")}
                                                 </span>
-                                                <p className="text-[11px] text-blue-100 truncate font-medium mt-0.5">
+                                                <p className="text-[11px] text-red-100 truncate font-medium mt-0.5">
                                                     Receive order confirmation to your inbox
                                                 </p>
                                             </div>
@@ -1124,18 +1168,20 @@ export default function CheckoutPage() {
                             )}
 
                             {/* Trust Badges Footer Grid */}
-                            <div className="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-center text-[10px] text-slate-500 font-medium">
-                                <div className="flex flex-col items-center gap-1">
-                                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                                    <span>100% Authentic Korean Brands</span>
-                                </div>
-                                <div className="flex flex-col items-center gap-1">
-                                    <Box className="w-4 h-4 text-indigo-600" />
-                                    <span>Tamper-Proof Box Packing</span>
-                                </div>
-                                <div className="flex flex-col items-center gap-1">
-                                    <Truck className="w-4 h-4 text-blue-600" />
-                                    <span>Tracked Courier Delivery</span>
+                            <div className="pt-3 border-t border-slate-100">
+                                <div className="bg-red-50/70 border border-red-100 rounded-xl p-2.5 grid grid-cols-3 gap-2 text-center text-[10px] text-slate-700 font-medium">
+                                    <div className="flex flex-col items-center gap-1">
+                                        <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
+                                        <span className="leading-tight">100% Authentic Korean Brands</span>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-1">
+                                        <Box className="w-4 h-4 text-primary shrink-0" />
+                                        <span className="leading-tight">Tamper-Proof Box Packing</span>
+                                    </div>
+                                    <div className="flex flex-col items-center gap-1">
+                                        <Truck className="w-4 h-4 text-primary shrink-0" />
+                                        <span className="leading-tight">Tracked Courier Delivery</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
