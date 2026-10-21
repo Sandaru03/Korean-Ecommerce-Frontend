@@ -438,7 +438,7 @@ export default function HomePage() {
 
             {/* ── Remaining Topics (6th onwards) ───────────────────── */}
             {!topicsLoading && activeTopicsWithProducts.length > 5 && (
-                <div className="mx-auto max-w-[1040px] px-4 space-y-6 md:space-y-10">
+                <div className="mx-auto max-w-[1040px] px-4 space-y-6 md:space-y-10 mb-8 md:mb-14">
                     {activeTopicsWithProducts.slice(5).map((topic) => (
                         <div key={topic.id}>
                             {topic.bannerImages?.length > 0 || topic.mobileBannerImages?.length > 0 || topic.bannerImage ? (

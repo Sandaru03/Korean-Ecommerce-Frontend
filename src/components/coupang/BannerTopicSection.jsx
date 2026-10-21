@@ -38,7 +38,7 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
         return () => clearInterval(timer);
     }, [images.length]);
 
-    // Measure right column height to ensure banner width on desktop is mathematically exact 3:5 ratio (zero crop)
+    // Measure right column height to ensure ALL desktop topic banners match Today's Deals 3:5 ratio
     const rightColRef = useRef(null);
     const [desktopBannerWidth, setDesktopBannerWidth] = useState(null);
 
@@ -46,10 +46,8 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
         if (!rightColRef.current) return;
         const updateWidth = () => {
             if (window.innerWidth >= 768 && rightColRef.current) {
-                const h = rightColRef.current.offsetHeight;
-                if (h > 0) {
-                    setDesktopBannerWidth(Math.round(h * (3 / 5)));
-                }
+                const h = Math.max(rightColRef.current.offsetHeight, 520);
+                setDesktopBannerWidth(Math.round(h * (3 / 5)));
             } else {
                 setDesktopBannerWidth(null);
             }
@@ -134,11 +132,11 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
     };
 
     return (
-        <section className="mb-0">
-            <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm items-stretch">
-                {/* Left: Banner Slider (Unified 3:5 Aspect Ratio for 100% Zero Crop & Zero Space) */}
+        <section className="w-full">
+            <div className="flex flex-col md:flex-row border border-[#eee] rounded-md overflow-hidden bg-white shadow-sm items-stretch md:min-h-[520px]">
+                {/* Left: Banner Slider (Standard 3:5 Ratio for 100% Zero Crop & Standard Dimensions) */}
                 <div 
-                    className="w-full md:w-[465px] lg:w-[485px] xl:w-[510px] shrink-0 relative overflow-hidden aspect-[3/5] bg-[#fafafa]"
+                    className="w-full shrink-0 relative overflow-hidden aspect-[3/5] md:aspect-auto bg-[#fafafa] md:min-h-[520px]"
                     style={{ 
                         ...(desktopBannerWidth ? { width: `${desktopBannerWidth}px` } : {}),
                         touchAction: 'pan-y' 
@@ -148,14 +146,14 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
                 >
                     {images.length > 0 ? (
                         <div className="absolute inset-0 w-full h-full group">
-                            {/* Unified 3:5 images */}
+                            {/* Unified edge-to-edge fit without crop or distortion */}
                             {images.map((img, idx) => (
                                 <img 
                                     key={`banner-${idx}`}
                                     src={img} 
                                     alt={`${title} banner ${idx + 1}`} 
-                                    className={`absolute inset-0 w-full h-full object-cover object-center z-10 transition-all duration-1000 transform-gpu backface-hidden will-change-transform ${
-                                        idx === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-105 pointer-events-none"
+                                    className={`absolute inset-0 w-full h-full object-cover object-center z-10 transition-opacity duration-700 ${
+                                        idx === currentIndex ? "opacity-100" : "opacity-0 pointer-events-none"
                                     }`}
                                 />
                             ))}
@@ -181,36 +179,48 @@ export function BannerTopicSection({ title, products, bannerImage, bannerImages,
                 </div>
 
                 {/* Right: Scrollable Product Rows */}
-                <div ref={rightColRef} className="flex-1 p-4 bg-white overflow-hidden min-w-0">
+                <div ref={rightColRef} className="flex-1 p-4 bg-white overflow-hidden min-w-0 flex flex-col justify-between md:min-h-[520px]">
                     <div className="flex justify-between items-center mb-4 border-b border-[#f0f0f0] pb-2">
                         <h2 className="text-xl font-bold text-neutral-dark">{title}</h2>
                     </div>
                     
                     {/* Mobile View (3 rows) */}
-                    <div className="md:hidden flex flex-col gap-3.5">
-                        {mobileRows.map((row, i) => (
-                            <div key={`mobile-row-${i}`} {...dragEvents} className="flex gap-2.5 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
-                                {row.map(p => (
-                                    <div key={p.id} className="snap-start w-[calc((100%-20px)/2.35)] min-w-[112px] max-w-[136px] shrink-0">
-                                        <CommonProductCard product={p} />
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
+                    {products && products.length > 0 ? (
+                        <div className="md:hidden flex flex-col gap-3.5">
+                            {mobileRows.map((row, i) => (
+                                <div key={`mobile-row-${i}`} {...dragEvents} className="flex gap-2.5 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
+                                    {row.map(p => (
+                                        <div key={p.id} className="snap-start w-[calc((100%-20px)/2.35)] min-w-[112px] max-w-[136px] shrink-0">
+                                            <CommonProductCard product={p} />
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="md:hidden flex items-center justify-center text-gray-400 py-8">
+                            <p className="text-xs font-medium">Products coming soon</p>
+                        </div>
+                    )}
 
                     {/* Desktop View (2 rows) */}
-                    <div className="hidden md:flex flex-col gap-5">
-                        {desktopRows.map((row, i) => (
-                            <div key={`desktop-row-${i}`} {...dragEvents} className="flex gap-3.5 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
-                                {row.map(p => (
-                                    <div key={p.id} className="snap-start w-[165px] lg:w-[185px] xl:w-[205px] shrink-0">
-                                        <CommonProductCard product={p} />
-                                    </div>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
+                    {products && products.length > 0 ? (
+                        <div className="hidden md:flex flex-col gap-4 flex-1 justify-center">
+                            {desktopRows.map((row, i) => (
+                                <div key={`desktop-row-${i}`} {...dragEvents} className="flex gap-3.5 overflow-x-auto snap-x scrollbar-hide pb-2 cursor-grab select-none">
+                                    {row.map(p => (
+                                        <div key={p.id} className="snap-start w-[150px] lg:w-[165px] xl:w-[178px] shrink-0">
+                                            <CommonProductCard product={p} />
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="hidden md:flex flex-1 items-center justify-center text-gray-400 py-20">
+                            <p className="text-sm font-medium">Products coming soon</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

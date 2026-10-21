@@ -3,7 +3,7 @@ import { PackagePlus, ArrowRight } from "lucide-react";
 
 export function RequestProductCTA() {
     return (
-        <section className="mx-auto max-w-[1040px] px-4 mb-14 md:mb-16">
+        <section className="mx-auto max-w-[1040px] px-4 my-8 md:my-14">
             <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-r from-primary to-rose-700 text-white shadow-xl">
                 {/* Decorative background elements */}
                 <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-10 blur-3xl pointer-events-none"></div>
