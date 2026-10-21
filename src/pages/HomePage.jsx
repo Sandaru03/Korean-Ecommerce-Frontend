@@ -67,11 +67,11 @@ function MiddleBannerSection({ banners }) {
     if (banners.length === 1) {
         return (
             <section className="mb-0 relative">
-                <Link to={banners[0].link || '#'} className="block w-full">
+                <Link to={banners[0].link || '#'} className="block w-full overflow-hidden rounded-2xl aspect-[1040/420]">
                     <img 
                         src={banners[0].image} 
                         alt="Promotion" 
-                        className="w-full h-[220px] md:h-[420px] object-contain block bg-[#f8f8f8]" 
+                        className="w-full h-full object-cover block bg-[#f8f8f8]" 
                     />
                 </Link>
             </section>
@@ -161,9 +161,9 @@ function MiddleBannerSection({ banners }) {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
-            <div className="overflow-hidden">
+            <div className="overflow-hidden rounded-2xl w-full">
                 <div 
-                    className={`flex transform-gpu will-change-transform ${
+                    className={`flex w-full transform-gpu will-change-transform ${
                         enableTransition 
                             ? "transition-transform duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]" 
                             : ""
@@ -172,15 +172,15 @@ function MiddleBannerSection({ banners }) {
                     onTransitionEnd={handleTransitionEnd}
                 >
                     {slides.map((banner, idx) => (
-                        <div key={`${banner.id || idx}-${idx}`} className="min-w-full shrink-0 relative">
+                        <div key={`${banner.id || idx}-${idx}`} className="w-full flex-none overflow-hidden relative aspect-[1040/420]">
                             <Link to={banner.link || '#'} className="block w-full h-full group/item">
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 opacity-60" />
                                 <img 
                                     src={banner.image} 
                                     alt="Promotion" 
-                                    className="w-full h-[220px] md:h-[420px] object-contain block bg-[#f8f8f8] transition-transform duration-1000 group-hover/item:scale-110" 
+                                    className="w-full h-full object-cover block bg-[#f8f8f8] transition-transform duration-1000 md:group-hover/item:scale-105" 
                                 />
-                                <div className="absolute bottom-10 left-10 z-20 transition-all duration-500 transform translate-y-2 group-hover/item:translate-y-0 opacity-0 group-hover/item:opacity-100 hidden md:block">
+                                <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 z-20 transition-all duration-500 transform translate-y-2 group-hover/item:translate-y-0 opacity-0 group-hover/item:opacity-100 hidden md:block">
                                     <span className="px-6 py-2 bg-white text-black font-bold rounded-full shadow-lg text-sm tracking-uppercase">Explore Collection</span>
                                 </div>
                             </Link>
