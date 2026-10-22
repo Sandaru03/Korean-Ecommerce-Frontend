@@ -669,30 +669,6 @@ export default function CartPage() {
         <div className="min-h-screen bg-[#f8f8f8] flex flex-col">
             <Header />
 
-            {/* Floating WhatsApp Button - Upgraded Premium Version - Always Visible */}
-            <a
-                href={contactNumber ? `https://wa.me/${contactNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(cart.length > 0 ? "Hi! I have some questions about the items in my cart." : "Hi! I'm browsing your store and have some questions.")}` : "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="fixed right-4 bottom-[calc(88px+env(safe-area-inset-bottom))] md:right-10 md:bottom-10 z-[100] group flex items-center justify-end"
-            >
-                {/* Friendly Floating Label */}
-                <div className="bg-white text-[#111] px-6 py-3 rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.2)] mr-4 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-10 group-hover:translate-x-0 font-bold text-[15px] pointer-events-none border border-[#f0f0f0] whitespace-nowrap tracking-tight ring-1 ring-black/5">
-                    Need help? Chat with us! 👋
-                </div>
-
-                {/* Animated Button */}
-                <div className="relative">
-                    {/* Subtle Ping Animation */}
-                    <div className="absolute inset-0 bg-[#25D366] rounded-full animate-ping opacity-20" />
-
-                    {/* Main Button with Gradient and Authentic WhatsApp Icon */}
-                    <div className="relative bg-gradient-to-br from-[#25D366] to-[#128C7E] text-white p-3.5 md:p-4 rounded-full shadow-[0_20px_40px_-10px_rgba(37,211,102,0.5)] hover:shadow-[0_25px_50px_-12px_rgba(37,211,102,0.6)] hover:scale-110 transition-all duration-500 active:scale-95 ring-4 ring-white flex items-center justify-center">
-                        <FaWhatsapp className="h-8 w-8 md:h-9 md:w-9 text-white drop-shadow-sm" />
-                    </div>
-                </div>
-            </a>
-
             {cart.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-center py-32 gap-4">
                     <ShoppingBag className="h-20 w-20 text-[#ddd]" strokeWidth={1} />

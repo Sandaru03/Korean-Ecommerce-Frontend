@@ -23,6 +23,7 @@ import ContactUsPage from "./pages/ContactUsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import RefundPolicyPage from "./pages/RefundPolicyPage";
 import TermsAndConditionsPage from "./pages/TermsAndConditionsPage";
+import { WhatsAppFloatingButton } from "./components/common/WhatsAppFloatingButton";
 
 // Setup global axios interceptor to automatically attach token
 axios.interceptors.request.use((config) => {
@@ -53,6 +54,7 @@ export default function App() {
       {isLoading && <Loader onFinished={() => setIsLoading(false)} />}
       <ScrollToTop />
       <SideCart />
+      <WhatsAppFloatingButton />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
