@@ -38,20 +38,20 @@ export function GridBannerSection({ title }) {
     const topBanners = banners.filter(b => b.position === 1 || b.position === 2);
     const bottomBanners = banners.filter(b => b.position >= 3 && b.position <= 6);
 
-    const renderBannerCard = (banner, desktopHeightClass = "md:h-[200px]") => {
+    const renderBannerCard = (banner, heightClass = "aspect-square md:aspect-auto md:h-[240px]") => {
         if (!banner.image) return null;
 
         return (
             <Link 
                 key={banner.id} 
                 to={banner.link || "#"} 
-                className={`relative block w-full bg-white border border-[#eaeaea] overflow-hidden group hover:shadow-md transition-shadow duration-300 ${desktopHeightClass}`}
+                className={`relative block w-full bg-white border border-[#eaeaea] overflow-hidden group hover:shadow-md transition-shadow duration-300 ${heightClass}`}
             >
                 {/* The image itself */}
                 <img 
                     src={banner.image} 
                     alt={`Promotion ${banner.position}`} 
-                    className="w-full h-auto md:h-full object-contain block transform group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover object-center block transform group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                 />
                 
@@ -71,12 +71,12 @@ export function GridBannerSection({ title }) {
             <div className="flex flex-col gap-4">
                 {/* Top Row: 2 Banners */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                    {topBanners.map(b => renderBannerCard(b, "md:h-[180px]"))}
+                    {topBanners.map(b => renderBannerCard(b, "h-[140px] sm:h-[160px] md:h-[180px]"))}
                 </div>
 
                 {/* Bottom Row: 4 Banners */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-                    {bottomBanners.map(b => renderBannerCard(b, "md:h-[240px]"))}
+                    {bottomBanners.map(b => renderBannerCard(b, "aspect-square md:aspect-auto md:h-[240px]"))}
                 </div>
             </div>
         </section>
